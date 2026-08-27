@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+    --townsfolk: #1f65ff;
+    --outsider: #46d5ff;
+    --minion: #ff6900;
+    --demon: #ce0100;
+    --traveller: #cc04ff;
+}
