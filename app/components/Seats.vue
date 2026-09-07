@@ -3,12 +3,15 @@
         <div id="wheel">
             <div v-for="(player, pIndex) in players.all"
                  class="seat">
-                <Token :data-index="pIndex"
-                        :data="player.role ?? undefined"
+                <div class="token flex flex-col mb-8">
+                    <Token :data="player.role ?? undefined"
                         :state="player.state"
                         kind="role"
                         @click="circle.scrollTo(pIndex) && emit('editPlayer', pIndex)"
                     />
+                    <PlayerTag class="mx-4 mt-1" :player="player"></PlayerTag>
+                </div>
+                
                 <Token v-for="(reminder, rIndex) in player.reminders"
                        class="reminder mx-auto"
                        :data="{name: reminder.name, image: reminder.image}"
