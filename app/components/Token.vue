@@ -22,8 +22,8 @@
             <template v-if="ui.showNightOrder">
                 <UPopover class="night-tooltip first-night"
                           mode="hover"
-                          :content="{side: popoverDirection == 'horizontal' ? 'left' : 'bottom'}"
-                          :ui="{content: 'bg-transparent'}"
+                          :content="{side: ui.centered ? 'left' : 'top'}"
+                          :ui="{content: 'w-64 p-4'}"
                           enable-touch>
                     <UButton label="0" color="neutral" variant="subtle" />
 
@@ -34,8 +34,8 @@
 
                 <UPopover class="night-tooltip other-night"
                           mode="hover"
-                          :content="{side: popoverDirection == 'horizontal' ? 'right' : 'bottom'}"
-                          :ui="{content: 'bg-transparent'}"
+                          :content="{side: ui.centered ? 'right' : 'top'}"
+                          :ui="{content: 'w-64 p-4'}"
                           enable-touch>
                     <UButton label="1" color="neutral" variant="subtle" />
 
@@ -58,19 +58,6 @@
 
 <script setup lang="ts">
 const ui = useUI();
-
-// Determine the direction of the popover based on the orientation of the UI
-const popoverDirection = computed(() => {
-    switch (ui.orientation) {
-        case "top":
-        case "bottom":
-            return "vertical"
-        case "left":
-        case "right":
-            case 'center':
-            return "horizontal"
-    }
-})
 
 const props = defineProps<{
     kind: TokenKind
