@@ -69,6 +69,7 @@ class PlayerCircle {
 
     /** The token data */
     seats = {
+        wrapper: {} as HTMLElement,
         elements: [] as HTMLElement[],
         /** Mapping, where the index maps the element to its seat in the wheel */
         slots: [] as number[],
@@ -83,6 +84,8 @@ class PlayerCircle {
 
     constructor() {
         onMounted(() => {
+            this.seats.wrapper = document.getElementById('seats')!;
+
             window.addEventListener("resize", () => {
                 this.setWheelVisualization(ui.orientation.user)
                 this.updateOrder(true)
@@ -269,8 +272,8 @@ class PlayerCircle {
 
 
     setWheelVisualization(position: WheelOrientation) {
-        const w_width = window.innerWidth;
-        const w_height = window.innerHeight;
+        const w_width = this.seats.wrapper.clientWidth;
+        const w_height = this.seats.wrapper.clientHeight;
 
         // If the screen is wide enough, allow all tokens to be displayed
         if (w_width > w_height &&
@@ -386,7 +389,7 @@ defineExpose({
     user-select: none;
 
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - var(--ui-header-height));
     position: relative;
 }
 
