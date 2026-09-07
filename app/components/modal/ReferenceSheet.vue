@@ -9,7 +9,7 @@
                    :ui="{ content: `mb-3` }"
             >
                 <template #scenario>
-                    <template v-for="(team, name) of game.teams">
+                    <template v-for="(team, name) of game.availableTeamRoles">
                         <div v-if="name !== 'traveller'"
                              :key="name"
                              :class="[name, 'team-list flex flex-col md:flex-row']">
@@ -32,14 +32,12 @@
                     </template>
                 </template>
                 <template #travellers>
-                    <div class="team-list flex">
-                        <div class="name flex-shrink-0" :style="{
-                            background: `linear-gradient(-90deg, var(--traveller), transparent)`
-                        }">
-                            <h3>traveller</h3>
+                    <div class="traveller team-list flex flex-col md:flex-row">
+                        <div class="name w-full md:w-6">
+                            <h3 class="px-6 border-b-2 md:border-0 md:rotate-270">traveller</h3>
                         </div>
                         <div class="flex-grow py-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-                            <div v-for="role in game.teams.traveller" :key="role.id"
+                            <div v-for="role in game.availableTeamRoles.traveller" :key="role.id"
                                     class="role flex items-center">
                                 <NuxtImg :src="role.image"/>
 

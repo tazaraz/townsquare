@@ -12,12 +12,12 @@ interface TeamDivision {
     traveller: number
 }
 
-interface Teams {
-    townsfolk: Role[]
-    outsider: Role[]
-    minion: Role[]
-    demon: Role[]
-    traveller: Role[]
+interface Teams<T> {
+    townsfolk: T[]
+    outsider: T[]
+    minion: T[]
+    demon: T[]
+    traveller: T[]
 }
 
 interface NightOrder {
@@ -33,7 +33,10 @@ export const useGame = defineStore('game', () => {
 
     const edition = computed<Edition>(() => gamestate.edition);
 
-    const teams = computed<Teams>(() => {
+    /**
+     * Contains all roles for each team.
+     */
+    const availableTeamRoles = computed<Teams<Role>>(() => {
         return {
             townsfolk:  gamestate.roles.filter(c => c.team === "townsfolk"),
             outsider:   gamestate.roles.filter(c => c.team === "outsider"),
@@ -43,17 +46,31 @@ export const useGame = defineStore('game', () => {
         }
     })
 
-    const teamDivision = computed<TeamDivision | null>(() => {
+    /**
+     * Contains all roles assigned to players
+     */
+    const assignedTeamRoles = computed<Teams<Player>>(() => {
+        return {
+            townsfolk:  players.all.filter(p => p.role?.team === "townsfolk"),
+            outsider:   players.all.filter(p => p.role?.team === "outsider"),
+            minion:     players.all.filter(p => p.role?.team === "minion"),
+            demon:      players.all.filter(p => p.role?.team === "demon"),
+            traveller:  players.all.filter(p => p.role?.team === "traveller"),
+        }
+    })
+
+    /**
+     * What amount of players to have for each team
+     */
+    const gameDivision = computed<TeamDivision | null>(() => {
         // Count the number of active players
         let travellers = players.all.filter(p => p.role?.team === "traveller").length
         if (players.count - travellers < 5) return null;
 
+        // Return the config associated with the amount of players
         return {
-            townsfolk:  players.all.filter(p => p.role?.team === "townsfolk").length,
-            outsider:   players.all.filter(p => p.role?.team === "outsider").length,
-            minion:     players.all.filter(p => p.role?.team === "minion").length,
-            demon:      players.all.filter(p => p.role?.team === "demon").length,
-            traveller:   travellers,
+            ...gameData[Math.min(players.count - travellers, 10)]!,  // File better exist
+            traveller: travellers
         }
     })
 
@@ -65,7 +82,8 @@ export const useGame = defineStore('game', () => {
                 // Remove any roles that are not in the current game
                 .filter(r => r !== undefined)
                 // Filter out travellers not in play
-                .filter(r => r.team !== 'traveller' || (r.team === 'traveller' && players.all.some(p => p.role?.id === r.id)))
+                .filter(r => r.team !== 'traveller' || 
+                             (r.team === 'traveller' && players.all.some(p => p.role?.id === r.id)))
                 .map(c => {
                     return {
                         name: c.name,
@@ -186,8 +204,9 @@ export const useGame = defineStore('game', () => {
 
     return {
         edition,
-        teams,
-        teamPartition: teamDivision,
+        availableTeamRoles,
+        assignedTeamRoles,
+        gameDivision,
 
         calculateNightOrder,
         loadScenario,
