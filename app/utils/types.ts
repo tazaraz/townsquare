@@ -58,7 +58,10 @@ export interface UI {
     /** Index of the currently selected token in the wheel */
     selectedToken: number
     /** Orientation of the token wheel */
-    orientation: WheelOrientation
+    orientation: {
+        user: WheelOrientation
+        rendered: WheelOrientation
+    }
     /** Whether the UI should show the night order, or just leaves */
     showNightOrder: boolean
     /** Whether the UI is in its hidden state */

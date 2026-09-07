@@ -81,12 +81,10 @@ class PlayerCircle {
 
     private draggable: Draggable = null!;
 
-    private renderedOrientation: WheelOrientation = ui.orientation
-
     constructor() {
         onMounted(() => {
             window.addEventListener("resize", () => {
-                this.setWheelVisualization(ui.orientation)
+                this.setWheelVisualization(ui.orientation.user)
                 this.updateOrder(true)
             })
 
@@ -111,7 +109,7 @@ class PlayerCircle {
      * Creates the circle and arranges the tokens around it
      */
     createCircle() {
-        this.setWheelVisualization(ui.orientation)
+        this.setWheelVisualization(ui.orientation.user)
 
         // Update the rotation of the tokens on each tick
         gsap.ticker.add(() => {
@@ -224,7 +222,7 @@ class PlayerCircle {
         const {selected, slots} = this.tokenOrder()
 
         // Update the class of the selected token in the DOM
-        if (this.renderedOrientation !== "center") {
+        if (ui.orientation.rendered !== "center") {
             this.seats.elements[ui.selectedToken]?.classList.remove("selected")
             this.seats.elements[selected]?.classList.add("selected")
         } else {
@@ -251,7 +249,7 @@ class PlayerCircle {
      */
     scrollTo(index: number) {
         // Don't scroll if:
-        if (this.renderedOrientation === "center" || index === ui.selectedToken) return true;
+        if (ui.orientation.rendered === "center" || index === ui.selectedToken) return true;
 
         // Index offset calculation, bearing in mind rotationary nature of the wheel
         const m = this.seats.elements.length
@@ -279,9 +277,9 @@ class PlayerCircle {
             (w_width > this.wheel.breakpoints.horizontal &&
              w_height > this.wheel.breakpoints.vertical)
         ) {
-            this.renderedOrientation = position = "center"
+            ui.orientation.rendered = position = "center"
         } else {
-            this.renderedOrientation = position = ui.orientation
+            ui.orientation.rendered = position = ui.orientation.user
         }
 
         const screenSize = Math.min(w_width, w_height);
@@ -315,7 +313,7 @@ class PlayerCircle {
 
         // Disable dragging if the wheel is smaller than the screen.
         if (ui.tokenSize * players.count < screenSize ||
-             this.renderedOrientation === "center") {
+             ui.orientation.rendered === "center") {
             this.draggable.disable()
         } else {
             this.draggable.enable()
