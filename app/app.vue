@@ -1,20 +1,13 @@
 <template>
     <UApp>
-        <UMain class="flex">
+        <UMain>
             <ClientOnly>
-                <div class="flex flex-col">
-                    <UButton label="Reference Sheet"
-                             color="primary"
-                             @click="openReferenceSheet"/>
-                    <UButton label="Night Order"
-                         color="primary"
-                         @click="openNightOrderSheet"/>
-                </div>
                 <Seats ref="seats"
                     @edit-player="editPlayer"
                     @edit-reminder="editReminder"/>
             </ClientOnly>
         </UMain>
+        <Menu />
     </UApp>
 </template>
 
@@ -30,8 +23,8 @@ const players = usePlayers()
 
 onBeforeMount(() => {
     game.loadScenario("tb")
-    for (const p of ["1", "2", "3", "4", "5", "6"]) {
-        players.add(p)
+    for (const p of Array(8).keys()) {
+        players.add((p + 1).toString())
     }
     players.set(1, 'imp')
 })
@@ -39,16 +32,6 @@ onBeforeMount(() => {
 
 const overlay = useOverlay();
 const tokenSelector = overlay.create(ModalTokenSelector)
-const referenceSheet = overlay.create(ModalReferenceSheet)
-const nightOrder = overlay.create(ModalNightOrder)
-
-async function openNightOrderSheet() {
-    const sheet = nightOrder.open()
-}
-
-async function openReferenceSheet() {
-    const sheet = referenceSheet.open()
-}
 
 async function editPlayer(player: number) {
     const selector = tokenSelector.open({
