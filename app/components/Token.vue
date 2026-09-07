@@ -25,10 +25,10 @@
                           :content="{side: ui.centered ? 'left' : 'top'}"
                           :ui="{content: 'w-64 p-4'}"
                           enable-touch>
-                    <UButton label="0" color="neutral" variant="subtle" />
+                    <UButton label="0" />
 
                     <template #content>
-                        <span class="night-tooltip-ui size-48 inline-flex" />
+                        {{ ui.formatReminderText((data as Role).firstNightReminder) }}
                     </template>
                 </UPopover>
 
@@ -37,10 +37,10 @@
                           :content="{side: ui.centered ? 'right' : 'top'}"
                           :ui="{content: 'w-64 p-4'}"
                           enable-touch>
-                    <UButton label="1" color="neutral" variant="subtle" />
+                    <UButton label="1"/>
 
                     <template #content>
-                        <span class="size-48 m-4 inline-flex" />
+                        {{ ui.formatReminderText((data as Role).otherNightReminder) }}
                     </template>
                 </UPopover>
             </template>
