@@ -32,8 +32,11 @@ export const useGamestate = defineStore('gamestate', () => {
     const ui = reactive<UI>({
         hidden: false,
         selectedToken: 0,
-        orientation: 'left',
-        showNightOrder: false,
+        orientation: {
+            user: 'left',
+            rendered: 'left'
+        },
+        showNightOrder: true,
         showFlavor: true,
 
         tokenSize: 0,
