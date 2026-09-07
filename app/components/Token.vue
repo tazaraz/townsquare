@@ -20,7 +20,8 @@
         <!-- Side leaves -->
         <template v-if="kind == 'role' && data && !ui.hidden && !hideNightOrder">
             <template v-if="ui.showNightOrder">
-                <UPopover class="night-tooltip first-night"
+                <UPopover v-if="(data as Role).firstNightReminder"
+                          class="night-tooltip first-night"
                           mode="hover"
                           :content="{side: ui.centered ? 'left' : 'top'}"
                           :ui="{content: 'w-64 p-4'}"
@@ -32,7 +33,8 @@
                     </template>
                 </UPopover>
 
-                <UPopover class="night-tooltip other-night"
+                <UPopover v-if="(data as Role).otherNightReminder"
+                          class="night-tooltip other-night"
                           mode="hover"
                           :content="{side: ui.centered ? 'right' : 'top'}"
                           :ui="{content: 'w-64 p-4'}"
@@ -66,11 +68,11 @@ const props = defineProps<{
     hideNightOrder?: boolean
 }>()
 
-let background = "/token.png"
+const background = "/token.png"
 
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .token {
     user-select: none;
     position: relative;
@@ -117,7 +119,6 @@ let background = "/token.png"
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        pointer-events: none;
     }
 
     .name {
@@ -144,6 +145,7 @@ let background = "/token.png"
         line-height: 1;
         aspect-ratio: 1;
         background-clip: padding-box !important;
+        color: white;
 
         &.first-night {
             top: 50%;
@@ -160,7 +162,7 @@ let background = "/token.png"
     }
 
     .leaf {
-        // Important, as it makes sure the leafs have a height at all.
+        /* Important, as it makes sure the leafs have a height at all. */
         height: 40%;
 
         &.first-night {
