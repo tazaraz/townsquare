@@ -21,9 +21,7 @@ export const useReminders = defineStore('reminders', () => {
      * @param reminders Reminders to remove
      */
     function remove(reminders: Reminder[]) {
-        console.log(reminders, JSON.parse(JSON.stringify(reminderstate.once)))
         reminderstate.once = reminderstate.once.filter(r => !reminders.some(rem => rem.name === r.name))
-        console.log(JSON.parse(JSON.stringify(reminderstate.once)))
         sort();
     }
     /**
