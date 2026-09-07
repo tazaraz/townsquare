@@ -61,5 +61,8 @@ for sprite in good evil custom fabled loric; do
     download_file "$REPO/characters/generic/$sprite.webp" "/app/public/sprites/generic/$sprite.webp"
 done
 
+# Community content banner
+download_file "$REPO/community/ccc-sleeve.png" "/app/public/sprites/ccc.png"
+
 # Download the plus sprite from townsquare
 download_file "https://raw.githubusercontent.com/bra1n/townsquare/refs/heads/develop/src/assets/icons/plus.png" "/app/public/sprites/plus.png"
