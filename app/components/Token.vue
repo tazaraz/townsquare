@@ -18,7 +18,7 @@
         </template>
 
         <!-- Side leaves -->
-        <template v-if="kind == 'role' && data && !ui.hidden">
+        <template v-if="kind == 'role' && data && !ui.hidden && !hideNightOrder">
             <template v-if="ui.showNightOrder">
                 <UPopover class="night-tooltip first-night"
                           mode="hover"
@@ -76,6 +76,7 @@ const props = defineProps<{
     kind: TokenKind
     data?: Role | Reminder
     state?: PlayerState
+    hideNightOrder?: boolean
 }>()
 
 let background = "/token.png"
