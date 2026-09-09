@@ -6,15 +6,15 @@ import { defineStore } from 'pinia';
  */
 export const useGamestate = defineStore('gamestate', () => {
     /** Which edition we are playing */
-    const edition = ref({} as Edition)
+    const edition: Ref<Edition> = ref({} as Edition)
     /** The roles and their definitions */
-    const roles = ref<Role[]>([])
+    const roles: Ref<Role[]> = ref([])
     /** Fabled roles */
-    const fabled = ref<Role[]>([])
+    const fabled: Ref<Role[]> = ref([])
     /** Loric roles */
-    const loric = ref<Role[]>([])
+    const loric: Ref<Role[]> = ref([])
     /** The players */
-    const players = ref<Player[]>([])
+    const players: Ref<Player[]> = ref([])
     /** The available reminders */
     const reminders = reactive({
         /** Reminders of which only one can be present at a time */
