@@ -9,7 +9,7 @@
                         kind="role"
                         @click="circle.scrollTo(pIndex) && emit('editPlayer', pIndex)"
                     />
-                    <PlayerTag class="mx-4 mt-1" :player="player"></PlayerTag>
+                    <PlayerTag class="mx-4 mt-1" :index="p"></PlayerTag>
                 </div>
                 
                 <Token v-for="(reminder, rIndex) in player.reminders"

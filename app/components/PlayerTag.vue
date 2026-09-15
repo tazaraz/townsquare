@@ -1,25 +1,41 @@
 <template>
     <UPopover class="player-tag"
-            mode="hover"
+            mode="click"
             arrow
             :content="{side: ui.centered ? 'left' : 'bottom'}"
             :ui="{content: ''}"
-            enable-touch>
+            enable-touch
+            @update:open="resetFields">
         <UButton :label="player.name" color="neutral" variant="subtle" />
 
         <template #content>
-            <span class="size-48 inline-flex" />
-            playertag
+            <div class="flex flex-col p-2">
+                <UInput v-model="name" 
+                        :color="name == '' ? 'error' : 'primary'"
+                        @change="players.setName(index, name)"/>
+            </div>
         </template>
     </UPopover>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
-    player: Player
+    index: number
 }>()
 
 const ui = useUI()
+const players = usePlayers()
+
+const player = players.get(props.index)!
+const name = ref(`${player.name}`);
+
+function resetFields(open: boolean) {
+    // If we just closed the popover, ignore
+    if (!open) return
+    
+    name.value = `${player.name}`
+}
+
 
 </script>
 
