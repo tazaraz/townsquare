@@ -1,6 +1,6 @@
 <template>
     <UModal
-        :title="`Select the ${kind}` + (kind !== 'fabled' ? ` for ${playerName}` : '')"
+        :title="`Select the ${kind}` + (kind === 'role' ? ` for ${playerName}` : '')"
         :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}"
     >
         <template #body>
@@ -15,7 +15,8 @@
                             :class="[(item as Role).team || undefined]"
                             :data="item"
                             :kind="kind"
-                            @click="emit('close', item)"/>
+                            :hide-leaves="true"
+                            @click="emitToken(item)"/>
                     </template>
                 </template>
                 <template #travellers>
@@ -24,34 +25,33 @@
                             :class="[(item as Role).team || undefined]"
                             :data="item"
                             :kind="kind"
-                            @click="emit('close', item)"/>
+                            :hide-leaves="true"
+                            @click="emitToken(item)"/>
                     </template>
                     <div v-else-if="items.length === 0 && !showTravellers" class="text-center">
                         There are no travellers in this edition.
                     </div>
-                    <template v-else v-for="item in game.loadAllTravellers()">
+                    <template v-else v-for="item in game.loadTravellers()">
                         <Token v-if="item.team === 'traveller'"
                             :class="[item.team]"
                             :data="item"
                             :kind="kind"
-                            @click="emit('close', item)"/>
+                            :hide-leaves="true"
+                            @click="emitToken(item)"/>
                     </template>
                 </template>
             </UTabs>
         </template>
         <template #footer>
             <ModalFooter>
-                <template #left v-if="activeTab === '1'">
-                    <USwitch v-model="showTravellers" label="Show all Travellers"/>
+                <template #left>
+                    <UButton v-if="kind !== 'reminder'" 
+                             label="Reference sheet" color="neutral" @click="referenceSheet.open({ kind })"/>
+                    <USwitch v-if="activeTab == '1'" v-model="showTravellers" label="Show all Travellers" class="py-2"/>
                 </template>
                 <template #center>
-                    <UButton v-if="canClear"
-                             :label="clearButtonLabel"
-                             color="error"
-                             @click="emit('close', 'unset')" class="mx-auto"/>
-                    <UButton label="Cancel"
-                             color="neutral"
-                             @click="emit('close', undefined)" class="mx-auto"/>
+                    <UButton v-if="canClear" :label="clearButtonLabel" color="error" @click="emit('close', 'unset')"/>
+                    <UButton label="Cancel" color="neutral" @click="emit('close', undefined)"/>
                 </template>
             </ModalFooter>
         </template>
@@ -59,6 +59,7 @@
 </template>
 
 <script setup lang="ts">
+import { ModalInput, ModalReferenceSheet } from '#components'
 
 const emit = defineEmits<{
     close: [item: Role | Reminder | "unset" | undefined]
@@ -67,6 +68,8 @@ const emit = defineEmits<{
 const gamestate = useGamestate()
 const ui = useUI()
 const game = useGame()
+
+const referenceSheet = useOverlay().create(ModalReferenceSheet)
 
 const props = defineProps<{
     kind: TokenKind
@@ -79,7 +82,9 @@ const items = computed((): (Role | Reminder)[] => {
         case 'role':
             return gamestate.roles
         case 'fabled':
-            return gamestate.fabled
+            return game.availableFabled
+        case 'loric':
+            return game.availableLoric
         case 'reminder':
             return gamestate.reminders.once.concat(gamestate.reminders.global)
     }
@@ -91,6 +96,8 @@ const clearButtonLabel = computed(() => {
             return "Clear role"
         case 'fabled':
             return "Remove fabled"
+        case 'loric':
+            return 'Remove Loric'
         case 'reminder':
             return "Remove reminder"
     }
@@ -108,6 +115,29 @@ const tabs = [
         slot: 'travellers'
     }
 ]
+
+async function emitToken(item: Role | Reminder | undefined) {
+    // If the user clicked the custom note option, display an input. Only the custom note option is defined as false
+    if ((item as Reminder)!.isCustom === false)
+        item = await customReminder()
+
+    // Make sure the item is valid
+    if (item)
+        emit('close', item)
+}
+
+async function customReminder() {
+    const input = useOverlay().create(ModalInput).open({ title: 'Enter custom reminder', value: ''})
+
+    const value = await input.result as string | undefined;
+    if (value) {
+        return {
+            name: value,
+            image: '/sprites/generic/custom.webp',
+            isCustom: true
+        } as Reminder
+    }
+}
 
 </script>
 
