@@ -12,7 +12,8 @@
                     <template v-for="(team, name) of items">
                         <div v-if="name !== 'traveller'"
                              :key="name"
-                             :class="[`text-(--${name})`, 'team-list flex flex-col md:flex-row']">
+                             class="team-list flex flex-col md:flex-row"
+                             :style="`color: var(--${name})`">
                             <div class="name w-full md:w-6">
                                 <h3 class="px-6 border-b-2 md:border-0 md:rotate-270">{{ name }}</h3>
                             </div>
@@ -22,7 +23,7 @@
                                     <NuxtImg :src="role.image"/>
 
                                     <div class="flex flex-col">
-                                        <span :class="['font-bold', `text-(--${name})`]">{{ role.name }}</span>
+                                        <span class="font-bold" :style="`color: var(--${name})`">{{ role.name }}</span>
                                         <span>{{ role.ability }}</span>
                                         <small v-if="ui.showFlavor" class="text-neutral-500">{{ role.flavor }}</small>
                                     </div>
