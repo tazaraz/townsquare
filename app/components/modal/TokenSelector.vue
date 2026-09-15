@@ -12,7 +12,7 @@
                 <template #edition>
                     <template v-for="item in items">
                         <Token v-if="(item as Role).team !== 'traveller'"
-                            :class="[(item as Role).team || undefined]"
+                            :class="[(item as Role).team || undefined, hasBackdrop((item as Role).id)]"
                             :data="item"
                             :kind="kind"
                             :hide-leaves="true"
@@ -22,7 +22,7 @@
                 <template #travellers>
                     <template v-if="items.length > 0 && !showTravellers" v-for="item in items">
                         <Token v-if="(item as Role).team === 'traveller'"
-                            :class="[(item as Role).team || undefined]"
+                            :class="[(item as Role).team || undefined, hasBackdrop((item as Role).id)]"
                             :data="item"
                             :kind="kind"
                             :hide-leaves="true"
@@ -33,7 +33,7 @@
                     </div>
                     <template v-else v-for="item in game.loadTravellers()">
                         <Token v-if="item.team === 'traveller'"
-                            :class="[item.team]"
+                            :class="[item.team, hasBackdrop((item as Role).id)]"
                             :data="item"
                             :kind="kind"
                             :hide-leaves="true"
@@ -46,7 +46,7 @@
             <ModalFooter>
                 <template #left>
                     <UButton v-if="kind !== 'reminder'" 
-                             label="Reference sheet" color="neutral" @click="referenceSheet.open({ kind })"/>
+                             label="Reference sheet" color="info" @click="referenceSheet.open({ kind })"/>
                     <USwitch v-if="activeTab == '1'" v-model="showTravellers" label="Show all Travellers" class="py-2"/>
                 </template>
                 <template #center>
@@ -73,6 +73,7 @@ const referenceSheet = useOverlay().create(ModalReferenceSheet)
 
 const props = defineProps<{
     kind: TokenKind
+    selected?: string[]
     canClear?: boolean
     playerName?: string
 }>()
@@ -116,6 +117,13 @@ const tabs = [
     }
 ]
 
+function hasBackdrop(name: string): 'backdrop' | '' {
+    if (props.selected === undefined)
+        return 'backdrop'
+
+    return props.selected.includes(name) ? 'backdrop' : ''
+}
+
 async function emitToken(item: Role | Reminder | undefined) {
     // If the user clicked the custom note option, display an input. Only the custom note option is defined as false
     if ((item as Reminder)!.isCustom === false)
@@ -154,11 +162,15 @@ async function customReminder() {
             width: var(--token-size);
             flex: 0 0 var(--token-size);
 
-            &.townsfolk { box-shadow: 0 0 10px var(--townsfolk),0 0 10px var(--townsfolk); }
-            &.outsider { box-shadow: 0 0 10px var(--outsider),0 0 10px var(--outsider); }
-            &.minion { box-shadow: 0 0 10px var(--minion),0 0 10px var(--minion); }
-            &.demon { box-shadow: 0 0 10px var(--demon),0 0 10px var(--demon); }
-            &.traveller { box-shadow: 0 0 10px var(--traveller),0 0 10px var(--traveller); }
+            &.backdrop {
+                &.townsfolk { box-shadow: 0 0 10px var(--townsfolk),0 0 10px var(--townsfolk); }
+                &.outsider { box-shadow: 0 0 10px var(--outsider),0 0 10px var(--outsider); }
+                &.minion { box-shadow: 0 0 10px var(--minion),0 0 10px var(--minion); }
+                &.demon { box-shadow: 0 0 10px var(--demon),0 0 10px var(--demon); }
+                &.traveller { box-shadow: 0 0 10px var(--traveller),0 0 10px var(--traveller); }
+                &.fabled { box-shadow: 0 0 10px var(--fabled),0 0 10px var(--fabled); }
+                &.loric { box-shadow: 0 0 10px var(--loric),0 0 10px var(--loric); }
+            }
         }
     }
 }

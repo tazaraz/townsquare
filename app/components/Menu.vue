@@ -181,7 +181,10 @@ async function addPlayer() {
 }
 
 async function addModifier(type: 'fabled' | 'loric') {
-    const selector = tokenSelector.open({ kind: type })
+    const selector = tokenSelector.open({ 
+        kind: type, 
+        selected: (type === 'fabled' ? game.assignedFabled : game.assignedLoric).map(f => f.id) 
+    })
 
     const item = await selector.result;
     if (item) {
