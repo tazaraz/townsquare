@@ -1,18 +1,18 @@
 <template>
     <UModal
-        :title="`${game.edition.name} Reference Sheet`"
+        :title="`${name} Reference Sheet`"
         :ui="{ content: 'max-w-screen-2xl', footer: 'flex relative'}"
     >
         <template #body>
             <UTabs id="tabs"
                    :items="tabs"
-                   :ui="{ content: `mb-3` }"
+                   :ui="{ content: `mb-3`, list: kind == 'role' ? '' : 'hidden' }"
             >
                 <template #scenario>
-                    <template v-for="(team, name) of game.availableTeamRoles">
+                    <template v-for="(team, name) of items">
                         <div v-if="name !== 'traveller'"
                              :key="name"
-                             :class="[name, 'team-list flex flex-col md:flex-row']">
+                             :class="[`text-(--${name})`, 'team-list flex flex-col md:flex-row']">
                             <div class="name w-full md:w-6">
                                 <h3 class="px-6 border-b-2 md:border-0 md:rotate-270">{{ name }}</h3>
                             </div>
@@ -22,7 +22,7 @@
                                     <NuxtImg :src="role.image"/>
 
                                     <div class="flex flex-col">
-                                        <span class="font-bold" :style="{ color: `var(--${name})` }">{{ role.name }}</span>
+                                        <span :class="['font-bold', `text-(--${name})`]">{{ role.name }}</span>
                                         <span>{{ role.ability }}</span>
                                         <small v-if="ui.showFlavor" class="text-neutral-500">{{ role.flavor }}</small>
                                     </div>
@@ -32,7 +32,7 @@
                     </template>
                 </template>
                 <template #travellers>
-                    <div class="traveller team-list flex flex-col md:flex-row">
+                    <div class="text-(--traveller) team-list flex flex-col md:flex-row">
                         <div class="name w-full md:w-6">
                             <h3 class="px-6 border-b-2 md:border-0 md:rotate-270">traveller</h3>
                         </div>
@@ -42,7 +42,7 @@
                                 <NuxtImg :src="role.image"/>
 
                                 <div class="flex flex-col">
-                                    <span class="font-bold" :style="{ color: `var(--traveller)` }">{{ role.name }}</span>
+                                    <span class="font-bold">{{ role.name }}</span>
                                     <span>{{ role.ability }}</span>
                                     <small v-if="ui.showFlavor" class="text-neutral-500">{{ role.flavor }}</small>
                                 </div>
@@ -58,9 +58,7 @@
                     <USwitch v-model="ui.showFlavor" label="Show character flavor text"/>
                 </template>
                 <template #center>
-                    <UButton label="Close"
-                            color="neutral"
-                            @click="emit('close')" class="mx-auto"/>
+                    <UButton label="Close" color="neutral" @click="emit('close')"/>
                 </template>
             </ModalFooter>
         </template>
@@ -73,8 +71,34 @@ const emit = defineEmits<{
     close: []
 }>()
 
+const props = defineProps<{
+    kind: TokenKind
+}>()
+
 const game = useGame()
 const ui = useUI()
+
+const items = computed(() => {
+    switch (props.kind) {
+        case 'role':
+            return game.availableTeamRoles
+        case 'fabled':
+            return { 'fabled': game.availableFabled }
+        case 'loric':
+            return { 'loric': game.availableLoric }
+    }
+})
+
+const name = computed(() => {
+    switch (props.kind) {
+        case 'role':
+            return game.edition.name
+        case 'fabled':
+            return 'Fabled'
+        case 'loric':
+            return 'Loric'
+    }
+})
 
 const tabs = [
     {
@@ -124,12 +148,6 @@ const tabs = [
         background: linear-gradient(90deg, color-mix(in srgb, currentColor, transparent 77%) 0%, rgba(0,0,0,0) 15%);
     }
 
-    &.townsfolk { color: var(--townsfolk); }
-    &.outsider { color: var(--outsider); }
-    &.minion { color: var(--minion); }
-    &.demon { color: var(--demon); }
-    &.traveller { color: var(--traveller); }
     & > *:not(.name) { color: white; }
-
 }
 </style>
