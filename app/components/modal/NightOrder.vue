@@ -27,9 +27,11 @@
             </div>
         </template>
         <template #footer>
-            <UButton label="Close"
-                     color="neutral"
-                     @click="emit('close')" class="mx-auto"/>
+            <ModalFooter>
+                <template #center>
+                    <UButton label="Close" color="neutral" @click="emit('close')"/>
+                </template>
+            </ModalFooter>
         </template>
     </UModal>
 </template>
