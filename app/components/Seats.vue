@@ -380,10 +380,29 @@ class PlayerCircle {
     }
 }
 
+/** Initialize the circle */
 const circle = new PlayerCircle()
+
+/** When the amount of players change, update the circle */
+watch(
+    () => [
+        players.all.length,
+        players.all.map(player => player.reminders?.length ?? 0)
+    ],
+    async () => {
+        await nextTick();
+        // Get the new player elements
+        circle.seats.elements = gsap.utils.toArray<HTMLElement>("#wheel > .seat")
+        // Update the wheel
+        circle.setWheelVisualization(ui.orientation.user)
+        circle.updateOrder(true);
+    }
+)
+
+/** Expose the circle to allow parent components to update the circle as well */
 defineExpose({
     circle
-})
+});
 
 </script>
 
