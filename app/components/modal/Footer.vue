@@ -1,17 +1,15 @@
 <template>
-    <div class="left">
+    <div v-if="!$slots.left" class="spacer flex-1 hidden lg:block"></div>
+    <div v-else class="left flex gap-3 flex-1">
         <slot name="left"></slot>
     </div>
-    <div class="center flex gap-10 ms-auto md:ms-0 md:sticky md:translate-x-[-50%]">
+
+    <main class="flex gap-3">
         <slot name="center"></slot>
+    </main>
+
+    <div v-if="!$slots.right" class="spacer flex-1 hidden lg:block"></div>
+    <div v-else class="right flex flex-1 flex justify-end">
+        <slot name="right"></slot>
     </div>
 </template>
-
-<script setup lang="ts">
-</script>
-
-<style scoped lang="css">
-.center {
-    left: 50%;
-}
-</style>
