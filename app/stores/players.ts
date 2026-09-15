@@ -70,6 +70,14 @@ export const usePlayers = defineStore('players', () => {
     }
 
     /**
+     * Get a player by its index
+     * @param index Index of the player
+     */
+    function get(index: number): Player | undefined  {
+        return players[index]
+    }
+
+    /**
      * Removes a player from the game, and removes its reminders from the game state
      * @param index Index of the player to remove
      */
@@ -88,9 +96,9 @@ export const usePlayers = defineStore('players', () => {
      */
     function setReminder(player: number, reminder: Reminder, index?: number) {
         // Get the current reminder
-        const curr: Reminder | undefined = players[player]!.reminders[index ?? -1]
+        const curr: Reminder | undefined = get(player)!.reminders[index ?? -1]
         // If the current reminder exists, add it back to the reminders
-        if (curr) {
+        if (curr)
             reminders.add([curr])
         }
 
@@ -99,9 +107,9 @@ export const usePlayers = defineStore('players', () => {
 
         // Add the reminder to the player's reminders
         if (index !== undefined) {
-            players[player]!.reminders[index] = reminder
+            get(player)!.reminders[index] = reminder
         } else {
-            players[player]!.reminders.push(reminder)
+            get(player)!.reminders.push(reminder)
         }
     }
 
@@ -112,8 +120,7 @@ export const usePlayers = defineStore('players', () => {
      */
     function removeReminder(player: number, index: number) {
         // Remove the reminder from the player's reminders
-        const reminder: Reminder = players[player]!.reminders.splice(index, 1)[0]!
-        // Add the reminder back to the `once` reminders list
+        const reminder: Reminder = get(player)!.reminders.splice(index, 1)[0]!
         reminders.add([reminder])
 
     }
@@ -122,9 +129,8 @@ export const usePlayers = defineStore('players', () => {
         all,
         count,
 
-        get,
-        set,
         add,
+        get,
         remove,
         setReminder,
         removeReminder,

@@ -16,6 +16,7 @@ export const useReminders = defineStore('reminders', () => {
         reminderstate.once.push(...reminders)
         sort();
     }
+
     /**
      * Removes reminders from the `once` reminders list
      * @param reminders Reminders to remove
@@ -24,12 +25,14 @@ export const useReminders = defineStore('reminders', () => {
         reminderstate.once = reminderstate.once.filter(r => !reminders.some(rem => rem.name === r.name))
         sort();
     }
+
     /**
      * Sorts the `once` reminders list, based on the image name of the reminders
      */
     function sort() {
         reminderstate.once.sort((a, b) => a.image.localeCompare(b.image))
     }
+
     /**
      * Add a global reminder
      * @param reminders Global reminder to add
@@ -43,6 +46,7 @@ export const useReminders = defineStore('reminders', () => {
         const customNote = reminderstate.global.splice(customNoteIndex, 1)[0]!
         reminderstate.global.push(customNote)
     }
+
     /**
      * Removes a global reminder
      * @param reminders Global reminder to remove
@@ -50,6 +54,7 @@ export const useReminders = defineStore('reminders', () => {
     function removeGlobal(reminders: Reminder[]) {
         reminderstate.global = reminderstate.global.filter(r => !reminders.some(rem => rem.name === r.name))
     }
+
     /**
      * Builds a list of reminder objects from a list of reminder names
      * @param reminder List of reminder names to build
@@ -58,6 +63,7 @@ export const useReminders = defineStore('reminders', () => {
     function fromString(reminder: string[], role: string): Reminder[] {
         return reminder.map(r => create(r, role))
     }
+    
     /**
      * Builds a reminder object from a reminder name
      * @param reminder Name of the reminder to build

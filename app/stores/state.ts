@@ -24,7 +24,8 @@ export const useGamestate = defineStore('gamestate', () => {
         global: [
             { name: 'Good', image: '/sprites/generic/good.webp' },
             { name: 'Evil', image: '/sprites/generic/evil.webp' },
-            { name: 'Custom note', image: '/sprites/generic/custom.webp' },
+            /** Custom note `isCustom` is strictly `false` instead of `undefined` */
+            { name: 'Custom note', image: '/sprites/generic/custom.webp', isCustom: false },
         ] as Reminder[],
     })
 

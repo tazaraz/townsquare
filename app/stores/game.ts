@@ -13,11 +13,11 @@ interface TeamDivision {
 }
 
 interface Teams<T> {
-    townsfolk: T[]
-    outsider: T[]
-    minion: T[]
-    demon: T[]
-    traveller: T[]
+    townsfolk: T
+    outsider: T
+    minion: T
+    demon: T
+    traveller: T
 }
 
 interface NightOrder {
@@ -31,12 +31,16 @@ export const useGame = defineStore('game', () => {
     const gamestate = useGamestate()
     const players   = usePlayers()
 
+    /**
+     * The edition and script being played
+     */
     const edition = computed<Edition>(() => gamestate.edition);
 
-    /**
-     * Contains all roles for each team.
-     */
-    const availableTeamRoles = computed<Teams<Role>>(() => {
+    /** Contains all roles available at the moment */
+    const availableRoles = computed(() => gamestate.roles);
+
+    /** Contains all roles for each team. */
+    const availableTeamRoles = computed<Teams<Role[]>>(() => {
         return {
             townsfolk:  gamestate.roles.filter(c => c.team === "townsfolk"),
             outsider:   gamestate.roles.filter(c => c.team === "outsider"),
@@ -46,10 +50,8 @@ export const useGame = defineStore('game', () => {
         }
     })
 
-    /**
-     * Contains all roles assigned to players
-     */
-    const assignedTeamRoles = computed<Teams<Player>>(() => {
+    /** Contains all roles assigned to players */
+    const assignedTeamRoles = computed<Teams<Player[]>>(() => {
         return {
             townsfolk:  players.all.filter(p => p.role?.team === "townsfolk"),
             outsider:   players.all.filter(p => p.role?.team === "outsider"),
@@ -62,14 +64,17 @@ export const useGame = defineStore('game', () => {
     /**
      * What amount of players to have for each team
      */
-    const gameDivision = computed<TeamDivision | null>(() => {
+    const division = computed<TeamDivision | null>(() => {
         // Count the number of active players
         let travellers = players.all.filter(p => p.role?.team === "traveller").length
-        if (players.count - travellers < 5) return null;
+        const divisionRuleIdx = players.count - travellers - 5
+
+        // Make sure we have at least 5 players
+        if (divisionRuleIdx < 0) return null;
 
         // Return the config associated with the amount of players
         return {
-            ...gameData[Math.min(players.count - travellers, 10)]!,  // File better exist
+            ...gameData[Math.min(divisionRuleIdx, 10)]!,  // File better exist
             traveller: travellers
         }
     })
@@ -204,13 +209,14 @@ export const useGame = defineStore('game', () => {
 
     return {
         edition,
+        availableRoles,
         availableTeamRoles,
         assignedTeamRoles,
-        gameDivision,
+        division,
 
         calculateNightOrder,
         loadScenario,
         loadRole,
-        loadAllTravellers: loadTravellers,
+        loadTravellers,
     }
 })
