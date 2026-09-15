@@ -11,10 +11,25 @@ export const useUI = defineStore('UI', () => {
                        .replace(/\*(.*?)\*/g, (_, t) => `'${t.toLowerCase()}'`)
     }
 
+    /**
+     * Runs an action, one which you would like to display in the UI
+     * @param label Name of the action
+     * @param action Function associated with the action
+     */
+    function runAction(label: string, action: Function) {
+        // Store the label
+        uistate.lastAction.label = label
+        uistate.lastAction.description = 'Last action';
+        uistate.lastAction.onSelect = () => action()
+
+        action();
+    }
+
     return {
         ...uistate,
 
         centered,
-        formatReminderText
+        formatReminderText,
+        runAction,
     }
 })

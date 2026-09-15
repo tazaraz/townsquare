@@ -69,6 +69,8 @@ export interface UI {
     /** Whether flavor text is hidden throughout the UI */
     showFlavor: boolean
 
+    lastAction: NavigationMenuItem
+
     /** Internal only. Size of the token as computed by the wheel */
     tokenSize: number
 }

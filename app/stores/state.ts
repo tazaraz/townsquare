@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 
+export const MAX_PLAYERS = 20;
+
 /**
  * This represents the game state, and is the only source of truth.
  * However, you probably should be using one other wrapper stores instead.

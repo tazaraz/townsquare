@@ -207,6 +207,37 @@ export const useGame = defineStore('game', () => {
             .filter((c): c is Role => c !== null)
     }
 
+    /** Contains selected roles during setup */
+    const setupSelected = ref<Role[]>(players.all.map(p => p.role).filter(r => r !== undefined))
+
+    /** Randomly assigns characters selected during setup */
+    function setupAssignRandomly() {
+        const roles = shuffleArray(setupSelected.value)
+
+        for (let p = 0; p < players.count; p++) {
+            players.setRole(p, roles[p]!.id)
+        }
+    }
+
+
+    /**
+     * Uses Fisher-Yates random shuffle for a somewhat acceptable shuffle
+     * @param array The array to be shuffled
+     * @returns Copy of the array, but shuffled
+     */
+    function shuffleArray<T>(array: T[]): T[] {
+        const result = [...array]
+
+        for (let i = result.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+
+            [result[i], result[j]] = [result[j]!, result[i]!]
+        }
+
+        return result
+    } 
+
+
     return {
         edition,
         availableRoles,
@@ -218,5 +249,9 @@ export const useGame = defineStore('game', () => {
         loadScenario,
         loadRole,
         loadTravellers,
+        setupSelected,
+        setupAssignRandomly,
+
+        shuffleArray,
     }
 })
