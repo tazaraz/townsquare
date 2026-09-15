@@ -26,7 +26,7 @@ onBeforeMount(() => {
     for (const p of Array(8).keys()) {
         players.add((p + 1).toString())
     }
-    players.set(1, 'imp')
+    players.setRole(1, 'imp')
 })
 
 
@@ -42,7 +42,7 @@ async function editPlayer(player: number) {
 
     const role = await selector.result as Role | "unset" | undefined
     if (role) {
-        players.set(player, typeof role === 'string' ? "unset" : role.id)
+        players.setRole(player, typeof role === 'string' ? "unset" : role.id)
     }
 }
 
