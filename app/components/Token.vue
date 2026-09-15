@@ -1,31 +1,67 @@
 <template>
-    <div :class="['token', kind, 'rounded-full', ui.showNightOrder ? '' : 'overflow-hidden']">
-        <!-- Token sprite -->
-        <NuxtImg src="/sprites/token.png" :class="{background, hidden: ui.hidden, dead: !ui.hidden && state == 'dead'}" />
-        <!-- Dead token -->
-        <NuxtImg v-if="!ui.hidden && state == 'dead'" src="/sprites/token.png" class="background small" />
+    <div :class="['token', kind, 'rounded-full']">
+        <UPopover 
+            class="inside rounded-full overflow-hidden"
+            mode="hover"
+            :open-delay="500"
+            :content="{side: ui.centered ? 'left' : 'top'}"
+            :ui="{content: ['w-64 p-4', (data as Role)?.ability ? '' : 'hidden' ]}"
+            enable-touch
+        >
+            <div>
+                <!-- Token sprite -->
+                <NuxtImg src="/sprites/token.png" :class="{background, hidden: ui.hidden, dead: !ui.hidden && state == 'dead'}" />
+                <!-- Dead token -->
+                <NuxtImg v-if="!ui.hidden && state == 'dead'" src="/sprites/token.png" class="background small" />
+        
+                <template v-if="!ui.hidden && data">
+                    <!-- Overflow hidden section -->
+                    <template v-if="kind == 'role'">
+                        <template v-if="!hideLeaves">
+                            <template v-if="!ui.showNightOrder">
+                                <NuxtImg v-if="(data as Role).firstNightReminder !== ''" src="/sprites/leaf.png" class="leaf first-night" />
+                                <NuxtImg v-if="(data as Role).otherNightReminder !== ''" src="/sprites/leaf.png" class="leaf other-night" />
+                            </template>
+    
+                            <div class="leaf top">
+                                <template v-for="i in (data as Role).reminders.length">
+                                    <NuxtImg :style="{
+                                        // Range step with .25 in both directions. (length - 1) can be zero, so defaul to 0
+                                        '--offset': ((i - 1) - ((data as Role).reminders.length - 1) / 2) * 0.5 || 0
+                                    }" src="/sprites/leaf.png"/>
+                                </template>
+                            </div>
+    
+                        </template>
+                        
+                        <NuxtImg v-if="(data as Role).setup" src="/sprites/maple.png" class="leaf setup" />
+                    </template> 
+                    
+                    <!-- Role -->
+                    <NuxtImg :src="data.image" class="role" placeholder="/sprites/custom.png"/>
+                    <!-- Text -->
+                    <svg viewBox="0 0 150 150" class="name">
+                        <path id="curve" d="M 13 75 C 13 160, 138 160, 138 75" fill="transparent"/>
+                        <text class="label" width="150" x="66.6%" text-anchor="middle">
+                            <textPath xlink:href="#curve">{{ data.name }}</textPath>
+                        </text>
+                    </svg>
+                </template>
+            </div>
 
-        <template v-if="!ui.hidden && data">
-            <!-- Role -->
-            <NuxtImg :src="data.image" class="role" placeholder="/sprites/custom.png"/>
-            <!-- Text -->
-            <svg viewBox="0 0 150 150" class="name">
-                <path id="curve" d="M 13 75 C 13 160, 138 160, 138 75" fill="transparent"/>
-                <text class="label" width="150" x="66.6%" text-anchor="middle">
-                    <textPath xlink:href="#curve">{{ data.name }}</textPath>
-                </text>
-            </svg>
-        </template>
-
-        <!-- Side leaves -->
-        <template v-if="kind == 'role' && data && !ui.hidden && !hideNightOrder">
-            <template v-if="ui.showNightOrder">
+            <template v-if="!ui.hidden && (data as Role)?.ability" #content>
+                {{ ui.formatReminderText((data as Role).ability) }}
+            </template>
+        </UPopover>
+        <!-- Overflow shown section -->
+        <div class="outside" v-if="kind == 'role' && data">
+            <template v-if="!ui.hidden && !hideLeaves && ui.showNightOrder">
                 <UPopover v-if="(data as Role).firstNightReminder"
-                          class="night-tooltip first-night"
-                          mode="hover"
-                          :content="{side: ui.centered ? 'left' : 'top'}"
-                          :ui="{content: 'w-64 p-4'}"
-                          enable-touch>
+                    class="night-tooltip first-night"
+                    mode="hover"
+                    :content="{side: ui.centered ? 'left' : 'top'}"
+                    :ui="{content: 'w-64 p-4'}"
+                    enable-touch>
                     <UButton label="0" />
 
                     <template #content>
@@ -34,11 +70,11 @@
                 </UPopover>
 
                 <UPopover v-if="(data as Role).otherNightReminder"
-                          class="night-tooltip other-night"
-                          mode="hover"
-                          :content="{side: ui.centered ? 'right' : 'top'}"
-                          :ui="{content: 'w-64 p-4'}"
-                          enable-touch>
+                    class="night-tooltip other-night"
+                    mode="hover"
+                    :content="{side: ui.centered ? 'right' : 'top'}"
+                    :ui="{content: 'w-64 p-4'}"
+                    enable-touch>
                     <UButton label="1"/>
 
                     <template #content>
@@ -46,15 +82,12 @@
                     </template>
                 </UPopover>
             </template>
-            <template v-else>
-                <NuxtImg v-if="(data as Role).firstNightReminder !== ''" src="/sprites/leaf.png" class="leaf first-night" />
-                <NuxtImg v-if="(data as Role).otherNightReminder !== ''" src="/sprites/leaf.png" class="leaf other-night" />
 
-                <div class="leaf setup">
-                    <NuxtImg v-for="i in (data as Role).reminders.length" :data-index="i" src="/sprites/leaf.png"/>
-                </div>
-            </template>
-        </template>
+            <Warning v-if="warning" class="rounded-full">
+                <!-- Pass through data -->
+                <slot name="warning"></slot>
+            </Warning>
+        </div>
     </div>
 </template>
 
@@ -65,7 +98,9 @@ const props = defineProps<{
     kind: TokenKind
     data?: Role | Reminder
     state?: PlayerState
-    hideNightOrder?: boolean
+
+    hideLeaves?: boolean
+    warning?: boolean
 }>()
 
 const background = "/token.png"
@@ -78,115 +113,146 @@ const background = "/token.png"
     position: relative;
     aspect-ratio: 1;
 
-    border: 3px solid black;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     cursor: pointer;
 
-    & > * {
+    .inside > *,
+    .outside > * {
         position: absolute;
-        top: 0;
     }
 
-    & .background {
+    border: 3px solid black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: calc(infinity * 1px);
+
+    .inside {
+        position: relative;
+        height: 100%;
         width: 100%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
 
-        &.hidden {
-            display: inherit;
-            filter: hue-rotate(225deg)
-                    saturate(2.4)
-                    brightness(0.55);
-        }
-
-        &.dead {
-            filter: grayscale(100%)
-                    brightness(0.66);
-        }
-        &.small {
-            width: 60%;
+        .background {
+            width: 100%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-        }
-    }
-
-    /** All the items within the token */
-    .role {
-        width: 90%;
-        aspect-ratio: 1;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .name {
-        .label {
-            stroke: white;
-            fill: black;
-            font-size: 24px;
-            stroke-width: 2px;
-            paint-order: stroke;
-            font-family: "Papyrus", serif;
-            font-weight: bold;
-            text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-            letter-spacing: 1px;
-        }
-        &:hover .label {
-            stroke: black;
-            fill: white;
-        }
-    }
-
-    .night-tooltip {
-        border: 2px solid black;
-        border-radius: 50%;
-        line-height: 1;
-        aspect-ratio: 1;
-        background-clip: padding-box !important;
-        color: white;
-
-        &.first-night {
-            top: 50%;
-            left: 0;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(180deg,#000,#1f65ff);
-        }
-        &.other-night {
-            top: 50%;
-            right: 0;
-            transform: translate(+50%, -50%);
-            background: linear-gradient(180deg,#000,#ce0100);
-        }
-    }
-
-    .leaf {
-        /* Important, as it makes sure the leafs have a height at all. */
-        height: 40%;
-
-        &.first-night {
-            top: 50%;
-            left: 0;
-            transform: translate(-100%, -45%) rotate(240deg);
-        }
-        &.other-night {
-            top: 50%;
-            right: 0;
-            transform: translate(+100%, -50%) rotate(80deg);
-        }
-        &.setup {
-            left: 50%;
-            transform: translate(-50%, -65%) rotate(0deg);
-            display: inline-flex;
-
-            img {
-                display: block;
-
-                &:nth-child(1) { transform: translate(-10%, -10%) rotate(-35deg); }
-                &:nth-child(2) { transform: translate(0%, -12%) rotate(-20deg); }
-                &:nth-child(3) { transform: translate(-30%, -10%) rotate(-35deg); }
+    
+            &.hidden {
+                display: inherit;
+                filter: hue-rotate(225deg)
+                        saturate(2.4)
+                        brightness(0.55);
             }
+    
+            &.dead {
+                filter: grayscale(100%)
+                        brightness(0.66);
+            }
+            &.small {
+                width: 60%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+    
+        /** All the items within the token */
+        &.role {
+            aspect-ratio: 1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+        }
+    
+        .name {
+            .label {
+                stroke: white;
+                fill: black;
+                font-size: 24px;
+                stroke-width: 2px;
+                paint-order: stroke;
+                font-family: "Papyrus", serif;
+                font-weight: bold;
+                text-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+                letter-spacing: 1px;
+            }
+            &:hover .label {
+                stroke: black;
+                fill: white;
+            }
+        }
+
+        .leaf {
+            /* Important, as it makes sure the leafs have a height at all. */
+            height: 30%;
+            width: max-content;
+
+            &.first-night {
+                top: 50%;
+                left: 0;
+                transform: translate(-100%, -45%) rotate(240deg);
+            }
+            &.other-night {
+                top: 50%;
+                right: 0;
+                transform: translate(+100%, -50%) rotate(80deg);
+            }
+            &.top {
+                left: 50%;
+                transform: translate(-50%, -65%) rotate(0deg);
+                display: inline-flex;
+
+                img {
+                    display: block;
+                    /* Dynamically position and angle the leaves based on a calculated offset */
+                    transform: 
+                        translate(
+                            calc(-10% +     (var(--offset) * 5%)),
+                            calc(-5%  + abs((var(--offset) * 30%))),
+                        ) 
+                        rotate(
+                            calc(-30deg +   (var(--offset) * 50deg))
+                        )
+                }
+            }
+            &.setup {
+                height: 35%;
+                bottom: 0;
+                right: 0;
+                transform: rotate(-15deg);
+            }
+        }
+    }
+
+    .outside {
+        .night-tooltip {
+            border: 2px solid black;
+            border-radius: 50%;
+            line-height: 1;
+            aspect-ratio: 1;
+            background-clip: padding-box !important;
+            color: white;
+    
+            &.first-night {
+                top: 50%;
+                left: 0;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(180deg,#000,var(--townsfolk));
+            }
+            &.other-night {
+                top: 50%;
+                right: 0;
+                transform: translate(+50%, -50%);
+                background: linear-gradient(180deg,#000,var(--demon));
+            }
+        }
+    
+        :deep(.warning) {
+            width: 30%;
+            right: 0;
+            top: 0;
+
+            color: var(--minion);
+            background: #21102f;
         }
     }
 }
