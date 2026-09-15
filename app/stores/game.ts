@@ -61,6 +61,15 @@ export const useGame = defineStore('game', () => {
         }
     })
 
+    /** Available Fabled roles */
+    const availableFabled: Role[] = roleData.filter(r => r.team === 'fabled').map(r => loadRole(r.id)!)
+    /** Which fabled are assigned */
+    const assignedFabled = computed(() => gamestate.fabled)
+    /** Available Loric roles */
+    const availableLoric: Role[] = roleData.filter(r => r.team === 'loric').map(r => loadRole(r.id)!)
+    /** Which loric are assigned */
+    const assignedLoric = computed(() => gamestate.loric)
+
     /**
      * What amount of players to have for each team
      */
@@ -207,6 +216,31 @@ export const useGame = defineStore('game', () => {
             .filter((c): c is Role => c !== null)
     }
 
+    /**
+     * Toggles a game modifier
+     * @param id Id to toggle
+     * @param type Type the ID belongs to
+     */
+    function toggleModifier(name: string, type: 'fabled' | 'loric'): boolean {
+        // Get the correct store data
+        const available = type === 'fabled' ? availableFabled  : availableLoric
+        const store     = type === 'fabled' ? gamestate.fabled : gamestate.loric
+
+        // Get the actual character associated with this name
+        const char = available.find(f => f.name == name)
+        if (!char)
+            return false;
+
+        // Toggle
+        const index = store.findIndex(f => f.name == char.name)
+        if (index < 0)
+            store.push(char)
+        else
+            store.splice(index, 1)
+
+        return true;
+    }
+
     /** Contains selected roles during setup */
     const setupSelected = ref<Role[]>(players.all.map(p => p.role).filter(r => r !== undefined))
 
@@ -243,12 +277,23 @@ export const useGame = defineStore('game', () => {
         availableRoles,
         availableTeamRoles,
         assignedTeamRoles,
+
+        availableFabled,
+        assignedFabled,
+
+        availableLoric,
+        assignedLoric,
+
         division,
 
         calculateNightOrder,
         loadScenario,
         loadRole,
         loadTravellers,
+
+        toggleFabled: (name: string) => toggleModifier(name, 'fabled'),
+        toggleLoric: (name: string) => toggleModifier(name, 'loric'),
+
         setupSelected,
         setupAssignRandomly,
 

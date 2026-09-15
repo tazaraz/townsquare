@@ -1,10 +1,13 @@
+import type { NavigationMenuItem } from '@nuxt/ui'
+
+
 export class NotFoundError extends Error {}
 export class DataFormatError extends Error {}
 
 
-export type EditionId = "tb" | "bmr" | "snv" | "carousel" | "loric" | "custom"
+export type EditionId = "tb" | "bmr" | "snv" | "carousel" | "fabled" | "loric" | "custom"
 export function validEditionId(id: string): id is EditionId {
-    return ["tb", "bmr", "snv", "carousel", "loric", "custom", ""].includes(id)
+    return ["tb", "bmr", "snv", "carousel", "fabled", "loric", "custom", ""].includes(id)
 }
 
 export interface Edition {
@@ -39,9 +42,11 @@ export interface Role {
 export interface Reminder {
     image: string
     name: string
+    /** Only present when the reminder is a custom note */
+    isCustom?: boolean
 }
 
-export type TokenKind = "role" | "fabled" | "reminder"
+export type TokenKind = "role" | "fabled" | "loric" | "reminder"
 export type PlayerState = "alive" | "dead" | "voteless"
 
 export interface Player {
