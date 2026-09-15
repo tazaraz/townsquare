@@ -121,7 +121,9 @@ export const usePlayers = defineStore('players', () => {
         // If the current reminder exists, add it back to the reminders
         if (curr)
             reminders.add([curr])
-        }
+        // If this is a custom reminder, add it to global
+        if (reminder.isCustom)
+            reminders.addGlobal([reminder])
 
         // Remove the reminder from the `once` reminders list
         reminders.remove([reminder])
@@ -142,8 +144,13 @@ export const usePlayers = defineStore('players', () => {
     function removeReminder(player: number, index: number) {
         // Remove the reminder from the player's reminders
         const reminder: Reminder = get(player)!.reminders.splice(index, 1)[0]!
-        reminders.add([reminder])
+        // Add the reminder back to the reminders list
+        if (!reminder.isCustom)
+            reminders.add([reminder])
 
+        // Check if no player has the reminder. If so, remove
+        else if (!players.some(p => p.reminders.some(r => r.name == reminder.name)))
+            reminders.removeGlobal([reminder])
     }
 
     return {

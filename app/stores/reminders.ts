@@ -12,6 +12,11 @@ export const useReminders = defineStore('reminders', () => {
         // Filter out global reminders
         reminders = reminders.filter(r => !reminderstate.global.find(g => g.name === r.name))
 
+        // Remove already existing reminders
+        reminders = reminders.filter(r => !reminderstate.once.find(
+            g => g.name == r.name && g.image == r.image
+        ))
+
         // Add the reminders to the `once` reminders list
         reminderstate.once.push(...reminders)
         sort();
@@ -38,6 +43,11 @@ export const useReminders = defineStore('reminders', () => {
      * @param reminders Global reminder to add
      */
     function addGlobal(reminders: Reminder[]) {
+        // Remove reminders already present
+        reminders = reminders.filter(r =>  !reminderstate.global.find(
+            g => g.name == r.name && g.image == r.image
+        ))
+
         reminderstate.global.push(...reminders)
         reminderstate.global.sort((a, b) => a.image.localeCompare(b.image))
 
