@@ -1,14 +1,14 @@
 <template>
     <div id="seats">
         <div id="wheel">
-            <div v-for="(player, pIndex) in players.all"
+            <div v-for="(player, p) in players.all"
                  class="seat">
-                <div class="token flex flex-col mb-8">
+                <div class="player flex flex-col mb-8">
                     <Token :data="player.role ?? undefined"
-                        :state="player.state"
-                        kind="role"
-                        @click="circle.scrollTo(pIndex) && emit('editPlayer', pIndex)"
-                    />
+                           :state="player.state"
+                           kind="role"
+                           @click="circle.scrollTo(p) && emit('editPlayer', p)"
+                        />
                     <PlayerTag class="mx-4 mt-1" :index="p"></PlayerTag>
                 </div>
                 
@@ -16,13 +16,13 @@
                        class="reminder mx-auto"
                        :data="{name: reminder.name, image: reminder.image}"
                        kind="reminder"
-                       @click="emit('editReminder', pIndex, rIndex)"
+                       @click="emit('editReminder', p, rIndex)"
                     />
                 <Token v-if="player.reminders.length < 3"
                        class="reminder mx-auto"
                        :data="{name: '', image: '/sprites/plus.png'}"
                        kind="reminder"
-                       @click="emit('editReminder', pIndex)"
+                       @click="emit('editReminder', p)"
                     />
             </div>
         </div>
@@ -312,8 +312,8 @@ class PlayerCircle {
             // Center. We calculate the radius based on the size of the token, ensuring no overlap
             case "center":
                 this.seats.max = players.count;
-                ui.tokenSize = Math.min(Math.max(100, (screenSize * 1.75) / this.seats.max), 160)
-                this.wheel.radius = Math.max(screenSize / 4, this.seats.max * ui.tokenSize * 0.23)
+                ui.tokenSize = Math.min(Math.max(100, (screenSize * 1.5) / this.seats.max), 160)
+                this.wheel.radius = Math.max(screenSize / 3, this.seats.max * ui.tokenSize * 0.23)
                 break;
         }
 
@@ -367,7 +367,7 @@ class PlayerCircle {
             rotation: this.wheel.orentation
         })
 
-        gsap.set("#wheel .token", {
+        gsap.set("#wheel .player", {
             width: ui.tokenSize,
             height: ui.tokenSize
         })
@@ -400,8 +400,8 @@ watch(
 )
 
 /** Expose the circle to allow parent components to update the circle as well */
-defineExpose({
-    circle
+defineExpose({ 
+    circle 
 });
 
 </script>
