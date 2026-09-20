@@ -99,13 +99,13 @@
 </template>
 
 <script setup lang="ts">
-import { ModalInput } from '#components';
+import { DialogInput } from '#components';
 import editionData from '~/components/data/editions.json'
 
 const game = useGame();
 
 const overlay = useOverlay();
-const inputModal = overlay.create(ModalInput);
+const inputDialog = overlay.create(DialogInput);
 
 const emit = defineEmits<{
     close: []
@@ -147,7 +147,7 @@ const tabs = [
 const error = ref(undefined as undefined | string)
 
 async function getUrl() {
-    const modal = inputModal.open({
+    const modal = inputDialog.open({
         title: 'Enter the url',
         placeholder: 'domain.com/path/to/scenario.json',
         leading: 'https://'

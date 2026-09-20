@@ -66,7 +66,7 @@ import {
     ModalNightOrder,
     ModalGameSetup,
     ModalSelectScenario,
-    ModalInput,
+    DialogInput,
     ModalTokenSelector,
 } from '#components'
 
@@ -80,7 +80,7 @@ const nightOrder = overlay.create(ModalNightOrder)
 const gameSetup = overlay.create(ModalGameSetup)
 const selectScenario = overlay.create(ModalSelectScenario)
 const tokenSelector = overlay.create(ModalTokenSelector)
-const inputModal = overlay.create(ModalInput)
+const inputDialog = overlay.create(DialogInput)
 
 
 const items = computed<NavigationMenuItem[][]>(() => [[
@@ -176,7 +176,7 @@ async function addPlayer() {
     if (players.count >= MAX_PLAYERS)
         return
 
-    const input = inputModal.open({ title: 'Input the player name', placeholder: 'Player name'})
+    const input = inputDialog.open({ title: 'Input the player name', placeholder: 'Player name'})
 
     const value = await input.result as string | undefined;
     if (value) {

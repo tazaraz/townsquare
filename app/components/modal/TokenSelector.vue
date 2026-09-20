@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { ModalInput, ModalReferenceSheet } from '#components'
+import { DialogInput, ModalReferenceSheet } from '#components'
 
 const emit = defineEmits<{
     close: [item: Role | Reminder | "unset" | undefined]
@@ -70,6 +70,7 @@ const ui = useUI()
 const game = useGame()
 
 const referenceSheet = useOverlay().create(ModalReferenceSheet)
+const inputDialog = useOverlay().create(DialogInput)
 
 const props = defineProps<{
     kind: TokenKind
@@ -135,7 +136,7 @@ async function emitToken(item: Role | Reminder | undefined) {
 }
 
 async function customReminder() {
-    const input = useOverlay().create(ModalInput).open({ title: 'Enter custom reminder', placeholder: 'Reminder text'})
+    const input = inputDialog.open({ title: 'Enter custom reminder', placeholder: 'Reminder text'})
 
     const value = await input.result as string | undefined;
     if (value) {
