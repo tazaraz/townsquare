@@ -47,7 +47,7 @@ export const usePlayers = defineStore('players', () => {
      * @param index Index of the player to set the role for
      * @param role ID of the role to set for the player
      */
-    function setRole(index: number, role: string): boolean {
+    function setRole(index: number, role: string | undefined): boolean {
         const player = get(index)
         if (!player) return false  // Player not found
 
@@ -67,7 +67,7 @@ export const usePlayers = defineStore('players', () => {
 
         // If a traveller is being set which was not present before, add it to the list of travellers
         if (game.loadTravellers().find(t => t.id === role) && !gamestate.roles.find(r => r.id === role)) {
-            gamestate.roles.push(game.loadRole(role)!)
+            gamestate.roles.push(game.loadRole(role as string)!)
         }
 
         // Find the role in the list of roles

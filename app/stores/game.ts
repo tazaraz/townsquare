@@ -273,10 +273,10 @@ export const useGame = defineStore('game', () => {
 
     /** Randomly assigns characters selected during setup */
     function setupAssignRandomly() {
-        const roles = shuffleArray(setupSelected.value)
+        const roles = shuffleArray(setupSelected.value.slice(0, MAX_ACTIVE_PLAYERS))
 
         for (let p = 0; p < players.count; p++) {
-            players.setRole(p, roles[p]!.id)
+            players.setRole(p, roles[p]?.id)
         }
     }
 

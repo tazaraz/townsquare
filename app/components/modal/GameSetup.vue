@@ -4,7 +4,7 @@
         :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}"
     >
         <template #body>
-            <template v-if="game.division" 
+            <template v-if="game.division"
                       v-for="(team, name) of game.availableTeamRoles" :key="name">
                 <div v-if="name !== 'traveller'"
                      :class="[name, 'team-list flex flex-col md:flex-row']"
@@ -13,7 +13,7 @@
                         <div class="flex flex-col md:rotate-270">
                             <h3 class="px-6 border-b-2 md:border-0 mb-2 md:mb-0">{{ name }}</h3>
                             <div class="mx-auto px-2 border rounded-full">
-                                {{ teamCount(name) }} 
+                                {{ teamCount(name) }}
                                 <span class="px-1">⁄</span>
                                 {{ game.division![name] }}
                             </div>
@@ -41,11 +41,23 @@
         <template #footer>
             <ModalFooter>
                 <template #center>
-                    <UButton 
-                        :disabled="roleTotal !== players.count"
-                        :label="`Randomly assign ${roleTotal} character${roleTotal == 1 ? '' : 's'}`"
-                        color="neutral"
-                        @click="ui.runAction('Reroll Assignment', game.setupAssignRandomly); emit('close')"/>
+                    <div class="flex flex-nowrap gap-1">
+                        <UButton
+                            :label="`Randomly assign ${roleTotal} character${roleTotal == 1 ? '' : 's'}`"
+                            color="neutral"
+                            @click="ui.runAction('Reroll Assignment', game.setupAssignRandomly); emit('close')"/>
+                        <Remark v-if="roleTotal < players.count || players.count >= MAX_ACTIVE_PLAYERS"
+                            kind="info"
+                            class="shuffle-warning w-[32px] p-1">
+                            <template v-if="roleTotal < players.count">
+                                {{ players.count }} players are present, but you only have selected {{ roleTotal }}. Only the first {{ roleTotal }} players will receive a role.
+                            </template>
+                            <hr v-if="roleTotal < players.count && players.count >= MAX_ACTIVE_PLAYERS" class="my-2">
+                            <template v-if="players.count >= MAX_ACTIVE_PLAYERS">
+                                Up to {{ MAX_ACTIVE_PLAYERS }} can be assigned. The leftovers will not be assigned.
+                            </template>
+                        </Remark>
+                    </div>
                     <div class="flex flex-nowrap gap-1">
                         <UButton label="Shuffle roles" color="neutral" @click="shuffle()"/>
                         <Remark v-if="game.setupSelected.some(r => r.setup)" kind="warning" class="shuffle-warning w-[32px] p-1">
@@ -179,10 +191,6 @@ function shuffle() {
             &.traveller { box-shadow: 0 0 10px var(--traveller),0 0 10px var(--traveller); }
         }
     }
-}
-
-:deep(.shuffle-warning) {
-    color: var(--minion)
 }
 
 </style>

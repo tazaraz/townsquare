@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia';
 
+/** Maximum amount of players the game can accept */
 export const MAX_PLAYERS = 20;
+/** Maximum amount of active players (so excluding travellers) */
+export const MAX_ACTIVE_PLAYERS = 15;
 
 /**
  * This represents the game state, and is the only source of truth.
