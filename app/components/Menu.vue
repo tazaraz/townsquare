@@ -63,7 +63,8 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 import { 
     ModalReferenceSheet, 
     ModalNightOrder, 
-    ModalScenarioSetup,
+    ModalGameSetup,
+    ModalSelectScenario,
     ModalInput,
     ModalTokenSelector,
 } from '#components'
@@ -75,7 +76,8 @@ const game = useGame();
 
 const referenceSheet = overlay.create(ModalReferenceSheet)
 const nightOrder = overlay.create(ModalNightOrder)
-const scenarioSetup = overlay.create(ModalScenarioSetup)
+const gameSetup = overlay.create(ModalGameSetup)
+const selectScenario = overlay.create(ModalSelectScenario)
 const tokenSelector = overlay.create(ModalTokenSelector)
 const inputModal = overlay.create(ModalInput)
 
@@ -100,13 +102,13 @@ const items = computed<NavigationMenuItem[][]>(() => [[
                 label: 'Select edition',
                 description: 'Define with what roles you are playing',
                 class: 'text-sky-300',
-                onSelect: () => {},
+                onSelect: () => selectScenario.open(),
             },
             {
                 label: 'Game setup',
                 description: 'Select roles and assign them to players.',
                 class: 'text-sky-300',
-                onSelect: () =>  scenarioSetup.open(),
+                onSelect: () =>  gameSetup.open(),
             },
             {
                 label: 'Add / Remove Fabled',
