@@ -58,7 +58,7 @@ export const usePlayers = defineStore('players', () => {
         // If the player is already the role
         if (char?.name === role)
             return true;
-        
+
         // Remove the reminders of the previous role (if any) from the game state
         if (char && oldRoleCount == 1) {
             reminders.remove(reminders.fromString(char.reminders, char.id))
@@ -87,7 +87,7 @@ export const usePlayers = defineStore('players', () => {
                 reminders.addGlobal(reminders.fromString(char.remindersGlobal ?? [], char.id))
             }
         }
-        
+
         return true;
     }
 
@@ -108,7 +108,7 @@ export const usePlayers = defineStore('players', () => {
         return true;
     }
 
-    
+
     /**
      * Sets a reminder for a player, without removing it from the `once` reminders list
      * @param player Index of the player to set the reminder for

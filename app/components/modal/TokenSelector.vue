@@ -45,7 +45,7 @@
         <template #footer>
             <ModalFooter>
                 <template #left>
-                    <UButton v-if="kind !== 'reminder'" 
+                    <UButton v-if="kind !== 'reminder'"
                              label="Reference sheet" color="info" @click="referenceSheet.open({ kind })"/>
                     <USwitch v-if="activeTab == '1'" v-model="showTravellers" label="Show all Travellers" class="py-2"/>
                 </template>

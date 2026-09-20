@@ -46,7 +46,7 @@ export const useGame = defineStore('game', () => {
             outsider:   gamestate.roles.filter(c => c.team === "outsider"),
             minion:     gamestate.roles.filter(c => c.team === "minion"),
             demon:      gamestate.roles.filter(c => c.team === "demon"),
-            traveller:   gamestate.roles.filter(c => c.team === "traveller"),
+            traveller:  gamestate.roles.filter(c => c.team === "traveller"),
         }
     })
 
@@ -96,7 +96,7 @@ export const useGame = defineStore('game', () => {
                 // Remove any roles that are not in the current game
                 .filter(r => r !== undefined)
                 // Filter out travellers not in play
-                .filter(r => r.team !== 'traveller' || 
+                .filter(r => r.team !== 'traveller' ||
                              (r.team === 'traveller' && players.all.some(p => p.role?.id === r.id)))
                 .map(c => {
                     return {
@@ -269,7 +269,7 @@ export const useGame = defineStore('game', () => {
         }
 
         return result
-    } 
+    }
 
 
     return {

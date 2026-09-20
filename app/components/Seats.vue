@@ -11,7 +11,6 @@
                         />
                     <PlayerTag class="mx-4 mt-1" :index="p"></PlayerTag>
                 </div>
-                
                 <Token v-for="(reminder, rIndex) in player.reminders"
                        class="reminder mx-auto"
                        :data="{name: reminder.name, image: reminder.image}"
@@ -400,8 +399,8 @@ watch(
 )
 
 /** Expose the circle to allow parent components to update the circle as well */
-defineExpose({ 
-    circle 
+defineExpose({
+    circle
 });
 
 </script>

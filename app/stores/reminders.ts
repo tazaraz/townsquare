@@ -73,7 +73,7 @@ export const useReminders = defineStore('reminders', () => {
     function fromString(reminder: string[], role: string): Reminder[] {
         return reminder.map(r => create(r, role))
     }
-    
+
     /**
      * Builds a reminder object from a reminder name
      * @param reminder Name of the reminder to build

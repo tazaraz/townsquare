@@ -1,6 +1,6 @@
 <template>
-    <UHeader 
-        class="relative z-10" 
+    <UHeader
+        class="relative z-10"
         mode="slideover"
         :ui="{ container: 'px-4!', left: 'h-full' }" >
         <template #left>
@@ -13,7 +13,7 @@
             </div>
         </template>
 
-        <UNavigationMenu :items="items" 
+        <UNavigationMenu :items="items"
             :ui="{
                 // Make sure the popover faces upward: it will not detect overflow.
                 viewportWrapper: 'absolute bottom-full top-auto start-0 flex w-full justify-center',
@@ -21,7 +21,7 @@
             }">
             <template #modifier-content="{ item }">
                 <div class="isolate grid p-2 grid-cols-2 gap-2">
-                    <div v-for="child in ((item as any).children as Role[])" 
+                    <div v-for="child in ((item as any).children as Role[])"
                         class="flex text-sm text-left rounded-md p-3 transition-colors hover:bg-elevated/50"
                         @click="referenceSheet.open({ kind: child.team as any })">
                         <NuxtImg :src="child.image" class="w-[64px] h-[64px]" />
@@ -60,9 +60,9 @@
 
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
-import { 
-    ModalReferenceSheet, 
-    ModalNightOrder, 
+import {
+    ModalReferenceSheet,
+    ModalNightOrder,
     ModalGameSetup,
     ModalSelectScenario,
     ModalInput,
@@ -80,6 +80,7 @@ const gameSetup = overlay.create(ModalGameSetup)
 const selectScenario = overlay.create(ModalSelectScenario)
 const tokenSelector = overlay.create(ModalTokenSelector)
 const inputModal = overlay.create(ModalInput)
+
 
 const items = computed<NavigationMenuItem[][]>(() => [[
     {
@@ -128,7 +129,7 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             },
             {
                 label: 'Show Grimoire',
-                description: 'Allows non-persistent modifications'
+                description: 'Allows non-persistent modifications',
             },
             {
                 label: 'Add a player',
@@ -183,16 +184,16 @@ async function addPlayer() {
 }
 
 async function addModifier(type: 'fabled' | 'loric') {
-    const selector = tokenSelector.open({ 
-        kind: type, 
-        selected: (type === 'fabled' ? game.assignedFabled : game.assignedLoric).map(f => f.id) 
+    const selector = tokenSelector.open({
+        kind: type,
+        selected: (type === 'fabled' ? game.assignedFabled : game.assignedLoric).map(f => f.id)
     })
 
     const item = await selector.result;
     if (item) {
         if (type == 'fabled')
             game.toggleFabled((item as Role).name)
-        else 
+        else
             game.toggleLoric((item as Role).name)
     }
 }
