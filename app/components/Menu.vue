@@ -83,12 +83,12 @@ const inputModal = overlay.create(ModalInput)
 
 
 const items = computed<NavigationMenuItem[][]>(() => [[
-    {
+    game.availableRoles.length == 0 ? {} : {
         label: 'Reference sheet',
         onSelect: () => referenceSheet.open({ kind: 'role' }),
         active: false
     },
-    {
+    game.availableRoles.length == 0 ? {} : {
         label: 'Night order',
         onSelect: () => nightOrder.open(),
         active: false
