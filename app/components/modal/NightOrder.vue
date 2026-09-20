@@ -7,7 +7,7 @@
             <div class="night-order text-right">
                 <h3>First night</h3>
                 <div v-for="role in firstNight" :class="['character', role.team, 'left', 'border-e']">
-                    <div class="role-info my-auto">
+                    <div class="role-info my-auto me-2">
                         <h3>{{ role.name }}</h3>
                         <span class="text-neutral-500">{{ role.players.map(p => p.name).join(", ") }}&nbsp;</span>
                     </div>
@@ -19,7 +19,7 @@
                 <h3>Other nights</h3>
                 <div v-for="role in otherNights" :class="['character', role.team, 'right', 'border-s']">
                     <NuxtImg :src="role.image" />
-                    <div class="role-info my-auto">
+                    <div class="role-info my-auto ms-2">
                         <h3>{{ role.name }}</h3>
                         <span class="text-neutral-500">{{ role.players.map(p => p.name).join(", ") }}&nbsp;</span>
                     </div>
