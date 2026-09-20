@@ -92,7 +92,20 @@ export const useGame = defineStore('game', () => {
         function sortByNightOrder(roles: Role[], night: "firstNight" | "otherNight"): NightOrder[] {
             return nightorderData[night]
                 // Map the role ids to the actual role objects
-                .map(roleId => roles.find(r => r.id === roleId)!)
+                .map(roleId => {
+                    // Add the info tokens to the night order reference
+                    if (roleId === 'minioninfo' || roleId === 'demoninfo') {
+                        return {
+                            id: roleId,
+                            name: roleId === 'minioninfo' ? 'Minion Info' : 'Demon Info & Bluffs',
+                            image: '/sprites/generic/evil.webp',
+                            team: roleId === 'minioninfo' ? 'minion' : 'demon',
+                            players: { all: [] }
+                        } as unknown as Role
+                    }
+
+                    return roles.find(r => r.id === roleId)!
+                })
                 // Remove any roles that are not in the current game
                 .filter(r => r !== undefined)
                 // Filter out travellers not in play
