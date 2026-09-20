@@ -135,7 +135,7 @@ async function emitToken(item: Role | Reminder | undefined) {
 }
 
 async function customReminder() {
-    const input = useOverlay().create(ModalInput).open({ title: 'Enter custom reminder', value: ''})
+    const input = useOverlay().create(ModalInput).open({ title: 'Enter custom reminder', placeholder: 'Reminder text'})
 
     const value = await input.result as string | undefined;
     if (value) {

@@ -174,7 +174,7 @@ async function addPlayer() {
     if (players.count >= MAX_PLAYERS)
         return
 
-    const input = inputModal.open({ title: 'Input the player name', value: ''})
+    const input = inputModal.open({ title: 'Input the player name', placeholder: 'Player name'})
 
     const value = await input.result as string | undefined;
     if (value) {
