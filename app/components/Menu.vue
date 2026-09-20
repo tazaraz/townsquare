@@ -16,6 +16,7 @@
         <UNavigationMenu :items="items"
             :ui="{
                 // Make sure the popover faces upward: it will not detect overflow.
+                root: 'min-w-[400px]',
                 viewportWrapper: 'absolute bottom-full top-auto start-0 flex w-full justify-center',
                 viewport: 'origin-[bottom_center]'
             }">
