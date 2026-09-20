@@ -4,14 +4,19 @@ import type { NavigationMenuItem } from '@nuxt/ui'
 export class NotFoundError extends Error {}
 export class DataFormatError extends Error {}
 
+export type RoleEdition = "tb" | "bmr" | "snv" | "carousel" | "fabled" | "loric"
+export function validRoleEditionId(id: string): id is RoleEdition {
+    return ["tb", "bmr", "snv", "carousel", "fabled", "loric", ""].includes(id)
+}
 
-export type EditionId = "tb" | "bmr" | "snv" | "carousel" | "fabled" | "loric" | "custom"
-export function validEditionId(id: string): id is EditionId {
-    return ["tb", "bmr", "snv", "carousel", "fabled", "loric", "custom", ""].includes(id)
+export interface EditionJSON {
+    id: "_meta"
+    name: string
+    author: string
 }
 
 export interface Edition {
-    id: EditionId
+    id:  "tb" | "bmr" | "snv" | string
     name: string | "Custom script"
     author?: "The Pandemonium Institute" | string
     description?: string
@@ -28,7 +33,7 @@ export interface Role {
     id: string
     name: string
     image: string
-    edition: EditionId
+    edition: RoleEdition
     team: Team
     firstNightReminder: string
     otherNightReminder: string

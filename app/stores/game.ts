@@ -115,26 +115,33 @@ export const useGame = defineStore('game', () => {
     }
 
     /**
-     * Loads a scenario from the editions data, and populates the game state with the roles and fabled roles of that edition
+     * Loads a scenario from the editions or supplied data, and populates the game state with the roles and fabled roles of that edition
      * @param game Either an array of role ids (for custom scripts), or an edition id (for predefined editions)
      */
-    function loadScenario(game: string[] | EditionId) {
+    function loadScenario(game: (EditionJSON | string)[] | string) {
         // If the game is a custom script, we will have an array of role ids
         if (Array.isArray(game)) {
+            // Find the metadata
+            const idx = game.findIndex(i => typeof i === 'object' && i.id === "_meta")
+            const metadata = (idx !== -1 ? game.splice(idx, 1)[0] : undefined) as EditionJSON | undefined
+            if (metadata && metadata.name === undefined)
+                throw new DataFormatError(`The scenario is missing the required name.`)
+
+            // Map the rest to roles, filter out duplicates
+            const roles = [...new Set(game.map(role => typeof role === "object" ? role.id : role) as string[])]
             gamestate.edition = {
-                id: "custom" as EditionId,
-                name: "Custom script",
-                roles: game,
+                id: "custom",
+                name: metadata?.name ?? "Custom script",
+                author: metadata?.author,
+                roles
             }
         }
 
         // There is an actual object to load
         else {
             const raw = editionsData.find(e => e.id === game)
-            if (!raw) throw new NotFoundError(`Edition ${game} not found in editions data`)
-
-            if (!validEditionId(raw.id))
-                throw new DataFormatError(`Invalid edition id: ${raw.id}`)
+            if (!raw)
+                throw new NotFoundError(`Edition ${game} not found in editions data`)
 
             gamestate.edition = {
                 id: raw.id,
@@ -148,12 +155,8 @@ export const useGame = defineStore('game', () => {
 
         // Load the roles and fabled roles
         for (const charId of gamestate.edition.roles) {
-            let char: Role | null = null;
             // Get the role from the roles data
-            if (!(char = loadRole(charId))) {
-                throw new NotFoundError(`Role ${charId} not found in the role data`)
-            }
-
+            let char = loadRole(charId);
             switch (char.team) {
                 case "townsfolk":
                 case "outsider":
@@ -179,14 +182,15 @@ export const useGame = defineStore('game', () => {
      * @param id ID of the role to load
      * @returns Either the the role `object`, `null` if not found, or `DataFormatError` if the data exists but is invalid
      */
-    function loadRole(id: string): Role | null {
+    function loadRole(id: string): Role {
         const raw = roleData.find(c => c.id === id)
-        if (!raw) return null
+        if (!raw)
+            throw new DataFormatError(`Could not find role '${id}'`)
 
         if (!validTeam(raw.team))
             throw new DataFormatError(`Invalid team for role ${raw.id}: ${raw.team}`)
 
-        if (!validEditionId(raw.edition))
+        if (!validRoleEditionId(raw.edition))
             throw new DataFormatError(`Invalid edition for role ${raw.id}: ${raw.edition}`)
 
         return {
