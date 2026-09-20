@@ -22,7 +22,12 @@
   },
   "devDependencies": {
     "@nuxt/hints": "^1.1.4",
-    "sass": "^1.102.0"
+    "@nuxt/test-utils": "^4.3.2",
+    "@vue/test-utils": "^2.5.1",
+    "happy-dom": "^20.14.5",
+    "playwright-core": "^1.63.0",
+    "sass": "^1.102.0",
+    "vitest": "^4.1.11"
   },
   "allowScripts": {
     "vue-demi@0.14.10": true,
