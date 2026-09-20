@@ -21,14 +21,8 @@ export const useGamestate = defineStore('gamestate', () => {
     const reminders = reactive({
         /** Reminders of which only one can be present at a time */
         once: [] as Reminder[],
-
         /** Reminders which are always present. To add, add `remindersGlobal: string[]` attribute to a role */
-        global: [
-            { name: 'Good', image: '/sprites/generic/good.webp' },
-            { name: 'Evil', image: '/sprites/generic/evil.webp' },
-            /** Custom note `isCustom` is strictly `false` instead of `undefined` */
-            { name: 'Custom note', image: '/sprites/generic/custom.webp', isCustom: false },
-        ] as Reminder[],
+        global: [] as Reminder[],
     })
 
     /** State of the UI */

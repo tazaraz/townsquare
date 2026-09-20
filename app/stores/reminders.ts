@@ -86,6 +86,18 @@ export const useReminders = defineStore('reminders', () => {
         }
     }
 
+    /** Resets the reminders to its initial state, clearing out both `once` and `global` reminders */
+    function reset() {
+        reminderstate.once.length = 0;
+        reminderstate.global.length = 0;
+        reminderstate.global.push(...[
+            { name: 'Good', image: '/sprites/generic/good.webp' },
+            { name: 'Evil', image: '/sprites/generic/evil.webp' },
+            /** Custom note `isCustom` is strictly `false` instead of `undefined` */
+            { name: 'Custom note', image: '/sprites/generic/custom.webp', isCustom: false },
+        ])
+    }
+
     return {
         add,
         remove,
@@ -93,5 +105,7 @@ export const useReminders = defineStore('reminders', () => {
         removeGlobal,
         fromString,
         create,
+
+        reset,
     }
 })

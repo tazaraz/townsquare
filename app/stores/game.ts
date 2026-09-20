@@ -166,6 +166,16 @@ export const useGame = defineStore('game', () => {
             }
         }
 
+        // Clear the current data
+        gamestate.roles.length = 0;
+        gamestate.fabled.length = 0;
+        gamestate.loric.length = 0;
+        useReminders().reset()
+        for (const player of gamestate.players) {
+            player.role = undefined
+            player.reminders.length = 0;
+        }
+
         // Load the roles and fabled roles
         for (const charId of gamestate.edition.roles) {
             // Get the role from the roles data
