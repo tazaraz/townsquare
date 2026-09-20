@@ -1,6 +1,6 @@
 <template>
     <div :class="['token', kind, 'rounded-full']">
-        <UPopover 
+        <UPopover
             class="inside rounded-full overflow-hidden"
             mode="hover"
             :open-delay="500"
@@ -13,7 +13,7 @@
                 <NuxtImg src="/sprites/token.png" :class="{background, hidden: ui.hidden, dead: !ui.hidden && state == 'dead'}" />
                 <!-- Dead token -->
                 <NuxtImg v-if="!ui.hidden && state == 'dead'" src="/sprites/token.png" class="background small" />
-        
+
                 <template v-if="!ui.hidden && data">
                     <!-- Overflow hidden section -->
                     <template v-if="kind == 'role'">
@@ -22,7 +22,7 @@
                                 <NuxtImg v-if="(data as Role).firstNightReminder !== ''" src="/sprites/leaf.png" class="leaf first-night" />
                                 <NuxtImg v-if="(data as Role).otherNightReminder !== ''" src="/sprites/leaf.png" class="leaf other-night" />
                             </template>
-    
+
                             <div class="leaf top">
                                 <template v-for="i in (data as Role).reminders.length">
                                     <NuxtImg :style="{
@@ -31,12 +31,12 @@
                                     }" src="/sprites/leaf.png"/>
                                 </template>
                             </div>
-    
+
                         </template>
-                        
+
                         <NuxtImg v-if="(data as Role).setup" src="/sprites/maple.png" class="leaf setup" />
-                    </template> 
-                    
+                    </template>
+
                     <!-- Role -->
                     <NuxtImg :src="data.image" class="role" placeholder="/sprites/custom.png"/>
                     <!-- Text -->
@@ -83,10 +83,10 @@
                 </UPopover>
             </template>
 
-            <Warning v-if="warning" class="rounded-full">
+            <InfoPopover v-if="warning" kind="warning" class="rounded-full">
                 <!-- Pass through data -->
                 <slot name="warning"></slot>
-            </Warning>
+            </InfoPopover>
         </div>
     </div>
 </template>
@@ -134,14 +134,14 @@ const background = "/token.png"
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-    
+
             &.hidden {
                 display: inherit;
                 filter: hue-rotate(225deg)
                         saturate(2.4)
                         brightness(0.55);
             }
-    
+
             &.dead {
                 filter: grayscale(100%)
                         brightness(0.66);
@@ -153,7 +153,7 @@ const background = "/token.png"
                 transform: translate(-50%, -50%);
             }
         }
-    
+
         /** All the items within the token */
         &.role {
             aspect-ratio: 1;
@@ -162,7 +162,7 @@ const background = "/token.png"
             transform: translate(-50%, -50%);
             overflow: hidden;
         }
-    
+
         .name {
             .label {
                 stroke: white;
@@ -204,11 +204,11 @@ const background = "/token.png"
                 img {
                     display: block;
                     /* Dynamically position and angle the leaves based on a calculated offset */
-                    transform: 
+                    transform:
                         translate(
                             calc(-10% +     (var(--offset) * 5%)),
                             calc(-5%  + abs((var(--offset) * 30%))),
-                        ) 
+                        )
                         rotate(
                             calc(-30deg +   (var(--offset) * 50deg))
                         )
@@ -231,7 +231,7 @@ const background = "/token.png"
             aspect-ratio: 1;
             background-clip: padding-box !important;
             color: white;
-    
+
             &.first-night {
                 top: 50%;
                 left: 0;
@@ -245,8 +245,8 @@ const background = "/token.png"
                 background: linear-gradient(180deg,#000,var(--demon));
             }
         }
-    
-        :deep(.warning) {
+
+        :deep(.info) {
             width: 30%;
             right: 0;
             top: 0;
