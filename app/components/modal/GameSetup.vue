@@ -48,9 +48,9 @@
                         @click="ui.runAction('Reroll Assignment', game.setupAssignRandomly); emit('close')"/>
                     <div class="flex flex-nowrap gap-1">
                         <UButton label="Shuffle roles" color="neutral" @click="shuffle()"/>
-                        <Warning v-if="game.setupSelected.some(r => r.setup)" class="shuffle-warning w-[32px] p-1">
+                        <Remark v-if="game.setupSelected.some(r => r.setup)" kind="warning" class="shuffle-warning w-[32px] p-1">
                             Shuffling does not account for roles which modify the game in an unpredictable way.
-                        </Warning>
+                        </Remark>
                     </div>
                 </template>
                 <template #right>

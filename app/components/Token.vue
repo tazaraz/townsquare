@@ -83,10 +83,10 @@
                 </UPopover>
             </template>
 
-            <InfoPopover v-if="warning" kind="warning" class="rounded-full">
+            <Remark v-if="warning" kind="warning" class="rounded-full">
                 <!-- Pass through data -->
                 <slot name="warning"></slot>
-            </InfoPopover>
+            </Remark>
         </div>
     </div>
 </template>
