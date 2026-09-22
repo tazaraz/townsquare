@@ -1,27 +1,28 @@
 <template>
     <div id="seats">
         <div id="wheel">
-            <div v-for="(player, p) in players.all"
-                 class="seat" :style="`z-index: ${p < players.all.length / 2 ? -p : p}`">
+            <div v-for="(player, p) in players.list"
+                 class="seat" :style="`z-index: ${p < players.list.length / 2 ? -p : p}`">
                 <div class="player flex flex-col mb-8">
                     <Token :data="player.role ?? undefined"
                            :state="player.state"
                            kind="role"
+                           :hidden="ui.hidden"
                            @click="circle.scrollTo(p) && emit('editPlayer', p)"
                         />
                     <PlayerTag class="mx-4 mt-1" :index="p"></PlayerTag>
                 </div>
                 <Token v-for="(reminder, rIndex) in player.reminders"
-                       class="reminder mx-auto"
-                       :data="{name: reminder.name, image: reminder.image}"
-                       kind="reminder"
-                       @click="emit('editReminder', p, rIndex)"
+                        :class="`reminder mx-auto ${ui.hidden ? 'invisible' : ''}`"
+                        :data="{name: reminder.name, image: reminder.image}"
+                        kind="reminder"
+                        @click="emit('editReminder', p, rIndex)"
                     />
                 <Token v-if="player.reminders.length < 3"
-                       class="reminder mx-auto"
-                       :data="{name: '', image: '/sprites/plus.png'}"
-                       kind="reminder"
-                       @click="emit('editReminder', p)"
+                        :class="`reminder mx-auto ${ui.hidden ? 'invisible' : ''}`"
+                        :data="{name: '', image: '/sprites/plus.png'}"
+                        kind="reminder"
+                        @click="emit('editReminder', p)"
                     />
             </div>
         </div>
@@ -397,10 +398,13 @@ const circle = new PlayerCircle()
 /** When the amount of players change, update the circle */
 watch(
     () => [
-        players.all.length,
-        players.all.map(player => player.reminders?.length ?? 0)
+        players.list.length,
+        players.list.map(player => player.reminders?.length ?? 0)
     ],
     async () => {
+        if (players.list.length === 0)
+            return;
+
         await nextTick();
         // Get the new player elements
         circle.seats.elements = gsap.utils.toArray<HTMLElement>("#wheel > .seat")
@@ -432,7 +436,7 @@ defineExpose({
     .seat {
         position: absolute;
 
-        &:deep(.reminder) {
+        &:deep(.reminder:not(.invisible)) {
             transition: opacity 0.3s;
             opacity: 1;
         }
