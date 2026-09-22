@@ -56,13 +56,13 @@
                 </template>
             </div>
 
-            <template v-if="!ui.hidden && (data as Role)?.ability" #content>
+            <template v-if="!hidden && (data as Role)?.ability" #content>
                 {{ ui.formatReminderText((data as Role).ability) }}
             </template>
         </UPopover>
         <!-- Overflow shown section -->
         <div class="outside" v-if="kind == 'role' && data">
-            <template v-if="!ui.hidden && !hideLeaves && ui.showNightOrder">
+            <template v-if="!hidden && !hideLeaves && ui.showNightOrder">
                 <UPopover v-if="(data as Role).firstNightReminder"
                     class="night-tooltip first-night"
                     mode="hover"
@@ -105,6 +105,7 @@ const props = defineProps<{
     kind: TokenKind
     data?: Role | Reminder
     state?: PlayerState
+    hidden?: boolean
 
     hideLeaves?: boolean
     warning?: boolean
