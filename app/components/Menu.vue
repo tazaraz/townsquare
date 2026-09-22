@@ -68,6 +68,7 @@ import {
     ModalSelectScenario,
     DialogInput,
     ModalTokenSelector,
+    ModalDisplayInfo,
 } from '#components'
 
 const overlay = useOverlay();
@@ -80,16 +81,21 @@ const nightOrder = overlay.create(ModalNightOrder)
 const gameSetup = overlay.create(ModalGameSetup)
 const selectScenario = overlay.create(ModalSelectScenario)
 const tokenSelector = overlay.create(ModalTokenSelector)
+const displayInfo = overlay.create(ModalDisplayInfo)
 const inputDialog = overlay.create(DialogInput)
 
 
+const scenarioIsSelected = computed(() => game.availableRoles.length > 0)
+const disabledItemCss = computed(() => scenarioIsSelected.value ? '' : 'opacity-50 cursor-not-allowed')
+
+
 const items = computed<NavigationMenuItem[][]>(() => [[
-    game.availableRoles.length == 0 ? {} : {
+    !scenarioIsSelected.value ? {} : {
         label: 'Reference sheet',
         onSelect: () => referenceSheet.open({ kind: 'role' }),
         active: false
     },
-    game.availableRoles.length == 0 ? {} : {
+    !scenarioIsSelected.value ? {} : {
         label: 'Night order',
         onSelect: () => nightOrder.open(),
         active: false
@@ -97,7 +103,7 @@ const items = computed<NavigationMenuItem[][]>(() => [[
 ], [
     {
         label: 'Storyteller Tools',
-        class: 'text-secondary',
+        class: 'text-info',
         defaultOpen: true,
         children: [
             {
@@ -109,7 +115,8 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             {
                 label: 'Game setup',
                 description: 'Select roles and assign them to players.',
-                class: 'text-sky-300',
+                class: `text-sky-300 ${disabledItemCss}`,
+                disabled: !scenarioIsSelected.value,
                 onSelect: () =>  gameSetup.open(),
             },
             {
@@ -126,7 +133,10 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             },
             {
                 label: 'Display info',
-                description: 'Either a token or text'
+                description: 'Either a token or text',
+                class: `${disabledItemCss}`,
+                disabled: !scenarioIsSelected.value,
+                onSelect: () => displayInfo.open()
             },
             {
                 label: 'Show Grimoire',
@@ -135,12 +145,15 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             {
                 label: 'Add a player',
                 description: (players.count >= MAX_PLAYERS ? 'Max players reached' : ''),
-                class:       (players.count >= MAX_PLAYERS ? 'text-neutral-700' : ''),
+                class:       (players.count >= MAX_PLAYERS ? 'opacity-50 cursor-not-allowed' : ''),
+                disabled:     players.count >= MAX_PLAYERS,
                 onSelect: () => addPlayer(),
             },
             {
                 label: 'Clear all player roles',
-                onSelect: () => players.all.forEach(p => (p.role = undefined))
+                class: `${disabledItemCss}`,
+                disabled: !scenarioIsSelected.value,
+                onSelect: () => players.list.forEach(p => (p.role = undefined))
             },
             {
                 ...ui.lastAction,
