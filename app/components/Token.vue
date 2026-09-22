@@ -10,11 +10,18 @@
         >
             <div>
                 <!-- Token sprite -->
-                <NuxtImg src="/sprites/token.png" :class="{background, hidden: ui.hidden, dead: !ui.hidden && state == 'dead'}" />
+                <NuxtImg src="/sprites/token.png" :class="{
+                    background,
+                    hidden: hidden,
+                    dead: state && state !== 'alive'
+                }" />
                 <!-- Dead token -->
-                <NuxtImg v-if="!ui.hidden && state == 'dead'" src="/sprites/token.png" class="background small" />
+                <NuxtImg v-if="state == 'dead'" src="/sprites/token.png" :class="[
+                    'background small',
+                    hidden?'hidden':''
+                ]" />
 
-                <template v-if="!ui.hidden && data">
+                <template v-if="!hidden && data">
                     <!-- Overflow hidden section -->
                     <template v-if="kind == 'role'">
                         <template v-if="!hideLeaves">
@@ -145,6 +152,12 @@ const background = "/token.png"
             &.dead {
                 filter: grayscale(100%)
                         brightness(0.66);
+            }
+            &.hidden.dead {
+                filter: hue-rotate(225deg)
+                        saturate(2.4)
+                        grayscale(0.5)
+                        brightness(0.3);
             }
             &.small {
                 width: 60%;
