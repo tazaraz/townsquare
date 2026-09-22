@@ -4,7 +4,7 @@
         :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}"
     >
         <template #body>
-            <UTabs id="tabs" v-model="activeTab"
+            <UTabs id="token-kind" v-model="activeTab"
                    :style="{ '--token-size': `${ui.tokenSize * 0.8}px` }"
                    :items="tabs"
                    :ui="{ list: `mb-3 ${kind == 'role' ? '' : 'hidden'}` }"
@@ -151,7 +151,7 @@ async function customReminder() {
 </script>
 
 <style lang="css" scoped>
-#tabs {
+#token-kind {
     /* data attribute data-token */
     &:deep([data-slot="content"]) {
         display: flex;
