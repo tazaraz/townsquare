@@ -26,7 +26,7 @@ export const useUI = defineStore('UI', () => {
     }
 
     return {
-        ...uistate,
+        ...toRefs(uistate),
 
         centered,
         formatReminderText,
