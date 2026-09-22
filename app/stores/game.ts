@@ -53,11 +53,11 @@ export const useGame = defineStore('game', () => {
     /** Contains all roles assigned to players */
     const assignedTeamRoles = computed<Teams<Player[]>>(() => {
         return {
-            townsfolk:  players.all.filter(p => p.role?.team === "townsfolk"),
-            outsider:   players.all.filter(p => p.role?.team === "outsider"),
-            minion:     players.all.filter(p => p.role?.team === "minion"),
-            demon:      players.all.filter(p => p.role?.team === "demon"),
-            traveller:  players.all.filter(p => p.role?.team === "traveller"),
+            townsfolk:  players.list.filter(p => p.role?.team === "townsfolk"),
+            outsider:   players.list.filter(p => p.role?.team === "outsider"),
+            minion:     players.list.filter(p => p.role?.team === "minion"),
+            demon:      players.list.filter(p => p.role?.team === "demon"),
+            traveller:  players.list.filter(p => p.role?.team === "traveller"),
         }
     })
 
@@ -75,7 +75,7 @@ export const useGame = defineStore('game', () => {
      */
     const division = computed<TeamDivision | null>(() => {
         // Count the number of active players
-        let travellers = players.all.filter(p => p.role?.team === "traveller").length
+        let travellers = players.list.filter(p => p.role?.team === "traveller").length
         const divisionRuleIdx = players.count - travellers - 5
 
         // Make sure we have at least 5 players
@@ -110,13 +110,13 @@ export const useGame = defineStore('game', () => {
                 .filter(r => r !== undefined)
                 // Filter out travellers not in play
                 .filter(r => r.team !== 'traveller' ||
-                             (r.team === 'traveller' && players.all.some(p => p.role?.id === r.id)))
+                             (r.team === 'traveller' && players.list.some(p => p.role?.id === r.id)))
                 .map(c => {
                     return {
                         name: c.name,
                         image: c.image,
                         team: c.team,
-                        players: players.all.filter(p => p.role?.id === c.id)
+                        players: players.list.filter(p => p.role?.id === c.id)
                     }
                 })
         }
@@ -269,7 +269,7 @@ export const useGame = defineStore('game', () => {
     }
 
     /** Contains selected roles during setup */
-    const setupSelected = ref<Role[]>(players.all.map(p => p.role).filter(r => r !== undefined))
+    const setupSelected = ref<Role[]>(players.list.map(p => p.role).filter(r => r !== undefined))
 
     /** Randomly assigns characters selected during setup */
     function setupAssignRandomly() {
