@@ -15,8 +15,9 @@
                             :class="[(item as Role).team || undefined, hasBackdrop((item as Role).id)]"
                             :data="item"
                             :kind="kind"
+                            :hidden="isDisabled((item as Role).id)"
                             :hide-leaves="true"
-                            @click="emitToken(item)"/>
+                            @click="!isDisabled((item as Role).id) && emitToken(item)"/>
                     </template>
                 </template>
                 <template #travellers>
@@ -25,8 +26,9 @@
                             :class="[(item as Role).team || undefined, hasBackdrop((item as Role).id)]"
                             :data="item"
                             :kind="kind"
+                            :hidden="isDisabled((item as Role).id)"
                             :hide-leaves="true"
-                            @click="emitToken(item)"/>
+                            @click="!isDisabled((item as Role).id) && emitToken(item)"/>
                     </template>
                     <div v-else-if="items.length === 0 && !showTravellers" class="text-center">
                         There are no travellers in this edition.
@@ -36,8 +38,9 @@
                             :class="[item.team, hasBackdrop((item as Role).id)]"
                             :data="item"
                             :kind="kind"
+                            :hidden="isDisabled((item as Role).id)"
                             :hide-leaves="true"
-                            @click="emitToken(item)"/>
+                            @click="!isDisabled((item as Role).id) && emitToken(item)"/>
                     </template>
                 </template>
             </UTabs>
@@ -83,6 +86,7 @@ const inputDialog = useOverlay().create(DialogInput)
 const props = defineProps<{
     kind: TokenKind
     selected?: string[]
+    disabled?: string[]
     canClear?: boolean
     playerName?: string
 }>()
@@ -126,11 +130,18 @@ const tabs = [
     }
 ]
 
-function hasBackdrop(name: string): 'backdrop' | '' {
+function hasBackdrop(id: string): 'backdrop' | '' {
     if (props.selected === undefined)
         return 'backdrop'
 
-    return props.selected.includes(name) ? 'backdrop' : ''
+    return props.selected.includes(id) ? 'backdrop' : ''
+}
+
+function isDisabled(id: string): boolean {
+    if (props.disabled === undefined)
+        return false;
+
+    return props.disabled.includes(id)
 }
 
 async function emitToken(item: Role | Reminder | undefined) {
