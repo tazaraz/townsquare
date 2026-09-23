@@ -56,6 +56,11 @@
         </UNavigationMenu>
 
         <template #body>
+            <USwitch v-model="ui.hidden" class="mb-3">
+                <template #label>
+                    Hide Grimoire <UKbd>G</UKbd>
+                </template>
+            </USwitch>
             <UNavigationMenu :items="items" orientation="vertical" class="-mx-2.5">
                 <template #modifier-label>
                     <span v-if="game.assignedFabled.length > 0" class="text-(--fabled)">Fabled</span>
@@ -74,7 +79,7 @@
         <template #right>
             <USwitch v-model="ui.hidden" class="hidden lg:flex">
                 <template #label>
-                    Show Grimoire <UKbd>G</UKbd>
+                    Hide Grimoire <UKbd>G</UKbd>
                 </template>
             </USwitch>
         </template>
