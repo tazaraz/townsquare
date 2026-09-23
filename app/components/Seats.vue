@@ -4,25 +4,25 @@
             <div v-for="(player, p) in players.list"
                  class="seat" :style="`z-index: ${p < players.list.length / 2 ? -p : p}`">
                 <div class="player flex flex-col mb-8">
-                    <Token :data="player.role ?? undefined"
-                           :state="player.state"
-                           kind="role"
-                           :hidden="ui.hidden"
-                           @click="circle.scrollTo(p) && emit('editPlayer', p)"
-                        />
-                    <PlayerTag class="mx-4 mt-1" :index="p"></PlayerTag>
+                    <Token
+                        :data="player.role ?? undefined"
+                        :state="player.state"
+                        kind="role"
+                        :hidden="ui.hidden"
+                        @click="circle.scrollTo(p) && emit('editPlayer', p)"/>
+                    <PlayerTag class="mx-4 mt-1" :player="player" :index="p"></PlayerTag>
                 </div>
                 <Token v-for="(reminder, rIndex) in player.reminders"
-                        :class="`reminder mx-auto ${ui.hidden ? 'invisible' : ''}`"
-                        :data="{name: reminder.name, image: reminder.image}"
-                        kind="reminder"
-                        @click="emit('editReminder', p, rIndex)"
+                    :class="`reminder mx-auto ${ui.hidden ? 'invisible' : ''}`"
+                    :data="{name: reminder.name, image: reminder.image}"
+                    kind="reminder"
+                    @click="emit('editReminder', p, rIndex)"
                     />
                 <Token v-if="player.reminders.length < 3"
-                        :class="`reminder mx-auto ${ui.hidden ? 'invisible' : ''}`"
-                        :data="{name: '', image: '/sprites/plus.png'}"
-                        kind="reminder"
-                        @click="emit('editReminder', p)"
+                    :class="`reminder mx-auto ${ui.hidden ? 'invisible' : ''}`"
+                    :data="{name: '', image: '/sprites/plus.png'}"
+                    kind="reminder"
+                    @click="emit('editReminder', p)"
                     />
             </div>
         </div>
@@ -315,8 +315,8 @@ class PlayerCircle {
             // Center. We calculate the radius based on the size of the token, ensuring no overlap
             case "center":
                 this.seats.max = players.count;
-                ui.tokenSize = Math.min(Math.max(100, (screenSize * 1.5) / this.seats.max), 160)
-                const dynamic = this.seats.max * ui.tokenSize * 0.23;
+                ui.tokenSize = Math.min(Math.max(100, (screenSize * 1.5) / this.seats.max), 150)
+                const dynamic = this.seats.max * ui.tokenSize * 0.29;
                 const fixed = screenSize / 3;
                 // Make an elliptic curve
                 if (dynamic < fixed) {

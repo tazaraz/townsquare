@@ -110,6 +110,20 @@ export const usePlayers = defineStore('players', () => {
         return true;
     }
 
+    /**
+     * Changes whether the player is alive, dead or voteless
+     * Changes the name of the player
+     * @param index Index of the player
+     * @param state The new state of the player
+     */
+    function setState(index: number, state: PlayerState): boolean {
+        // Get player
+        const player = get(index);
+        if (!player) return false;
+
+        player.state = state;
+        return true;
+    }
 
     /**
      * Sets a reminder for a player, without removing it from the `once` reminders list
@@ -165,6 +179,7 @@ export const usePlayers = defineStore('players', () => {
         setRole,
         setName,
         setReminder,
+        setState,
         removeReminder,
     }
 })
