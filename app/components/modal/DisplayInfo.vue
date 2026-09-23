@@ -1,8 +1,7 @@
 <template>
     <UModal
         :title="`Select the characters for the game`"
-        :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}"
-    >
+        :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}">
         <template #body>
             <div class="flex gap-3 justify-center mb-3">
                 <USwitch v-model="useToken" label="Display token" />
@@ -10,22 +9,24 @@
             <div class="flex flex-col md:flex-row select-none">
                 <div class="flex-2 grid grid-cols-2 md:grid-cols-3 gap-2">
                     <UButton v-for="text, t in texts"
-                             class="cursor-pointer font-bold text-[110%]"
-                             :color="textIdx == t ? 'primary' : 'neutral'"
-                             :variant="textIdx == t ? 'solid' : 'outline'"
-                             @click="textIdx = t">{{ text }}</UButton>
-                    <UButton class="cursor-pointer font-bold text-[110%]"
-                             color="neutral"
-                             variant="subtle"
-                             @click="addText">Custom note</UButton>
+                        class="cursor-pointer font-bold text-[110%]"
+                        :color="textIdx == t ? 'primary' : 'neutral'"
+                        :variant="textIdx == t ? 'solid' : 'outline'"
+                        @click="textIdx = t">{{ text }}</UButton>
+                    <UButton
+                        class="cursor-pointer font-bold text-[110%]"
+                        color="neutral"
+                        variant="subtle"
+                        @click="addText">Custom note</UButton>
                 </div>
                 <div v-if="useToken" class="flex-1 flex m-10">
-                    <Token class="w-[140px] m-auto"
-                            :data="token"
-                            state="alive"
-                            kind="role"
-                            :hide-leaves="true"
-                            @click="editToken" />
+                    <Token
+                        class="w-[140px] m-auto"
+                        :data="token"
+                        state="alive"
+                        kind="role"
+                        :hide-leaves="true"
+                        @click="editToken" />
                 </div>
             </div>
         </template>

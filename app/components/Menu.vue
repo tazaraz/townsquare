@@ -2,7 +2,7 @@
     <UHeader
         class="relative z-10"
         mode="slideover"
-        :ui="{ container: 'px-4!', left: 'h-full' }" >
+        :ui="{ container: 'px-4!', left: 'h-full' }">
         <template #left>
             <NuxtLink class="h-full p-3 ps-0" to="https://bloodontheclocktower.com/" target="_blank">
                 <NuxtImg src="/sprites/ccc.png" class="h-full"></NuxtImg>
@@ -25,6 +25,7 @@
                     <div v-for="child in ((item as any).children as Role[])"
                         class="flex text-sm text-left rounded-md p-3 transition-colors hover:bg-elevated/50"
                         @click="referenceSheet.open({ kind: child.team as any })">
+
                         <NuxtImg :src="child.image" class="w-[64px] h-[64px]" />
                         <div class="m-auto ms-2">
                             <span :class="`font-medium text-(--${child.team})`">{{ child.name }}</span>
@@ -47,7 +48,7 @@
         </template>
 
         <template #right>
-            <USwitch class="hidden lg:flex">
+            <USwitch v-model="ui.hidden" class="hidden lg:flex">
                 <template #label>
                     Show Grimoire <UKbd>G</UKbd>
                 </template>
@@ -68,6 +69,7 @@ import {
     ModalSelectScenario,
     DialogInput,
     ModalTokenSelector,
+    ModalTemporaryGrimoire,
     ModalDisplayInfo,
 } from '#components'
 
@@ -82,6 +84,7 @@ const gameSetup = overlay.create(ModalGameSetup)
 const selectScenario = overlay.create(ModalSelectScenario)
 const tokenSelector = overlay.create(ModalTokenSelector)
 const displayInfo = overlay.create(ModalDisplayInfo)
+const temporaryGrimoire = overlay.create(ModalTemporaryGrimoire)
 const inputDialog = overlay.create(DialogInput)
 
 
@@ -105,6 +108,12 @@ const items = computed<NavigationMenuItem[][]>(() => [[
         label: 'Storyteller Tools',
         class: 'text-info',
         defaultOpen: true,
+        icon: 'material-symbols-book-2-outline',
+        chip: ui.temporaryGrimoire ? {
+            color: 'error',
+            text: '!',
+            size: 'xl'
+        } : undefined,
         children: [
             {
                 label: 'Select edition',
@@ -139,8 +148,11 @@ const items = computed<NavigationMenuItem[][]>(() => [[
                 onSelect: () => displayInfo.open()
             },
             {
-                label: 'Show Grimoire',
-                description: 'Allows non-persistent modifications',
+                label: `${ui.temporaryGrimoire ? '!' : ''} Temporary Grimoire`,
+                description: `Allows non-persistent modifications`,
+                class: `${disabledItemCss} ${ui.temporaryGrimoire ? 'text-error' : ''}`,
+                disabled: !scenarioIsSelected.value,
+                onSelect: () => temporaryGrimoire.open()
             },
             {
                 label: 'Add a player',

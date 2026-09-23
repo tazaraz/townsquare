@@ -3,13 +3,15 @@
         :title="title ?? 'Title unset'"
         :ui="{ body: 'flex justify-center'}">
         <template #body>
-            <UInput v-model="value"
-                    :color="value == '' ? 'error' : 'neutral'"
-                    :placeholder="placeholder"
-                    :ui="{ root: 'w-full' }"
-                    :style="`padding-left: ${0.45 * leading?.length! || 1}rem`"
-                    autofocus
-                    @keydown.enter="value !== '' && emit('close', value)">
+            <UInput
+                v-model="value"
+                :color="value == '' ? 'error' : 'neutral'"
+                :placeholder="placeholder"
+                :ui="{ root: 'w-full' }"
+                :style="`padding-left: ${0.45 * leading?.length! || 1}rem`"
+                autofocus
+                @keydown.enter="value !== '' && emit('close', value)">
+
                 <template v-if="leading" #leading>
                     <p class="text-sm text-muted">{{ leading }}</p>
                 </template>

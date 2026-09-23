@@ -13,6 +13,7 @@
                 <span v-if="scenario.level">Level: {{ scenario.level }}</span>
             </div>
         </template>
+
         <NuxtImg v-if="scenario.image" :src="scenario.image" class="h-full mx-auto" />
         <template #footer>
             <UButton :label="scenario.button" @click="emit('selected')"/>

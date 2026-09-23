@@ -1,8 +1,7 @@
 <template>
     <UModal
         :title="`${name} Reference Sheet`"
-        :ui="{ content: 'max-w-screen-2xl', footer: 'flex relative'}"
-    >
+        :ui="{ content: 'max-w-screen-2xl', footer: 'flex relative'}">
         <template #body>
             <UTabs id="tabs"
                    :items="tabs"
@@ -11,17 +10,18 @@
                 <template #scenario>
                     <template v-for="(team, name) of items">
                         <div v-if="name !== 'traveller'"
-                             :key="name"
-                             class="team-list flex flex-col md:flex-row"
-                             :style="`color: var(--${name})`">
+                            :key="name"
+                            class="team-list flex flex-col md:flex-row"
+                            :style="`color: var(--${name})`">
+
                             <div class="name w-full md:w-6">
                                 <h3 class="px-6 border-b-2 md:border-0 md:rotate-270">{{ name }}</h3>
                             </div>
                             <div class="flex-grow py-3 grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                                 <div v-for="role in team" :key="role.id"
-                                     class="role flex items-center">
-                                    <NuxtImg :src="role.image"/>
+                                    class="role flex items-center">
 
+                                    <NuxtImg :src="role.image"/>
                                     <div class="flex flex-col">
                                         <span class="font-bold" :style="`color: var(--${name})`">{{ role.name }}</span>
                                         <span>{{ role.ability }}</span>
@@ -39,9 +39,9 @@
                         </div>
                         <div class="flex-grow py-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                             <div v-for="role in game.availableTeamRoles.traveller" :key="role.id"
-                                    class="role flex items-center">
-                                <NuxtImg :src="role.image"/>
+                                class="role flex items-center">
 
+                                <NuxtImg :src="role.image"/>
                                 <div class="flex flex-col">
                                     <span class="font-bold">{{ role.name }}</span>
                                     <span>{{ role.ability }}</span>
@@ -56,10 +56,15 @@
         <template #footer>
             <ModalFooter>
                 <template #left>
-                    <USwitch v-model="ui.showFlavor" label="Show character flavor text"/>
+                    <USwitch
+                        v-model="ui.showFlavor"
+                        label="Show character flavor text"/>
                 </template>
                 <template #center>
-                    <UButton label="Close" color="neutral" @click="emit('close')"/>
+                    <UButton
+                        label="Close"
+                        color="neutral"
+                        @click="emit('close')"/>
                 </template>
             </ModalFooter>
         </template>

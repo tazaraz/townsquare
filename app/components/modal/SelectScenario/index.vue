@@ -1,8 +1,7 @@
 <template>
     <UModal
         title="Load the scenario"
-        :ui="{ content: 'max-w-screen-2xl', body: 'flex flex-col', footer: 'flex relative'}"
-    >
+        :ui="{ content: 'max-w-screen-2xl', body: 'flex flex-col', footer: 'flex relative'}">
         <template #body>
             <UTabs
                 id="tabs"
@@ -51,16 +50,25 @@
                                 Click here for more scenarios (Google Docs)
                             </UButton>
                         </template>
+
                         <NuxtImg src="/sprites/editions/custom.webp" class="h-full mx-auto" />
+
                         <template #footer>
                             <div class="flex flex-wrap gap-2">
-                                <UInput type="file" class="w-fit" accept=".json"
+                                <UInput
+                                    type="file"
+                                    class="w-fit"
+                                    accept=".json"
                                     @change="loadFile"/>
                                 <div class="flex gap-2">
-                                    <UButton color="info" label="Input file url"
+                                    <UButton
+                                        label="Input file url"
+                                        color="info"
                                         @click="getUrl"
                                         icon="i-formkit-url"/>
-                                    <UButton color="info" label="Load from clipboard"
+                                    <UButton
+                                        label="Load from clipboard"
+                                        color="info"
                                         @click="getClipboard"
                                         icon="i-lucide-clipboard"/>
                                 </div>
@@ -75,6 +83,7 @@
                                     color="info"
                                     variant="outline"
                                     :ui="{ root: 'text-white mt-5 p-3', description: 'flex flex-wrap'}" >
+
                                     <template #description>
                                         <template v-for="role, i in game.availableRoles">
                                             <span :style="`color: var(--${role.team})`">{{ role.name }}</span>

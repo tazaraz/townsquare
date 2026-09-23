@@ -6,8 +6,7 @@
             :open-delay="500"
             :content="{side: ui.centered ? 'left' : 'top'}"
             :ui="{content: ['w-64 p-4', (data as Role)?.ability ? '' : 'hidden' ]}"
-            enable-touch
-        >
+            enable-touch>
             <div>
                 <!-- Token sprite -->
                 <NuxtImg src="/sprites/token.png" :class="{

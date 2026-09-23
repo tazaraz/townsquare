@@ -1,14 +1,14 @@
 <template>
     <UModal
         :title="`Select the characters for the game`"
-        :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}"
-    >
+        :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}">
         <template #body>
             <template v-if="game.division"
                       v-for="(team, name) of game.availableTeamRoles" :key="name">
                 <div v-if="name !== 'traveller'"
-                     :class="[name, 'team-list flex flex-col md:flex-row']"
-                     :style="{ '--token-size': `${ui.tokenSize * 0.8}px` }">
+                    :class="[name, 'team-list flex flex-col md:flex-row']"
+                    :style="{ '--token-size': `${ui.tokenSize * 0.8}px` }">
+
                     <div class="name w-full md:w-12">
                         <div class="flex flex-col md:rotate-270">
                             <h3 class="px-6 border-b-2 md:border-0 mb-2 md:mb-0">{{ name }}</h3>
@@ -27,6 +27,7 @@
                             :hideLeaves="true"
                             :warning="getRole(item.name)?.setup"
                             @click="toggleRole(item.name)">
+
                             <template #warning>
                                 This role modifies the setup of the game in an unpredictable way.
                             </template>
@@ -49,6 +50,7 @@
                         <Remark v-if="roleTotal < players.count || players.count >= MAX_ACTIVE_PLAYERS"
                             kind="info"
                             class="shuffle-warning w-[32px] p-1">
+
                             <template v-if="roleTotal < players.count">
                                 {{ players.count }} players are present, but you only have selected {{ roleTotal }}. Only the first {{ roleTotal }} players will receive a role.
                             </template>
@@ -60,13 +62,18 @@
                     </div>
                     <div class="flex flex-nowrap gap-1">
                         <UButton label="Shuffle roles" color="neutral" @click="shuffle()"/>
-                        <Remark v-if="game.setupSelected.some(r => r.setup)" kind="warning" class="shuffle-warning w-[32px] p-1">
+                        <Remark v-if="game.setupSelected.some(r => r.setup)"
+                            kind="warning"
+                            class="shuffle-warning w-[32px] p-1">
                             Shuffling does not account for roles which modify the game in an unpredictable way.
                         </Remark>
                     </div>
                 </template>
                 <template #right>
-                    <UButton label="Close" color="neutral" @click="() => emit('close')"/>
+                    <UButton
+                        label="Close"
+                        color="neutral"
+                        @click="emit('close')"/>
                 </template>
             </ModalFooter>
         </template>

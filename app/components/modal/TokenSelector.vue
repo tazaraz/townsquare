@@ -1,14 +1,14 @@
 <template>
     <UModal
         :title="`Select the ${kind}` + (kind === 'role' ? ` for ${playerName}` : '')"
-        :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}"
-    >
+        :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}">
         <template #body>
-            <UTabs id="token-kind" v-model="activeTab"
-                   :style="{ '--token-size': `${ui.tokenSize * 0.8}px` }"
-                   :items="tabs"
-                   :ui="{ list: `mb-3 ${kind == 'role' ? '' : 'hidden'}` }"
-            >
+            <UTabs
+                id="token-kind"
+                v-model="activeTab"
+                :style="{ '--token-size': `${ui.tokenSize * 0.8}px` }"
+                :items="tabs"
+                :ui="{ list: `mb-3 ${kind == 'role' ? '' : 'hidden'}` }">
                 <template #edition>
                     <template v-for="item in items">
                         <Token v-if="(item as Role).team !== 'traveller'"
@@ -46,12 +46,20 @@
             <ModalFooter>
                 <template #left>
                     <UButton v-if="kind !== 'reminder'"
-                             label="Reference sheet" color="info" @click="referenceSheet.open({ kind })"/>
+                        label="Reference sheet"
+                        color="info"
+                        @click="referenceSheet.open({ kind })"/>
                     <USwitch v-if="activeTab == '1'" v-model="showTravellers" label="Show all Travellers" class="py-2"/>
                 </template>
                 <template #center>
-                    <UButton v-if="canClear" :label="clearButtonLabel" color="error" @click="emit('close', 'unset')"/>
-                    <UButton label="Cancel" color="neutral" @click="emit('close', undefined)"/>
+                    <UButton v-if="canClear"
+                        :label="clearButtonLabel"
+                        color="error"
+                        @click="emit('close', 'unset')"/>
+                    <UButton
+                        label="Cancel"
+                        color="neutral"
+                        @click="emit('close', undefined)"/>
                 </template>
             </ModalFooter>
         </template>
