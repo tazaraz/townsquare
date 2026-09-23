@@ -21,9 +21,9 @@
             <NuxtLink class="h-full p-3 ps-0" to="https://bloodontheclocktower.com/" target="_blank">
                 <NuxtImg src="/sprites/ccc.png" class="h-full"></NuxtImg>
             </NuxtLink>
-            <div class="flex flex-col text-sm">
-                <span>A Townsquare and</span>
-                <span>Digital Grimoire</span>
+            <div class="flex flex-col flex-nowrap text-sm">
+                <span class="text-nowrap">A Townsquare and</span>
+                <span class="text-nowrap">Digital Grimoire</span>
             </div>
         </template>
 
@@ -34,6 +34,11 @@
                 viewportWrapper: 'absolute bottom-full top-auto start-0 flex w-full justify-center',
                 viewport: 'origin-[bottom_center]'
             }">
+            <template #modifier-label>
+                <span v-if="game.assignedFabled.length > 0" class="text-(--fabled)">Fabled</span>
+                <span v-if="game.assignedFabled.length > 0 && game.assignedLoric.length > 0" class="px-1"> ⁄ </span>
+                <span v-if="game.assignedLoric.length > 0" class="text-(--loric)">Loric</span>
+            </template>
             <template #modifier-content="{ item }">
                 <div class="isolate grid p-2 grid-cols-2 gap-2">
                     <div v-for="child in ((item as any).children as Role[])"
@@ -52,6 +57,11 @@
 
         <template #body>
             <UNavigationMenu :items="items" orientation="vertical" class="-mx-2.5">
+                <template #modifier-label>
+                    <span v-if="game.assignedFabled.length > 0" class="text-(--fabled)">Fabled</span>
+                    <span v-if="game.assignedFabled.length > 0 && game.assignedLoric.length > 0" class="px-1"> ⁄ </span>
+                    <span v-if="game.assignedLoric.length > 0" class="text-(--loric)">Loric</span>
+                </template>
                 <template #modifier-item="{ item }">
                     <div :class="`flex text-(--${(item as Role).name})`">
                         <NuxtImg :src="(item as Role).image" class="w-[32px] h-[32px]" />

@@ -21,7 +21,7 @@
                 </div>
                 <div v-if="useToken" class="flex-1 flex m-10">
                     <Token
-                        class="w-[140px] m-auto"
+                        class="w-[120px] m-auto"
                         :data="token"
                         state="alive"
                         kind="role"

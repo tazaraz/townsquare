@@ -48,7 +48,6 @@
                             color="neutral"
                             :disabled="roleTotal > players.count"
                             @click="ui.runAction('Reroll Assignment', game.setupAssignRandomly); emit('close')"/>
-                            {{ roleTotal }} {{ players.count }}
                         <Remark v-if="roleTotal !== players.count || players.count >= MAX_ACTIVE_PLAYERS"
                             kind="info"
                             class="shuffle-warning w-[32px] p-1">

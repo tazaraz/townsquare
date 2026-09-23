@@ -5,7 +5,7 @@
             mode="hover"
             :open-delay="500"
             :content="{side: ui.centered ? 'left' : 'top'}"
-            :ui="{content: ['w-64 p-4', (data as Role)?.ability ? '' : 'hidden' ]}"
+            :ui="{content: ['w-64 p-4', !hidden && (data as Role)?.ability ? '' : 'hidden' ]}"
             enable-touch>
             <div>
                 <!-- Token sprite -->
