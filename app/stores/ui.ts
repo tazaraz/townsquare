@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useUI = defineStore('UI', () => {
     const uistate = useGamestate().ui
+    const players = useGamestate().players
 
     /** Whether the Seats are shown in a circle */
     const centered = computed(() => uistate.orientation.rendered === 'center')
@@ -25,11 +26,30 @@ export const useUI = defineStore('UI', () => {
         action();
     }
 
+    const oldGrimoire: Ref<Player[]> = ref([]);
+    /**
+     * Changes the grimoire to allow for non-persisting changes
+     */
+    function toggleTemporaryGrimoire() {
+        uistate.temporaryGrimoire = !uistate.temporaryGrimoire
+        if (uistate.temporaryGrimoire) {
+            // Copy old state
+            oldGrimoire.value.splice(0, oldGrimoire.value.length, ...players)
+            // Insert a temporary copy
+            players.splice(0, players.length, ...structuredClone(toRaw(players)))
+        } else {
+            // Restore
+            players.splice(0, players.length, ...oldGrimoire.value)
+            oldGrimoire.value.length = 0
+        }
+    }
+
     return {
         ...toRefs(uistate),
 
         centered,
         formatReminderText,
         runAction,
+        toggleTemporaryGrimoire
     }
 })

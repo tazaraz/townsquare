@@ -79,6 +79,9 @@ export interface UI {
     /** Whether flavor text is hidden throughout the UI */
     showFlavor: boolean
 
+    /** Whether to show a temporary grimoire */
+    temporaryGrimoire: boolean
+    /** Allows quick access to actions */
     lastAction: NavigationMenuItem
 
     /** Internal only. Size of the token as computed by the wheel */

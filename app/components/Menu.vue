@@ -3,6 +3,20 @@
         class="relative z-10"
         mode="slideover"
         :ui="{ container: 'px-4!', left: 'h-full' }">
+        <template #toggle="{ toggle }">
+            <UChip :show="ui.temporaryGrimoire"
+                text="!"
+                color="error"
+                size="3xl"
+                class="lg:hidden">
+                <UButton
+                    icon="i-lucide-menu"
+                    color="neutral"
+                    variant="ghost"
+                    class="lg:hidden"
+                    @click="toggle" />
+            </UChip>
+        </template>
         <template #left>
             <NuxtLink class="h-full p-3 ps-0" to="https://bloodontheclocktower.com/" target="_blank">
                 <NuxtImg src="/sprites/ccc.png" class="h-full"></NuxtImg>
@@ -143,14 +157,14 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             {
                 label: 'Display info',
                 description: 'Either a token or text',
-                class: `${disabledItemCss}`,
+                class: `${disabledItemCss} text-(--traveller)`,
                 disabled: !scenarioIsSelected.value,
                 onSelect: () => displayInfo.open()
             },
             {
                 label: `${ui.temporaryGrimoire ? '!' : ''} Temporary Grimoire`,
                 description: `Allows non-persistent modifications`,
-                class: `${disabledItemCss} ${ui.temporaryGrimoire ? 'text-error' : ''}`,
+                class: `${disabledItemCss} text-(--traveller) ${ui.temporaryGrimoire ? 'text-error' : ''}`,
                 disabled: !scenarioIsSelected.value,
                 onSelect: () => temporaryGrimoire.open()
             },

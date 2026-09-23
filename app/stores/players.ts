@@ -6,7 +6,9 @@ export const usePlayers = defineStore('players', () => {
     const reminders = useReminders()
     const game      = useGame()
 
-    const all = computed(() => players as Player[])
+    /** Contains the list of players, or the temporary state of the list of players */
+    const list = computed(() => players as Player[])
+
     const count = computed(() => players.length)
 
     /**
@@ -154,7 +156,7 @@ export const usePlayers = defineStore('players', () => {
     }
 
     return {
-        all,
+        list,
         count,
 
         add,
