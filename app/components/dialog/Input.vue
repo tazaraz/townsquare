@@ -20,11 +20,15 @@
         <template #footer>
             <ModalFooter>
                 <template #center>
-                    <UButton label="Confirm"
-                             color="primary"
-                             :disabled="value === ''"
-                             @click="emit('close', value)" />
-                    <UButton label="Close" color="neutral" @click="emit('close')" />
+                    <UButton
+                        label="Confirm"
+                        color="primary"
+                        :disabled="value === ''"
+                        @click="emit('close', value)" />
+                    <UButton
+                        label="Close"
+                        color="neutral"
+                        @click="emit('close')" />
                 </template>
             </ModalFooter>
         </template>
