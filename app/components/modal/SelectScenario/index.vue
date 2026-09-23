@@ -16,6 +16,7 @@
                     </template>
                 </template>
                 <template #full>
+                    <NuxtImg src="/sprites/editions/custom.webp" class="h-full mx-auto" />
                     <template v-for="scenario in scenarios">
                         <ModalSelectScenarioCard
                             v-if="scenario.type === 'full'"
@@ -24,6 +25,7 @@
                     </template>
                 </template>
                 <template #teensyville>
+                    <NuxtImg src="/sprites/editions/custom.webp" class="h-full mx-auto" />
                     <template v-for="scenario in scenarios">
                         <ModalSelectScenarioCard
                             v-if="scenario.type === 'teensyville'"
