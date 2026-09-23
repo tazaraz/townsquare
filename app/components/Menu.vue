@@ -213,29 +213,23 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             }
         ],
     },
-], [
-    game.assignedFabled.length == 0 ? {} : {
+], game.assignedFabled.length + game.assignedLoric.length == 0 ? [] : [
+    {
         slot: 'modifier' as const,
-        label: 'Fabled',
-        class: 'text-(--fabled)',
         defaultOpen: true,
-        children: game.assignedFabled.map(f => ({
-            slot: 'modifier-item' as const,
-            onSelect: () => referenceSheet.open({ kind: 'fabled' }),
-            ...f,
-        }))
+        children: [
+            ...game.assignedFabled.map(f => ({
+                slot: 'modifier-item' as const,
+                onSelect: () => referenceSheet.open({ kind: 'fabled' }),
+                ...f,
+            })),
+            ...game.assignedLoric.map(f => ({
+                slot: 'modifier-item' as const,
+                onSelect: () => referenceSheet.open({ kind: 'loric' }),
+                ...f,
+            }))
+        ]
     },
-    game.assignedLoric.length == 0 ? {} : {
-        slot: 'modifier' as const,
-        label: 'Loric',
-        class: 'text-(--loric)',
-        defaultOpen: true,
-        children: game.assignedLoric.map(f => ({
-            slot: 'modifier-item' as const,
-            onSelect: () => referenceSheet.open({ kind: 'loric' }),
-            ...f,
-        }))
-    }
 ]])
 
 async function addPlayer() {
