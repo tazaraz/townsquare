@@ -69,6 +69,8 @@ export const useGame = defineStore('game', () => {
     const availableLoric: Role[] = roleData.filter(r => r.team === 'loric').map(r => loadRole(r.id)!)
     /** Which loric are assigned */
     const assignedLoric = computed(() => gamestate.loric)
+    /** The demon bluffs */
+    const demonBluffs = computed(() => gamestate.demonBluffs)
 
     /**
      * What amount of players to have for each team
@@ -311,6 +313,7 @@ export const useGame = defineStore('game', () => {
         availableLoric,
         assignedLoric,
 
+        demonBluffs,
         division,
 
         calculateNightOrder,

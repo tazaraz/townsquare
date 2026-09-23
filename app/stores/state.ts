@@ -20,6 +20,8 @@ export const useGamestate = defineStore('gamestate', () => {
     const loric: Ref<Role[]> = ref([])
     /** The players */
     const players: Ref<Player[]> = ref([])
+    /** The demon bluffs available to the demon */
+    const demonBluffs: Ref<(Role | undefined)[]> = ref([undefined, undefined, undefined])
     /** The available reminders */
     const reminders = reactive({
         /** Reminders of which only one can be present at a time */
@@ -57,6 +59,7 @@ export const useGamestate = defineStore('gamestate', () => {
         fabled,
         loric,
         players,
+        demonBluffs,
 
         reminders,
         ui,

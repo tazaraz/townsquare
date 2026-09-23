@@ -95,6 +95,7 @@ import {
     ModalTokenSelector,
     ModalTemporaryGrimoire,
     ModalDisplayInfo,
+    ModalDemonBluffs,
 } from '#components'
 
 defineShortcuts({
@@ -117,6 +118,8 @@ const selectScenario = overlay.create(ModalSelectScenario)
 const tokenSelector = overlay.create(ModalTokenSelector)
 const displayInfo = overlay.create(ModalDisplayInfo)
 const temporaryGrimoire = overlay.create(ModalTemporaryGrimoire)
+const demonBluffs = overlay.create(ModalDemonBluffs)
+
 const inputDialog = overlay.create(DialogInput)
 
 
@@ -185,6 +188,12 @@ const items = computed<NavigationMenuItem[][]>(() => [[
                 class: `${disabledItemCss} text-(--traveller) ${ui.temporaryGrimoire ? 'text-error' : ''}`,
                 disabled: !scenarioIsSelected.value,
                 onSelect: () => temporaryGrimoire.open()
+            },
+            {
+                label: 'Set demon bluffs',
+                description: 'They probably need it',
+                class: 'text-(--demon)',
+                onSelect: () => demonBluffs.open({ editable: true })
             },
             {
                 label: 'Add a player',
