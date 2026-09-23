@@ -87,6 +87,14 @@ import {
     ModalDisplayInfo,
 } from '#components'
 
+defineShortcuts({
+    g: () => {
+        ui.hidden = !ui.hidden
+    },
+
+})
+
+
 const overlay = useOverlay();
 const players = usePlayers();
 const ui = useUI();
