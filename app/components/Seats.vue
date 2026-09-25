@@ -9,7 +9,8 @@
                         :state="player.state"
                         kind="role"
                         :hidden="ui.hidden"
-                        @click="circle.scrollTo(p) && emit('editPlayer', p)"/>
+                        :can-swap="ui.swapping >= 0 && ui.swapping !== p"
+                        @click="processTokenClick(p)"/>
                     <PlayerTag class="mx-4 mt-1" :player="player" :index="p"></PlayerTag>
                 </div>
                 <Token v-for="(reminder, rIndex) in player.reminders"
@@ -258,7 +259,7 @@ class PlayerCircle {
      */
     scrollTo(index: number) {
         // Don't scroll if:
-        if (ui.orientation.rendered === "center" || index === ui.selectedToken) return true;
+        if (ui.orientation.rendered === "center" || index === ui.selectedToken) return false;
 
         // Index offset calculation, bearing in mind rotationary nature of the wheel
         const m = this.seats.elements.length
@@ -273,7 +274,7 @@ class PlayerCircle {
             onUpdate: () => this.updateOrder(),
         })
 
-        return false;
+        return true;
     }
 
 
@@ -394,6 +395,19 @@ class PlayerCircle {
 
 /** Initialize the circle */
 const circle = new PlayerCircle()
+
+function processTokenClick(player: number) {
+    if (circle.scrollTo(player))
+        return
+
+    if (ui.swapping >= 0) {
+        if (ui.swapping !== player) {
+            players.swap(ui.swapping, player)
+            ui.swapping = -1;
+        }
+    } else
+        emit('editPlayer', player)
+}
 
 /** When the amount of players change, update the circle */
 watch(

@@ -40,6 +40,7 @@ export const useGamestate = defineStore('gamestate', () => {
         },
         showNightOrder: true,
         showFlavor: true,
+        swapping: -1,
 
         temporaryGrimoire: false,
         lastAction: {} as any,

@@ -14,14 +14,10 @@
                     v-model="name"
                     :color="name == '' ? 'error' : 'primary'"
                     @change="players.setName(index, name)"/>
-                <USwitch
-                    label="Is alive"
-                    :default-value="player.state === 'alive'"
-                    @change="players.setState(index, player.state === 'alive' ? 'dead' : 'alive')"/>
-                <USwitch v-if="player.state !== 'alive'"
-                    label="Has a deathvote"
-                    :default-value="player.state === 'dead'"
-                    @change="players.setState(index, player.state === 'dead' ? 'voteless' : 'dead')"/>
+                <UButton
+                    :label="ui.swapping == index ? 'Cancel swap' : 'Swap seats'"
+                    variant="outline"
+                    @click="ui.swapping == index ? ui.swapping = -1 : ui.swapping = index"/>
             </div>
         </template>
     </UPopover>

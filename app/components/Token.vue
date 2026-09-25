@@ -53,6 +53,14 @@
                         </text>
                     </svg>
                 </template>
+
+                <!-- Swapping icon -->
+                <div v-if="kind == 'role' && canSwap"
+                    class="flex w-full h-full justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg"class="p-9" viewBox="0 0 24 24" >
+                        <path stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M7 11L3 7m0 0l4-4M3 7h18m-4 14l4-4m0 0l-4-4m4 4H3"></path>
+                    </svg>
+                </div>
             </div>
 
             <template v-if="!hidden && (data as Role)?.ability" #content>
@@ -108,6 +116,7 @@ const props = defineProps<{
 
     hideLeaves?: boolean
     warning?: boolean
+    canSwap?: boolean
 }>()
 
 const background = "/token.png"

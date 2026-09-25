@@ -43,6 +43,15 @@ export const usePlayers = defineStore('players', () => {
         reminders.removeGlobal(removed.reminders)
     }
 
+    /**
+     * Swap two players
+     * @param index1 Player to swap
+     * @param index2 Player to swap
+     */
+    function swap(index1: number, index2: number) {
+        [players[index1], players[index2]] = [players[index2]!, players[index1]!];
+    }
+
 
     /**
      * Updates the role of a player, and adds the reminders of that role to the game state
@@ -176,6 +185,8 @@ export const usePlayers = defineStore('players', () => {
         add,
         get,
         remove,
+        swap,
+
         setRole,
         setName,
         setReminder,

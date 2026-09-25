@@ -78,6 +78,8 @@ export interface UI {
     hidden: boolean
     /** Whether flavor text is hidden throughout the UI */
     showFlavor: boolean
+    /** Whether we are swapping players */
+    swapping: number | -1
 
     /** Whether to show a temporary grimoire */
     temporaryGrimoire: boolean

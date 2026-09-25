@@ -45,7 +45,7 @@ export const useUI = defineStore('UI', () => {
     }
 
     return {
-        ...toRefs(uistate),
+        ...uistate,
 
         centered,
         formatReminderText,
