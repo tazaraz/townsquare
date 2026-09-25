@@ -14,6 +14,19 @@
                     v-model="name"
                     :color="name == '' ? 'error' : 'primary'"
                     @change="players.setName(index, name)"/>
+                <UAlert variant="outline">
+                    <template #description>
+                        <USwitch
+                            label="Is alive"
+                            :default-value="player.state === 'alive'"
+                            @change="players.setState(index, player.state === 'alive' ? 'dead' : 'alive')"/>
+                        <USwitch v-if="player.state !== 'alive'"
+                            label="Has a deathvote"
+                            :default-value="player.state === 'dead'"
+                            class="mt-2"
+                            @change="players.setState(index, player.state === 'dead' ? 'voteless' : 'dead')"/>
+                    </template>
+                </UAlert>
                 <UButton
                     :label="ui.swapping == index ? 'Cancel swap' : 'Swap seats'"
                     variant="outline"
