@@ -31,6 +31,11 @@
                     :label="ui.swapping == index ? 'Cancel swap' : 'Swap seats'"
                     variant="outline"
                     @click="ui.swapping == index ? ui.swapping = -1 : ui.swapping = index"/>
+                <UButton
+                    color="error"
+                    label="Remove player"
+                    variant="outline"
+                    @click="players.remove(index)"/>
             </div>
         </template>
     </UPopover>
