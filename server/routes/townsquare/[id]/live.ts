@@ -42,6 +42,8 @@ export interface Session {
     id: string
     /** Token handed out to the player */
     token: string
+    /** The townsquare associated with this session */
+    townsquare: string
     /** Websocket peer */
     peer?: Peer
 
@@ -73,10 +75,11 @@ export const townsquares = new Map<Townsquare['id'], Townsquare>()
  * Creates a server side instance of a user connection
  * @returns A connection definition
  */
-export function createSession(): Session {
+export function createSession(townsquare: string): Session {
     return {
         id: randomUUID(),
         token: randomBytes(32).toString('hex'),
+        townsquare,
 
         messageCount: 0,
         alive: true,
@@ -123,7 +126,7 @@ export default defineWebSocketHandler({
 
         // Check validity
         const session = sessions.get(cookies.id)
-        if (!id || !session || token !== session.token || !townsquares.get(id))
+        if (!id || !session || session.token !== token || session.townsquare !== id || !townsquares.get(id))
             return peer.close(1008, 'Invalid session')
 
         // Add the user
@@ -151,13 +154,11 @@ export default defineWebSocketHandler({
         // Sanity check
         if (!session) {
             console.error(`Could not find ${peer.id} when closing`)
-            peer.send(createErrorMessage('Could not find your session on the server'))
             return
         }
 
         if (!id) {
             console.error(`Townsquare Id ${id} does not exist`)
-            peer.send(createErrorMessage('Could not find your session on the server'))
             return
         }
 

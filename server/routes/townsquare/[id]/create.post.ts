@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    const host = createSession()
+    const host = createSession(townsquareId)
 
     sessions.set(host.id, host)
     townsquares.set(townsquareId, {

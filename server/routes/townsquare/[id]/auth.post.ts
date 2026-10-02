@@ -36,10 +36,8 @@ export default defineEventHandler(async (event) => {
     }
 
     // Check if this user not is reauthing
-    const id = parseCookies(event)['id']
-
-    if (!(id && (townsquares.get(townsquareId)!.users.has(id) || townsquares.get(townsquareId)!.host == id ))) {
-        const session = createSession()
+    if (!id) {
+        const session = createSession(townsquareId)
         sessions.set(session.id, session)
 
         // Set token cookie inaccesible by js
