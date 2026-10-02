@@ -65,27 +65,30 @@ export interface Player {
 export type WheelOrientation = "center" | "top" | "right" | "bottom" | "left"
 
 export interface UI {
-    /** Index of the currently selected token in the wheel */
-    selectedToken: number
+    /** Whether the UI is in its hidden state */
+    hidden: boolean
+    /** Whether the UI should show the night order, or just leaves */
+    showNightOrder: boolean
+    /** Whether flavor text is hidden throughout the UI */
+    showFlavor: boolean
+
+    /** Whether we are swapping players */
+    swapping: number | -1
+    /** Internal only. Size of the token as computed by the wheel */
+    tokenSize: number
+
     /** Orientation of the token wheel */
     orientation: {
         user: WheelOrientation
         rendered: WheelOrientation
     }
-    /** Whether the UI should show the night order, or just leaves */
-    showNightOrder: boolean
-    /** Whether the UI is in its hidden state */
-    hidden: boolean
-    /** Whether flavor text is hidden throughout the UI */
-    showFlavor: boolean
-    /** Whether we are swapping players */
-    swapping: number | -1
 
-    /** Whether to show a temporary grimoire */
-    temporaryGrimoire: boolean
-    /** Allows quick access to actions */
-    lastAction: NavigationMenuItem
-
-    /** Internal only. Size of the token as computed by the wheel */
-    tokenSize: number
+    grimoire: {
+        /** Whether to show a temporary grimoire */
+        temporary: boolean
+        /** Index of the currently selected token in the wheel */
+        selectedToken: number
+        /** Allows quick access to actions */
+        lastAction: NavigationMenuItem
+    }
 }

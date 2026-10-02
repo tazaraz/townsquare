@@ -10,14 +10,14 @@
                     </span>
 
                     <UAlert
-                        :color="ui.temporaryGrimoire ? 'error' : 'neutral'"
+                        :color="ui.grimoire.temporary ? 'error' : 'neutral'"
                         variant="subtle"
                         class="w-fit mx-auto">
                         <template #description>
                             <USwitch
                                 label="Temporary grimoire"
                                 description="Enable or disable this feature"
-                                :default-value="ui.temporaryGrimoire"
+                                :default-value="ui.grimoire.temporary"
                                 @change="ui.toggleTemporaryGrimoire()"/>
                         </template>
                     </UAlert>

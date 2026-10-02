@@ -4,7 +4,7 @@
         mode="slideover"
         :ui="{ container: 'px-4!', left: 'h-full' }">
         <template #toggle="{ toggle }">
-            <UChip :show="ui.temporaryGrimoire"
+            <UChip :show="ui.grimoire.temporary"
                 text="!"
                 color="error"
                 size="3xl"
@@ -149,7 +149,7 @@ const items = computed<NavigationMenuItem[][]>(() => [[
         class: 'text-info',
         defaultOpen: true,
         icon: 'material-symbols-book-2-outline',
-        chip: ui.temporaryGrimoire ? {
+        chip: ui.grimoire.temporary ? {
             color: 'error',
             text: '!',
             size: 'xl'
@@ -188,9 +188,9 @@ const items = computed<NavigationMenuItem[][]>(() => [[
                 onSelect: () => displayInfo.open()
             },
             {
-                label: `${ui.temporaryGrimoire ? '!' : ''} Temporary Grimoire`,
+                label: `${ui.grimoire.temporary ? '!' : ''} Temporary Grimoire`,
                 description: `Allows non-persistent modifications`,
-                class: `${disabledItemCss} text-(--traveller) ${ui.temporaryGrimoire ? 'text-error' : ''}`,
+                class: `${disabledItemCss} text-(--traveller) ${ui.grimoire.temporary ? 'text-error' : ''}`,
                 disabled: !scenarioIsSelected.value,
                 onSelect: () => temporaryGrimoire.open()
             },
@@ -214,7 +214,7 @@ const items = computed<NavigationMenuItem[][]>(() => [[
                 onSelect: () => players.list.forEach(p => (p.role = undefined))
             },
             {
-                ...ui.lastAction,
+                ...ui.grimoire.lastAction,
             }
         ],
     },

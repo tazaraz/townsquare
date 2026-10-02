@@ -233,13 +233,13 @@ class PlayerCircle {
 
         // Update the class of the selected token in the DOM
         if (ui.orientation.rendered !== "center") {
-            this.seats.elements[ui.selectedToken]?.classList.remove("selected")
+            this.seats.elements[ui.grimoire.selectedToken]?.classList.remove("selected")
             this.seats.elements[selected]?.classList.add("selected")
         } else {
-            this.seats.elements[ui.selectedToken]?.classList.remove("selected")
+            this.seats.elements[ui.grimoire.selectedToken]?.classList.remove("selected")
         }
 
-        ui.selectedToken = selected
+        ui.grimoire.selectedToken = selected
 
         // If the slots have changed, update them and re-render the tokens
         if (force || !this.seats.slots.every((e, i) => e === slots[i])) {
@@ -259,7 +259,7 @@ class PlayerCircle {
      */
     scrollTo(index: number) {
         // Don't scroll if:
-        if (ui.orientation.rendered === "center" || index === ui.selectedToken) return false;
+        if (ui.orientation.rendered === "center" || index === ui.grimoire.selectedToken) return false;
 
         // Index offset calculation, bearing in mind rotationary nature of the wheel
         const m = this.seats.elements.length

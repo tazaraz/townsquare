@@ -33,19 +33,21 @@ export const useGamestate = defineStore('gamestate', () => {
     /** State of the UI */
     const ui = reactive<UI>({
         hidden: false,
-        selectedToken: 0,
+        showNightOrder: true,
+        showFlavor: true,
+
+        swapping: -1,
+        tokenSize: 0,
+
         orientation: {
             user: 'left',
             rendered: 'left'
         },
-        showNightOrder: true,
-        showFlavor: true,
-        swapping: -1,
-
-        temporaryGrimoire: false,
-        lastAction: {} as any,
-
-        tokenSize: 0,
+        grimoire: {
+            temporary: false,
+            selectedToken: 0,
+            lastAction: {} as any,
+        }
     })
 
     /** To which online session we are linked */
