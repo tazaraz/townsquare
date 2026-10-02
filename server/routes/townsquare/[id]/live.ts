@@ -173,7 +173,6 @@ export default defineWebSocketHandler({
         })
 
         townsquares.get(id)!.users.delete(session.id)
-        sessions.delete(session.id)
     },
 
     message(peer, message_raw) {
