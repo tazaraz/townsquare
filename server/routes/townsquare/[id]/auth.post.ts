@@ -23,6 +23,21 @@ export default defineEventHandler(async (event) => {
         })
     }
 
+    const id = parseCookies(event)['id']
+    const token = parseCookies(event)['token']
+    // Check if the token is valid
+    if (!id || !sessions.get(id)?.token ||
+        sessions.get(id)?.token !== token ||
+        sessions.get(id)?.townsquare !== townsquareId) {
+        // Something is not right. Delete the token cookie and ask for reauth using a password
+        deleteCookie(event, 'token');
+
+        throw createError({
+            statusCode: 401,
+            statusMessage: 'Your session expired. Log in again',
+        })
+    }
+
     // Check if the password is valid
     const valid = await argon2.verify(
         townsquares.get(townsquareId)!.passwordHash,
