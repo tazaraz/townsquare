@@ -15,7 +15,7 @@ describe('Game Store', () => {
 
     describe('Predefined Scenario', () => {
         it('loads', () => {
-            game.loadScenario('tb')
+            game.loadScript('tb')
             expect(state.roles.map(r => r.id)).toEqual([
                 "washerwoman", "librarian", "investigator", "chef", "empath", "fortuneteller", "undertaker", "monk", "ravenkeeper", "virgin", "slayer", "soldier", "mayor", "butler", "drunk", "recluse", "saint", "poisoner", "spy", "scarletwoman", "baron", "imp", "scapegoat", "gunslinger", "beggar", "bureaucrat", "thief"
             ])
@@ -26,7 +26,7 @@ describe('Game Store', () => {
             //     "Is The Drunk", "Good", "Evil", "Custom note"
             // ])
 
-            game.loadScenario('bmr')
+            game.loadScript('bmr')
             expect(state.roles.map(r => r.id)).toEqual([
                 "grandmother", "sailor", "chambermaid", "exorcist", "innkeeper", "gambler", "gossip", "courtier", "professor", "minstrel", "tealady", "pacifist", "fool", "tinker", "moonchild", "goon", "lunatic", "godfather", "devilsadvocate", "assassin", "mastermind", "zombuul", "pukka", "shabaloth", "po", "butcher", "bonecollector", "harlot", "barista", "deviant"
             ])
@@ -39,7 +39,7 @@ describe('Game Store', () => {
         })
 
         it('loads fabled', () => {
-            game.loadScenario([
+            game.loadScript([
                 "chef", "undertaker", "oracle", "sage", "ravenkeeper", "mayor", "recluse", "lunatic", "poisoner", "spy", "zombuul", "sentinel"
             ])
 
@@ -76,7 +76,7 @@ describe('Game Store', () => {
                 json: [{id: "_meta", name: "scenario name", author: "me"}, { id: "clockmaker" }, { id: "dreamer" }, { id: "snakecharmer" }, { id: "mathematician" }, { id: "flowergirl" }, { id: "towncrier" }, { id: "oracle" }, { id: "savant" }, { id: "seamstress" }, { id: "philosopher" }, { id: "artist" }, { id: "juggler" }, { id: "sage" }, { id: "mutant" }, { id: "sweetheart" }, { id: "barber" }, { id: "klutz" }, { id: "eviltwin" }, { id: "witch" }, { id: "cerenovus" }, { id: "pithag" }, { id: "fanggu" }, { id: "vigormortis" }, { id: "nodashii" }, { id: "vortox" }, { id: "apprentice" }, { id: "matron" }, { id: "voudon" },"judge", { id: "bishop" }]
             },
         ])('loads $name', ({ json }) => {
-            game.loadScenario(json as any)
+            game.loadScript(json as any)
 
             expect(state.roles.map(r => r.id)).toEqual([
                 "clockmaker", "dreamer", "snakecharmer", "mathematician", "flowergirl", "towncrier", "oracle", "savant", "seamstress", "philosopher", "artist", "juggler", "sage", "mutant", "sweetheart", "barber", "klutz", "eviltwin", "witch", "cerenovus", "pithag", "fanggu", "vigormortis", "nodashii", "vortox", "apprentice", "matron", "voudon","judge", "bishop"
@@ -97,7 +97,7 @@ describe('Game Store', () => {
                 json: [{ id: '_meta' }, "clockmaker", "dreamer", "snakecharmer", "mathematician", "flowergirl", "towncrier", "oracle"]
             },
         ])('detects incorrect json: $name', ({ json }) => {
-            expect(() => game.loadScenario(json as any)).toThrow()
+            expect(() => game.loadScript(json as any)).toThrow()
         })
     })
 

@@ -132,7 +132,7 @@ const scenarios = [
         level: s.level,
         type: s.type,
         button: `Play ${s.name}`,
-        onSelect: () => game.loadScenario(s.id) && emit('close')
+        onSelect: () => game.loadScript(s.id) && emit('close')
     }))
 ]
 
@@ -171,7 +171,7 @@ async function getUrl() {
         try {
             res = await fetch(`https://${url}`);
             const script = await res.json();
-            game.loadScenario(script);
+            game.loadScript(script);
         } catch (e) {
             if (e instanceof TypeError)
                 error.value = 'Invalid url'
@@ -192,7 +192,7 @@ async function loadFile(event: any) {
 
     try {
         const script = JSON.parse(await selectedFile.text());
-        game.loadScenario(script);
+        game.loadScript(script);
     } catch (e) {
         error.value = e instanceof DataFormatError ? String(e) : 'Invalid JSON formatting'
         setTimeout(() => error.value = '', 5000)
@@ -204,7 +204,7 @@ async function getClipboard() {
 
     try {
         const script = JSON.parse(text);
-        game.loadScenario(script);
+        game.loadScript(script);
     } catch (e) {
         error.value = e instanceof DataFormatError ? String(e) : 'Invalid JSON formatting'
         setTimeout(() => error.value = '', 5000)

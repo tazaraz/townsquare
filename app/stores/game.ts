@@ -133,7 +133,7 @@ export const useGame = defineStore('game', () => {
      * Loads a scenario from the editions or supplied data, and populates the game state with the roles and fabled roles of that edition
      * @param game Either an array of role ids (for custom scripts), or an edition id (for predefined editions)
      */
-    function loadScenario(game: (EditionJSON | string)[] | string) {
+    function loadScript(game: (EditionJSON | string)[] | string) {
         // If the game is a custom script, we will have an array of role ids
         if (Array.isArray(game)) {
             // Find the metadata
@@ -317,7 +317,7 @@ export const useGame = defineStore('game', () => {
         division,
 
         calculateNightOrder,
-        loadScenario,
+        loadScript,
         loadRole,
         loadTravellers,
 

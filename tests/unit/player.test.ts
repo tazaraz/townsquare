@@ -41,7 +41,7 @@ describe('Player Store', () => {
 
     describe('manages reminders', () => {
         it('available', () => {
-            game.loadScenario('bmr')
+            game.loadScript('bmr')
             for (const [p, i] of ["grandmother", "sailor", "chambermaid", "exorcist", "innkeeper", "gambler"].entries()) {
                 players.add(i.toString())
                 players.setRole(p, i)
@@ -52,7 +52,7 @@ describe('Player Store', () => {
         })
 
         it('assignes', () => {
-            game.loadScenario('bmr')
+            game.loadScript('bmr')
             for (const [p, i] of ["grandmother", "sailor", "chambermaid", "exorcist", "innkeeper", "gambler"].entries()) {
                 players.add(i.toString())
                 players.setRole(p, i)
