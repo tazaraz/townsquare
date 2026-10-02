@@ -3,7 +3,6 @@ import type { Peer } from 'crossws'
 
 const TOWNSQUARE_MAX_INACTIVITY = 14400000  // 4h
 const PING_INTERVAL = 30000;                // 30s
-const MAX_MESSAGES_PER_SECOND = 5;
 
 interface Message extends Object {
     /** If this is a broadcasting message instead of a 1-to-1 message */
@@ -18,9 +17,10 @@ interface Message extends Object {
           // UI state change
           'nominated' | 'marked' | 'night' | 'votelocked' |
           // Player actions
-          'nominate' | 'voting' | 'rename' | 'claim' | 'unclaim' |
+          'claim' | 'unclaim' | 'rename' | 'nominate' | 'voting' |
           // Server specific
           'ping' | 'pong' | 'error' | 'leave' | 'host'
+    // TODO: 'grimoire' | 'state' | 'bluffs' | 'nominate' | 'voting' | 'nominated' | 'marked' | 'night' | 'votelocked'
 
     /** The payload */
     data: any
@@ -270,7 +270,7 @@ export default defineWebSocketHandler({
                     return
                 }
 
-                // Reject data which does not come from the host, except `message`
+                // Reject data which does not go to the host, except `message`
                 if (message.kind !== 'message' && townsquares.get(id)!.host !== to.id)
                     return;
 
