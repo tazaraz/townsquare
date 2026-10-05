@@ -19,9 +19,9 @@ export const useUI = defineStore('UI', () => {
      */
     function runAction(label: string, action: Function) {
         // Store the label
-        uistate.lastAction.label = label
-        uistate.lastAction.description = 'Last action';
-        uistate.lastAction.onSelect = () => action()
+        uistate.grimoire.lastAction.label = label
+        uistate.grimoire.lastAction.description = 'Last action';
+        uistate.grimoire.lastAction.onSelect = () => action()
 
         action();
     }
@@ -31,8 +31,8 @@ export const useUI = defineStore('UI', () => {
      * Changes the grimoire to allow for non-persisting changes
      */
     function toggleTemporaryGrimoire() {
-        uistate.temporaryGrimoire = !uistate.temporaryGrimoire
-        if (uistate.temporaryGrimoire) {
+        uistate.grimoire.temporary = !uistate.grimoire.temporary
+        if (uistate.grimoire.temporary) {
             // Copy old state
             oldGrimoire.value.splice(0, oldGrimoire.value.length, ...players)
             // Insert a temporary copy
