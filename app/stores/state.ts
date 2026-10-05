@@ -54,7 +54,11 @@ export const useGamestate = defineStore('gamestate', () => {
     const sessionId = ref('')
 
     /** Whether we are the host */
-    const isHost = ref(false)
+    const isHost = ref(true)
+    /** Our current seat as a player */
+    const seatIndex = ref(-1)
+    /** Our id in the socket */
+    const id = ref('')
 
     return {
         edition,
@@ -68,6 +72,8 @@ export const useGamestate = defineStore('gamestate', () => {
         ui,
         sessionId,
         isHost,
+        seatIndex,
+        id,
     }
 }, {
     // persist: {

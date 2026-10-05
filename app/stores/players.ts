@@ -45,13 +45,36 @@ export const usePlayers = defineStore('players', () => {
 
     /**
      * Swap two players
-     * @param index1 Player to swap
-     * @param index2 Player to swap
+     * @param index1 Swap from
+     * @param index2 Swap to
      */
     function swap(index1: number, index2: number) {
         [players[index1], players[index2]] = [players[index2]!, players[index1]!];
+        gamestate.seatIndex = index2
     }
 
+    /**
+     * Claims a seat for a player
+     * @param index Index of the seat
+     * @param id The websocket ID
+     */
+    function claim(index: number, id: string) {
+        players[index]!.socketId = id;
+        gamestate.seatIndex = index
+    }
+
+    /**
+     * Unclaims a seat
+     * @param index Index to unclaim
+     */
+    function unclaim(index: number) {
+        if (index < 0)
+            return false
+
+        players[index]!.socketId = undefined
+        gamestate.seatIndex = -1
+        return true
+    }
 
     /**
      * Updates the role of a player, and adds the reminders of that role to the game state
@@ -186,11 +209,13 @@ export const usePlayers = defineStore('players', () => {
         get,
         remove,
         swap,
+        claim,
+        unclaim,
 
         setRole,
         setName,
-        setReminder,
         setState,
+        setReminder,
         removeReminder,
     }
 })

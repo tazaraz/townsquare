@@ -96,11 +96,13 @@ import {
     ModalNightOrder,
     ModalGameSetup,
     ModalSelectScenario,
-    DialogInput,
     ModalTokenSelector,
     ModalTemporaryGrimoire,
     ModalDisplayInfo,
     ModalDemonBluffs,
+    DialogInput,
+    DialogSession,
+    DialogConfirm,
 } from '#components'
 
 defineShortcuts({
@@ -115,6 +117,7 @@ const overlay = useOverlay();
 const players = usePlayers();
 const ui = useUI();
 const game = useGame();
+const socket = useSocket();
 
 const referenceSheet = overlay.create(ModalReferenceSheet)
 const nightOrder = overlay.create(ModalNightOrder)
@@ -125,6 +128,8 @@ const displayInfo = overlay.create(ModalDisplayInfo)
 const temporaryGrimoire = overlay.create(ModalTemporaryGrimoire)
 const demonBluffs = overlay.create(ModalDemonBluffs)
 
+const confirmDialog = overlay.create(DialogConfirm)
+const sessionDialog = overlay.create(DialogSession)
 const inputDialog = overlay.create(DialogInput)
 
 
@@ -132,7 +137,7 @@ const scenarioIsSelected = computed(() => game.availableRoles.length > 0)
 const disabledItemCss = computed(() => scenarioIsSelected.value ? '' : 'opacity-50 cursor-not-allowed')
 
 
-const items = computed<NavigationMenuItem[][]>(() => [[
+const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
     !scenarioIsSelected.value ? {} : {
         label: 'Reference sheet',
         onSelect: () => referenceSheet.open({ kind: 'role' }),
@@ -143,7 +148,7 @@ const items = computed<NavigationMenuItem[][]>(() => [[
         onSelect: () => nightOrder.open(),
         active: false
     },
-], [
+], !socket.isHost ? [] : [
     {
         label: 'Storyteller Tools',
         class: 'text-info',
@@ -164,7 +169,7 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             {
                 label: 'Game setup',
                 description: 'Select roles and assign them to players.',
-                class: `text-sky-300 ${disabledItemCss}`,
+                class: `text-sky-300 ${disabledItemCss.value}`,
                 disabled: !scenarioIsSelected.value,
                 onSelect: () =>  gameSetup.open(),
             },
@@ -183,22 +188,30 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             {
                 label: 'Display info',
                 description: 'Either a token or text',
-                class: `${disabledItemCss} text-(--traveller)`,
+                class: `${disabledItemCss.value} text-(--traveller)`,
                 disabled: !scenarioIsSelected.value,
                 onSelect: () => displayInfo.open()
             },
             {
                 label: `${ui.grimoire.temporary ? '!' : ''} Temporary Grimoire`,
                 description: `Allows non-persistent modifications`,
-                class: `${disabledItemCss} text-(--traveller) ${ui.grimoire.temporary ? 'text-error' : ''}`,
+                class: `${disabledItemCss.value} text-(--traveller) ${ui.grimoire.temporary ? 'text-error' : ''}`,
                 disabled: !scenarioIsSelected.value,
                 onSelect: () => temporaryGrimoire.open()
             },
             {
                 label: 'Set demon bluffs',
                 description: 'They probably need it',
-                class: 'text-(--demon)',
+                class: `${disabledItemCss.value} text-(--demon)`,
+                disabled: !scenarioIsSelected.value,
                 onSelect: () => demonBluffs.open({ editable: true })
+            },
+            {
+                label: 'Hand out roles & bluffs',
+                description: '',
+                class: `${disabledItemCss.value} text-(--minion)`,
+                disabled: !scenarioIsSelected.value,
+                onSelect: () => syncRoleData()
             },
             {
                 label: 'Add a player',
@@ -209,7 +222,7 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             },
             {
                 label: 'Clear all player roles',
-                class: `${disabledItemCss}`,
+                class: `${disabledItemCss.value}`,
                 disabled: !scenarioIsSelected.value,
                 onSelect: () => players.list.forEach(p => (p.role = undefined))
             },
@@ -218,6 +231,52 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             }
         ],
     },
+], [
+    {
+        label: 'Game',
+        class: 'grid-cols-1',
+        defaultOpen: true,
+        slot: 'game' as const,
+        children: [
+            socket.id ? {} : {
+                label: 'Connect to a game',
+                onSelect: () => sessionDialog.open({ create: false })
+            },
+            socket.id ? {} : {
+                label: 'Host a game',
+                onSelect: () => sessionDialog.open({ create: true })
+            },
+            socket.id ? {
+                label: 'Leave game',
+                icon: 'i-lucide-file-text',
+                onSelect: () => socket.disconnect()
+            } : {},
+            {
+                label: 'Load game',
+                onSelect: () => {
+                    game.loadScript("tb")
+                    for (const p of Array(8).keys()) {
+                        players.add((p + 1).toString())
+                    }
+                }
+            },
+            {
+                label: '3',
+                description: 'Total connected players',
+                icon: 'i-lucide-file-text',
+            },
+            {
+                description: 'Player role division',
+                icon: 'i-lucide-file-text',
+                slot: 'division' as const
+            },
+            {
+                label: 'Demon bluffs',
+                class: 'text-(--demon)',
+                onSelect: () => demonBluffs.open({ editable: false })
+            }
+        ]
+    }
 ], game.assignedFabled.length + game.assignedLoric.length == 0 ? [] : [
     {
         slot: 'modifier' as const,
@@ -235,13 +294,27 @@ const items = computed<NavigationMenuItem[][]>(() => [[
             }))
         ]
     },
-]])
+]]))
+
+/** This function removes any {} objects from the menu */
+function cleanMenu(menu: NavigationMenuItem[][]){
+    for (let group = 0; group < menu.length; group++) {
+        menu[group] = menu[group]!.filter(item => Object.keys(item).length > 0);
+
+        for (let item of menu[group]!) {
+            if (item.children)
+                item.children = item.children.filter(child => Object.keys(child).length > 0)
+        }
+    }
+
+    return menu.filter(group => group.length > 0)
+}
 
 async function addPlayer() {
     if (players.count >= MAX_PLAYERS)
         return
 
-    const input = inputDialog.open({ title: 'Input the player name', placeholder: 'Player name'})
+    const input = inputDialog.open({ title: 'Input the player name', placeholder: 'Player name' })
 
     const value = await input.result as string | undefined;
     if (value) {
@@ -261,6 +334,19 @@ async function addModifier(type: 'fabled' | 'loric') {
             game.toggleFabled((item as Role).name)
         else
             game.toggleLoric((item as Role).name)
+    }
+}
+
+async function syncRoleData() {
+    const confirm = confirmDialog.open({
+        title: 'Syncing roles & bluffs',
+        text: 'Are you sure you want to sync the roles to the players?'
+    })
+
+    const yes = await confirm.result;
+    console.log(yes)
+    if (yes) {
+        socket.syncDataToPlayers();
     }
 }
 </script>
