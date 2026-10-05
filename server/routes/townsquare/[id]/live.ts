@@ -130,6 +130,7 @@ export default defineWebSocketHandler({
             return peer.close(1008, 'Invalid session')
 
         // Add the user
+        session.alive = true;
         session.peer = peer
 
         // Don't add if it is the host
@@ -270,8 +271,9 @@ export default defineWebSocketHandler({
                     return
                 }
 
-                // Reject data which does not go to the host, except `message`
-                if (message.kind !== 'message' && townsquares.get(id)!.host !== to.id)
+                // Reject data which does not go to the host, except `message`. Allow data from the host.
+                if (session.id !== townsquares.get(id)!.host &&
+                    message.kind !== 'message' && townsquares.get(id)!.host !== to.id)
                     return;
 
                 // Make sure the player exists
@@ -303,8 +305,10 @@ export default defineWebSocketHandler({
 const pingpong = setInterval(() => {
     for (const [id, connection] of sessions) {
         // Close the connection if it wasn't alive since previous ping-pong
-        if (!connection.alive)
-            return connection.peer?.terminate()
+            connection.peer?.terminate()
+            connection.peer = undefined
+            continue
+        }
 
         connection.alive = false;
         connection.peer?.send({ origin: 'server', kind: 'ping', data: undefined} satisfies ReceiveMessage)
