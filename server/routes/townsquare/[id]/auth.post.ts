@@ -23,19 +23,22 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    const id = parseCookies(event)['id']
-    const token = parseCookies(event)['token']
+    let id = parseCookies(event)['id']
+    let token = parseCookies(event)['token']
     // Check if the token is valid
     if (!id || !sessions.get(id)?.token ||
         sessions.get(id)?.token !== token ||
         sessions.get(id)?.townsquare !== townsquareId) {
         // Something is not right. Delete the token cookie and ask for reauth using a password
         deleteCookie(event, 'token');
+        id = undefined;
 
-        throw createError({
-            statusCode: 401,
-            statusMessage: 'Your session expired. Log in again',
-        })
+        if (!townsquareId || !password) {
+            throw createError({
+                statusCode: 401,
+                statusMessage: 'Your session expired. Log in again',
+            })
+        }
     }
 
     // Check if the password is valid
