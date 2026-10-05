@@ -31,9 +31,7 @@ export const useGame = defineStore('game', () => {
     const gamestate = useGamestate()
     const players   = usePlayers()
 
-    /**
-     * The edition and script being played
-     */
+    /** The edition and script being played*/
     const edition = computed<Edition>(() => gamestate.edition);
 
     /** Contains all roles available at the moment */
@@ -270,6 +268,16 @@ export const useGame = defineStore('game', () => {
         return true;
     }
 
+    function setBluff(index: number, role: string | undefined): boolean {
+        if (index < 0 && 3 < index) return false;
+        try {
+            demonBluffs.value[index] = role ? loadRole(role) : undefined
+            return true
+        } catch {
+            return false
+        }
+    }
+
     /** Contains selected roles during setup */
     const setupSelected = ref<Role[]>(players.list.map(p => p.role).filter(r => r !== undefined))
 
@@ -323,6 +331,7 @@ export const useGame = defineStore('game', () => {
 
         toggleFabled: (name: string) => toggleModifier(name, 'fabled'),
         toggleLoric: (name: string) => toggleModifier(name, 'loric'),
+        setBluff,
 
         setupSelected,
         setupAssignRandomly,

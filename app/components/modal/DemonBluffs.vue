@@ -38,7 +38,6 @@ const emit = defineEmits<{
 }>()
 
 const game = useGame()
-const ui = useUI();
 
 const overlay = useOverlay();
 
@@ -56,7 +55,7 @@ async function editBluff(index: number) {
 
     const role = await selector.result as Role | "unset" | undefined
     if (role && role !== 'unset') {
-        game.demonBluffs[index] = role
+        game.setBluff(index, role.id)
     }
 }
 </script>
