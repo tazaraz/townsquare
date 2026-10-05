@@ -3,7 +3,7 @@
         :title="title ?? 'Title unset'"
         :ui="{ body: 'flex justify-center'}">
         <template #body>
-            <slot></slot>
+            {{ text }}
         </template>
         <template #footer>
             <ModalFooter>
@@ -24,7 +24,8 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-    title: string
+    title: string,
+    text: string,
 }>()
 
 const emit = defineEmits<{
