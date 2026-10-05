@@ -55,11 +55,31 @@ export type TokenKind = "role" | "fabled" | "loric" | "reminder"
 export type PlayerState = "alive" | "dead" | "voteless"
 
 export interface Player {
+    /** Shown name in the UI */
     name: string
+    /** Role assigned to the player */
     role: Role | undefined
+    /** Reminders assigned to the player */
     reminders: Reminder[]
-
+    /** State of the player in the UI */
     state: PlayerState
+
+    /** Whether this player is currently voting */
+    isVoting: boolean
+    /** This player is marked for death */
+    isMarked: boolean
+    /** Whether this player is nominated */
+    nominated: {
+        /** Whether the player is currently nominated */
+        currently: boolean,
+        /** Whether the player has already been nominated */
+        been: boolean,
+        /** Whether the player has nominated someone else */
+        has: boolean,
+    }
+
+    /** ID of the player in the socket */
+    socketId?: string
 }
 
 export type WheelOrientation = "center" | "top" | "right" | "bottom" | "left"

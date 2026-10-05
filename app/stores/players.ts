@@ -21,6 +21,14 @@ export const usePlayers = defineStore('players', () => {
             role: undefined,
             reminders: [],
             state: "alive",
+
+            isVoting: false,
+            isMarked: false,
+            nominated: {
+                currently: false,
+                been: false,
+                has: false
+            }
         })
     }
 
