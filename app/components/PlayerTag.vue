@@ -16,7 +16,7 @@
                     :disabled="index !== socket.seatIndex && !socket.isHost"
                     v-model="name"
                     :color="name == '' ? 'error' : 'primary'"
-                    @change="socket.requestRename(name)"/>
+                    @change="socket.isHost ? players.setName(index, name) : socket.requestRename(name)"/>
                 <UAlert v-if="socket.isHost" variant="outline">
                     <template #description>
                         <USwitch
