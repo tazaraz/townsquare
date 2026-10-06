@@ -32,7 +32,7 @@ export const useGame = defineStore('game', () => {
     const players   = usePlayers()
 
     /** The edition and script being played*/
-    const edition = computed<Edition>(() => gamestate.edition);
+    const edition = computed(() => gamestate.edition);
 
     /** Contains all roles available at the moment */
     const availableRoles = computed(() => gamestate.roles);
