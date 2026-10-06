@@ -30,6 +30,7 @@ export default defineEventHandler(async (event) => {
         sessions.get(id)?.token !== token ||
         sessions.get(id)?.townsquare !== townsquareId) {
         // Something is not right. Delete the token cookie and ask for reauth using a password
+        deleteCookie(event, 'id');
         deleteCookie(event, 'token');
         id = undefined;
 
