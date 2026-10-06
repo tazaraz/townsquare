@@ -102,6 +102,13 @@ export const useSocket = defineStore('socket', () => {
             })
         })
     }
+
+    /** Allows the host to shut down the current session, and disconnect all players */
+    function closeTownsquare() {
+        if (!ws) return
+
+        sendTo('server', 'close', true)
+        disconnect()
     }
 
     /** Send a direct message */
@@ -339,6 +346,7 @@ export const useSocket = defineStore('socket', () => {
         create,
         connect,
         disconnect,
+        closeTownsquare,
 
         syncDataToPlayers,
 
