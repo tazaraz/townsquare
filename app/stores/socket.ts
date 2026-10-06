@@ -91,6 +91,17 @@ export const useSocket = defineStore('socket', () => {
             disconnect()
             unobserveState()
         }
+
+        // Create an awaitable promise that resolves when the socket is connected
+        return new Promise<void>((resolve) => {
+            const stop = watch(() => gamestate.id, (id) => {
+                if (id) {
+                    stop()
+                    resolve()
+                }
+            })
+        })
+    }
     }
 
     /** Send a direct message */
