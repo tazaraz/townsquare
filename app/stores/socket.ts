@@ -248,9 +248,10 @@ export const useSocket = defineStore('socket', () => {
                     }
 
                     broadcast('claim', { index: message.data.index, id: message.origin })
+                    message.data.id = message.origin
                 }
 
-                return players.claim(message.data.index, message.origin)
+                return players.claim(message.data.index, message.data.id)
             case 'unclaim':
                 if (gamestate.isHost) {
                     // Verify that this player can unclaim
