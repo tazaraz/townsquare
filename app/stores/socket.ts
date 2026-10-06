@@ -75,7 +75,6 @@ export const useSocket = defineStore('socket', () => {
     }
 
     function createWS(townsquare: string) {
-        gamestate.id = document.cookie.match(/id=([^;]+)/)?.[1]!
         window.history.pushState({}, '', `/townsquare/${townsquare}`)
 
         // Set some stuff
@@ -87,7 +86,6 @@ export const useSocket = defineStore('socket', () => {
         ws.onmessage = handleMessage
         ws.onclose = () => {
             // Show hosting tools again
-            gamestate.isHost = true
             disconnect()
             unobserveState()
         }

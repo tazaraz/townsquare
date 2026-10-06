@@ -5,15 +5,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
     '@nuxt/ui',
-    '@nuxtjs/i18n',
     '@pinia/nuxt',
     '@nuxt/image',
     '@nuxt/test-utils/module',
     'pinia-plugin-persistedstate/nuxt',
   ],
-  i18n: {
-
-  },
   typescript: {
     tsConfig: {
       include: [
