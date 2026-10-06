@@ -46,19 +46,19 @@
                         <UButton
                             :label="`Randomly assign ${roleTotal} character${roleTotal == 1 ? '' : 's'}`"
                             color="neutral"
-                            :disabled="roleTotal > players.count"
+                            :disabled="roleTotal > players.length"
                             @click="ui.runAction('Reroll Assignment', game.setupAssignRandomly); emit('close')"/>
-                        <Remark v-if="roleTotal !== players.count || players.count >= MAX_ACTIVE_PLAYERS"
+                        <Remark v-if="roleTotal !== players.length || players.length >= MAX_ACTIVE_PLAYERS"
                             kind="info"
                             class="shuffle-warning w-[32px] p-1">
-                            <template v-if="roleTotal < players.count">
-                                {{ players.count }} players are present, but you only have selected {{ roleTotal }} roles. Only the first {{ roleTotal }} players will receive a role.
+                            <template v-if="roleTotal < players.length">
+                                {{ players.length }} players are present, but you only have selected {{ roleTotal }} roles. Only the first {{ roleTotal }} players will receive a role.
                             </template>
-                            <template v-if="roleTotal > players.count">
-                                {{ players.count }} players are present, but you have selected {{ roleTotal }} roles.
+                            <template v-if="roleTotal > players.length">
+                                {{ players.length }} players are present, but you have selected {{ roleTotal }} roles.
                             </template>
-                            <hr v-if="roleTotal !== players.count && players.count >= MAX_ACTIVE_PLAYERS" class="my-2">
-                            <template v-if="players.count >= MAX_ACTIVE_PLAYERS">
+                            <hr v-if="roleTotal !== players.length && players.length >= MAX_ACTIVE_PLAYERS" class="my-2">
+                            <template v-if="players.length >= MAX_ACTIVE_PLAYERS">
                                 Up to {{ MAX_ACTIVE_PLAYERS }} can be assigned. The leftovers will not be assigned.
                             </template>
                         </Remark>

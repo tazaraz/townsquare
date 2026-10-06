@@ -76,7 +76,7 @@ export const useGame = defineStore('game', () => {
     const division = computed<TeamDivision | null>(() => {
         // Count the number of active players
         let travellers = players.list.filter(p => p.role?.team === "traveller").length
-        const divisionRuleIdx = players.count - travellers - 5
+        const divisionRuleIdx = players.length - travellers - 5
 
         // Make sure we have at least 5 players
         if (divisionRuleIdx < 0) return null;
@@ -285,7 +285,7 @@ export const useGame = defineStore('game', () => {
     function setupAssignRandomly() {
         const roles = shuffleArray(setupSelected.value.slice(0, MAX_ACTIVE_PLAYERS))
 
-        for (let p = 0; p < players.count; p++) {
+        for (let p = 0; p < players.length; p++) {
             players.setRole(p, roles[p]?.id)
         }
     }

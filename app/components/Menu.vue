@@ -215,9 +215,9 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
             },
             {
                 label: 'Add a player',
-                description: (players.count >= MAX_PLAYERS ? 'Max players reached' : ''),
-                class:       (players.count >= MAX_PLAYERS ? 'opacity-50 cursor-not-allowed' : ''),
-                disabled:     players.count >= MAX_PLAYERS,
+                description: (players.length >= MAX_PLAYERS ? 'Max players reached' : ''),
+                class:       (players.length >= MAX_PLAYERS ? 'opacity-50 cursor-not-allowed' : ''),
+                disabled:     players.length >= MAX_PLAYERS,
                 onSelect: () => addPlayer(),
             },
             {
@@ -311,7 +311,7 @@ function cleanMenu(menu: NavigationMenuItem[][]){
 }
 
 async function addPlayer() {
-    if (players.count >= MAX_PLAYERS)
+    if (players.length >= MAX_PLAYERS)
         return
 
     const input = inputDialog.open({ title: 'Input the player name', placeholder: 'Player name' })

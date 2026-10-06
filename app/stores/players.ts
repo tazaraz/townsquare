@@ -9,7 +9,7 @@ export const usePlayers = defineStore('players', () => {
     /** Contains the list of players, or the temporary state of the list of players */
     const list = computed(() => players as Player[])
 
-    const count = computed(() => players.length)
+    const length = computed(() => players.length)
 
     /**
      * Player to add to the game
@@ -211,7 +211,7 @@ export const usePlayers = defineStore('players', () => {
 
     return {
         list,
-        count,
+        length,
 
         add,
         get,
