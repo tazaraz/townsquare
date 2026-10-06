@@ -138,13 +138,11 @@ export default defineWebSocketHandler({
             townsquares.get(id)!.users.add(session.id)
 
         // Clarify for the user whether they are noted in this session as the host
-        setTimeout(() => {
-            peer.send({
-                origin: 'server',
-                kind: 'host',
-                data: townsquares.get(id)!.host === session.id
-            } satisfies ReceiveMessage)
-        }, 500)
+        peer.send({
+            origin: 'server',
+            kind: 'connected',
+            data: { isHost: townsquares.get(id)!.host === session.id }
+        } satisfies ReceiveMessage)
     },
 
     close(peer, details) {
@@ -154,7 +152,6 @@ export default defineWebSocketHandler({
 
         // Sanity check
         if (!session) {
-            console.error(`Could not find ${peer.id} when closing`)
             return
         }
 
@@ -164,8 +161,8 @@ export default defineWebSocketHandler({
         }
 
         // Notify the connected clients of the disconnect
-        townsquares.get(id)!.users.forEach(u => {
-            sessions.get(u)!.peer!.send({
+        townsquares.get(id)?.users.forEach(u => {
+            sessions.get(u)?.peer!.send({
                 broadcast: true,
                 kind: 'leave',
                 origin: 'server',
@@ -173,11 +170,12 @@ export default defineWebSocketHandler({
             } satisfies ReceiveMessage)
         })
 
-        townsquares.get(id)!.users.delete(session.id)
+        townsquares.get(id)?.users.delete(session.id)
     },
 
     message(peer, message_raw) {
         const id = getTownsquareId(peer)
+
         if (!id) {
             peer.close(1008, 'Could not find session')
             return
@@ -188,7 +186,7 @@ export default defineWebSocketHandler({
             return
         }
 
-        const session = sessions.values().find(c => c.peer!.id == peer.id);
+        const session = sessions.values().find(c => c.peer?.id == peer.id);
         // Sanity check
         if (!session) {
             console.error(`Could not find ${peer.id} for communication`)
@@ -232,11 +230,27 @@ export default defineWebSocketHandler({
                 return
             }
 
+            // Close the townsquare if the host leaves
+            if (message.kind == 'close') {
+                // Ensure this is the host
+                if (peer.id === sessions.get(townsquares.get(id)!.host)?.peer?.id) {
+                    for (const connectionId of townsquares.get(id)!.users) {
+                        sessions.get(connectionId)?.peer?.close(1001, 'The host has closed this townsquare.')
+                        sessions.delete(connectionId)
+                    }
+
+                    townsquares.delete(id)
+                }
+                return;
+            }
+
             // Broadcast the message
             if (message.broadcast === true) {
                 // Only the host can do this
                 if (peer.id !== sessions.get(townsquares.get(id)!.host)?.peer?.id)
                     return;
+
+                console.log(`Broadcasting message from ${session.id} to ${townsquares.get(id)!.users.size} users`)
 
                 // Send to everyone
                 townsquares.get(id)!.users.forEach(u => {
@@ -260,6 +274,12 @@ export default defineWebSocketHandler({
                     : sessions.get(message.to!)
                 if (!to) {
                     peer.send(createErrorMessage(`Could not find recipient '${message.to}'`))
+                    return
+                }
+
+                // Prevent the host sending to the host
+                if (peer.id === to.peer?.id) {
+                    peer.send(createErrorMessage('You cannot send messages to yourself'))
                     return
                 }
 
@@ -305,6 +325,7 @@ export default defineWebSocketHandler({
 const pingpong = setInterval(() => {
     for (const [id, connection] of sessions) {
         // Close the connection if it wasn't alive since previous ping-pong
+        if (!connection.alive && connection.peer) {
             connection.peer?.terminate()
             connection.peer = undefined
             continue

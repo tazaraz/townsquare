@@ -69,7 +69,7 @@ export const useSocket = defineStore('socket', () => {
 
     function reconnect() {
         console.log('reconnect')
-        const townsquare = window.location.href.match(/\/townsquare\/([^\/]+)/)?.[1]
+        const townsquare = getUrlSessionId()
         if (townsquare)
             createWS(townsquare)
     }
@@ -140,11 +140,78 @@ export const useSocket = defineStore('socket', () => {
         switch (message.kind) {
             case 'ping':
                 return sendTo('server', 'pong', true)
-            case 'host':
-                gamestate.isHost = message.data
+
+            case 'connected':
+                gamestate.isHost = message.data.isHost
                 if (gamestate.isHost)
                     unobserveState = observeState()
+
+                if (!gamestate.isHost) {
+                    sendTo('host', 'sync', true)
+                } else {
+                    // We have synced up, so we can now set our sessionId
+                    gamestate.id = document.cookie.match(/id=([^;]+)/)?.[1]!
+                    gamestate.sessionId = getUrlSessionId()!
+                }
                 return
+
+            // Sync state to the player
+            case 'sync':
+                // Send data to the joined player as host
+                if (gamestate.isHost) {
+                    sendTo(message.origin, 'sync', {
+                        edition: gamestate.edition,
+                        fabled: gamestate.fabled.map(r => r.id),
+                        loric: gamestate.loric.map(r => r.id),
+                        demonBluffs: gamestate.players.find(p => p.role?.team === 'demon')?.socketId === message.origin
+                            ? gamestate.demonBluffs.map(b => b?.id)
+                            : [undefined, undefined, undefined],
+                        players: players.list.map(p => ({
+                            name: p.name,
+                            state: p.state,
+                            socketId: p.socketId,
+                        })),
+                    })
+                }
+
+                // Receive data from the host
+                else {
+                    // If no edition is set, ignore
+                    if (message.data.edition) {
+                        game.loadScript(message.data.edition.roles)
+
+                        // If empty, these do nothing
+                        message.data.fabled.forEach((id: string) => game.toggleFabled(id))
+                        message.data.loric.forEach((id: string) => game.toggleLoric(id))
+                        message.data.demonBluffs.forEach((id: string | undefined, i: number) => game.setBluff(i, id));
+                    }
+
+                    // If there is a mismatch in the player data, reset it
+                    if (JSON.stringify(message.data.players.map((p: any) => ({
+                            name: p.name, state: p.state, socketId: p.socketId
+                        })))
+                        !== JSON.stringify(players.list.map((p: any) => ({
+                            name: p.name, state: p.state, socketId: p.socketId
+                        })))
+                    ) {
+                        gamestate.reset('seats')
+                    }
+
+                    message.data.players.forEach((
+                        { name, state, socketId }: { name: string, state: PlayerState, socketId: string }) => {
+                            // Only add new players, and don't add the same player twice
+                            if (!players.list.some(p => p.socketId === socketId && socketId !== undefined))
+                                players.add(name)
+
+                            players.setState(players.length - 1, state)
+                        }
+                    );
+                }
+
+                // We have synced up, so we can now set our sessionId
+                gamestate.id = document.cookie.match(/id=([^;]+)/)?.[1]!
+                gamestate.sessionId = getUrlSessionId()!
+
             case 'leave':
                 // Get the player with this id
                 const seat = players.list.find(p => p.socketId == message.data.id)
@@ -164,7 +231,7 @@ export const useSocket = defineStore('socket', () => {
                         return
                     }
 
-                    broadcast('claim', { index: message.data.index, id: message.origin})
+                    broadcast('claim', { index: message.data.index, id: message.origin })
                 }
 
                 return players.claim(message.data.index, message.origin)
@@ -195,7 +262,7 @@ export const useSocket = defineStore('socket', () => {
                 return players.swap(message.data.index1, message.data.index2)
             case 'role':
                 if (gamestate.isHost) return
-                return console.log(players.setRole(message.data.index, message.data.role))
+                return players.setRole(message.data.index, message.data.role)
             case 'player':
                 if (gamestate.isHost) return
                 if (message.data.add)
@@ -247,6 +314,10 @@ export const useSocket = defineStore('socket', () => {
             unactPlayers();
             unactGame();
         }
+    }
+
+    function getUrlSessionId() {
+        return window.location.href.match(/\/townsquare\/([^\/]+)/)?.[1]
     }
 
     return {
