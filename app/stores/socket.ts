@@ -59,7 +59,12 @@ export const useSocket = defineStore('socket', () => {
     function disconnect() {
         ws?.close()
         ws = undefined;
-        gamestate.id = ''
+        gamestate.reset('connection')
+        gamestate.isHost = true
+
+        for (const player of players.list) {
+            player.socketId = undefined
+        }
     }
 
     function reconnect() {
@@ -74,8 +79,8 @@ export const useSocket = defineStore('socket', () => {
         window.history.pushState({}, '', `/townsquare/${townsquare}`)
 
         // Set some stuff
-        gamestate.seatIndex = -1;
-        gamestate.isHost = false
+        gamestate.reset('connection')
+        gamestate.isHost = false;
         unobserveState()
 
         ws = new WebSocket(`/townsquare/${townsquare}/live`)

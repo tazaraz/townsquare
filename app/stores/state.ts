@@ -11,7 +11,7 @@ export const MAX_ACTIVE_PLAYERS = 15;
  */
 export const useGamestate = defineStore('gamestate', () => {
     /** Which edition we are playing */
-    const edition: Ref<Edition> = ref({} as Edition)
+    const edition: Ref<Edition | undefined> = ref(undefined)
     /** The roles and their definitions */
     const roles: Ref<Role[]> = ref([])
     /** Fabled roles */
@@ -60,6 +60,34 @@ export const useGamestate = defineStore('gamestate', () => {
     /** Our id in the socket */
     const id = ref('')
 
+    /**
+     * Resets the state of the game.
+     * @param level `seats` clears the seats, `connection` resets socket data, `game` resets the game only
+     */
+    function reset(level: 'seats' | 'connection' | 'game') {
+        // Clear the current data
+        switch (level) {
+            case 'seats':
+                players.value.length = 0;
+                break;
+            case 'connection':
+                id.value = '';
+                sessionId.value = '';
+                seatIndex.value = -1;
+                break;
+            case 'game':
+                useReminders().reset()
+                edition.value = undefined
+                roles.value.length = 0;
+                fabled.value.length = 0;
+                loric.value.length = 0;
+
+                for (const player of players.value)
+                    player.role = undefined
+                break;
+        }
+    }
+
     return {
         edition,
         roles,
@@ -74,6 +102,8 @@ export const useGamestate = defineStore('gamestate', () => {
         isHost,
         seatIndex,
         id,
+
+        reset,
     }
 }, {
     // persist: {

@@ -132,6 +132,9 @@ export const useGame = defineStore('game', () => {
      * @param game Either an array of role ids (for custom scripts), or an edition id (for predefined editions)
      */
     function loadScript(game: (EditionJSON | string)[] | string) {
+        // If our previous session was for a different townsquare, we need to reset the game state
+        gamestate.reset('game')
+
         // If the game is a custom script, we will have an array of role ids
         if (Array.isArray(game)) {
             // Find the metadata
@@ -164,16 +167,6 @@ export const useGame = defineStore('game', () => {
                 level: raw.level as keyof Edition['level'],
                 roles: raw.roles,
             }
-        }
-
-        // Clear the current data
-        gamestate.roles.length = 0;
-        gamestate.fabled.length = 0;
-        gamestate.loric.length = 0;
-        useReminders().reset()
-        for (const player of gamestate.players) {
-            player.role = undefined
-            player.reminders.length = 0;
         }
 
         // Load the roles and fabled roles
