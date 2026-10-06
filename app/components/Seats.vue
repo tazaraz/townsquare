@@ -90,9 +90,9 @@ class PlayerCircle {
     }
 
     /** Currently selected seat index (in `[0...this.seats.max]`) */
-    private centreSeatIndex = 0;
+    centreSeatIndex = 0;
 
-    private draggable: Draggable = null!;
+    draggable: Draggable = null!;
 
     constructor() {
         onMounted(() => {
@@ -103,19 +103,15 @@ class PlayerCircle {
                 this.updateOrder(true)
             })
 
-            this.draggable = Draggable.create("#wheel", {
-                type: "rotation",
-                inertia: true,
+            if (players.list.length === 0)
+                return;
 
-                snap: (value: number) => {
-                    const angle = 360 / this.seats.max
-                    return Math.round((value - this.wheel.orentation) / angle) * angle + this.wheel.orentation
-                },
-                onThrowUpdate: () => this.updateOrder(),
-                onDrag: () => this.updateOrder(),
-            })[0]!;
-
+            // Create GSAP circle
             this.createCircle()
+
+            // Get the token elements in the DOM
+            this.seats.elements = gsap.utils.toArray<HTMLElement>("#wheel > .seat")
+            this.setWheelVisualization(ui.orientation.user)
             this.updateOrder(true)
         })
     }
@@ -124,7 +120,17 @@ class PlayerCircle {
      * Creates the circle and arranges the tokens around it
      */
     createCircle() {
-        this.setWheelVisualization(ui.orientation.user)
+        this.draggable = Draggable.create("#wheel", {
+            type: "rotation",
+            inertia: true,
+
+            snap: (value: number) => {
+                const angle = 360 / this.seats.max
+                return Math.round((value - this.wheel.orentation) / angle) * angle + this.wheel.orentation
+            },
+            onThrowUpdate: () => this.updateOrder(),
+            onDrag: () => this.updateOrder(),
+        })[0]!;
 
         // Update the rotation of the tokens on each tick
         gsap.ticker.add(() => {
@@ -153,9 +159,6 @@ class PlayerCircle {
 
             })
         })
-
-        // Get the token elements in the DOM
-        this.seats.elements = gsap.utils.toArray<HTMLElement>("#wheel > .seat")
     }
 
     /**
@@ -284,6 +287,8 @@ class PlayerCircle {
 
 
     setWheelVisualization(position: WheelOrientation) {
+        if (!this.draggable) return;
+
         const w_width = this.seats.wrapper.clientWidth;
         const w_height = this.seats.wrapper.clientHeight;
 
@@ -320,7 +325,7 @@ class PlayerCircle {
                 break;
             // Center. We calculate the radius based on the size of the token, ensuring no overlap
             case "center":
-                this.seats.max = players.count;
+                this.seats.max = players.length;
                 ui.tokenSize = Math.min(Math.max(100, (screenSize * 1.5) / this.seats.max), 150)
                 const dynamic = this.seats.max * ui.tokenSize * 0.29;
                 const fixed = screenSize / 3;
@@ -336,8 +341,7 @@ class PlayerCircle {
         }
 
         // Disable dragging if the wheel is smaller than the screen.
-        if (ui.tokenSize * players.count < screenSize ||
-             ui.orientation.rendered === "center") {
+        if (ui.orientation.rendered === "center") {
             this.draggable.disable()
         } else {
             this.draggable.enable()
@@ -425,6 +429,9 @@ watch(
             return;
 
         await nextTick();
+
+        if (!circle.draggable)
+            circle.createCircle()
         // Get the new player elements
         circle.seats.elements = gsap.utils.toArray<HTMLElement>("#wheel > .seat")
         // Update the wheel
@@ -446,7 +453,7 @@ defineExpose({
 
     width: 100%;
     min-height: 100%;
-    position: relative;
+    position: absolute;
 }
 
 #wheel {
