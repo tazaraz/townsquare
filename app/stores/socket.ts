@@ -319,10 +319,8 @@ export const useSocket = defineStore('socket', () => {
             switch (name) {
                 case 'loadScript':
                     return broadcast('script', args[0])
-                case 'toggleFabled':
-                    return broadcast('modifier', { type: 'fabled', role: args[0] })
-                case 'toggleLoric':
-                    return broadcast('modifier', { type: 'loric', role: args[0] })
+                case 'toggleModifier':
+                    return broadcast('modifier', { type: args[0], role: args[1] })
             }
         }))
 

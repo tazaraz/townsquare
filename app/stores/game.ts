@@ -256,10 +256,10 @@ export const useGame = defineStore('game', () => {
 
     /**
      * Toggles a game modifier
-     * @param id Id to toggle
      * @param type Type the ID belongs to
+     * @param id Id to toggle
      */
-    function toggleModifier(name: string, type: 'fabled' | 'loric'): boolean {
+    function toggleModifier(type: 'fabled' | 'loric', id: string): boolean {
         // Get the correct store data
         const available = type === 'fabled' ? availableFabled  : availableLoric
         const store     = type === 'fabled' ? gamestate.fabled : gamestate.loric
@@ -343,8 +343,7 @@ export const useGame = defineStore('game', () => {
         loadRole,
         loadTravellers,
 
-        toggleFabled: (name: string) => toggleModifier(name, 'fabled'),
-        toggleLoric: (name: string) => toggleModifier(name, 'loric'),
+        toggleModifier,
         setBluff,
 
         setupSelected,

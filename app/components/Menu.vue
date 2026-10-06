@@ -330,10 +330,7 @@ async function addModifier(type: 'fabled' | 'loric') {
 
     const item = await selector.result;
     if (item) {
-        if (type == 'fabled')
-            game.toggleFabled((item as Role).name)
-        else
-            game.toggleLoric((item as Role).name)
+        game.toggleModifier(type, (item as Role).id)
     }
 }
 
