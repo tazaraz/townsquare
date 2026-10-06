@@ -10,6 +10,10 @@
                         kind="role"
                         :hidden="ui.hidden"
                         :can-swap="ui.swapping >= 0 && ui.swapping !== p"
+                        :order="{
+                            firstNight: game.knownNightOrder.firstNight.findIndex(r => r.id === player.role?.id) + 1,
+                            otherNights: game.knownNightOrder.otherNights.findIndex(r => r.id === player.role?.id) + 1
+                        }"
                         @click="processTokenClick(p)"/>
                     <PlayerTag class="mx-4 mt-1" :player="player" :index="p"></PlayerTag>
                 </div>
@@ -43,6 +47,7 @@ const emit = defineEmits<{
 
 const players = usePlayers()
 const ui = useUI()
+const game = useGame()
 
 /**
  * The logic in this file is purely for visualizing the player tokens in a circle.

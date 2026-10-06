@@ -130,6 +130,8 @@ export const usePlayers = defineStore('players', () => {
             }
         }
 
+        // Recalculate the night order for the current script, given the known current player roles
+        game.calculateNightOrder();
         return true;
     }
 

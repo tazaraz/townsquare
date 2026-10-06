@@ -69,14 +69,14 @@
         </UPopover>
         <!-- Overflow shown section -->
         <div class="outside" v-if="kind == 'role' && data">
-            <template v-if="!hidden && !hideLeaves && ui.showNightOrder">
+            <template v-if="!hidden && !hideLeaves && ui.showNightOrder && order">
                 <UPopover v-if="(data as Role).firstNightReminder"
                     class="night-tooltip first-night"
                     mode="hover"
                     :content="{side: ui.centered ? 'left' : 'top'}"
                     :ui="{content: 'w-64 p-4'}"
                     enable-touch>
-                    <UButton label="0" />
+                    <UButton :label="order.firstNight.toString()" />
 
                     <template #content>
                         {{ ui.formatReminderText((data as Role).firstNightReminder) }}
@@ -89,7 +89,7 @@
                     :content="{side: ui.centered ? 'right' : 'top'}"
                     :ui="{content: 'w-64 p-4'}"
                     enable-touch>
-                    <UButton label="1"/>
+                    <UButton :label="order.otherNights.toString()"/>
 
                     <template #content>
                         {{ ui.formatReminderText((data as Role).otherNightReminder) }}
@@ -114,6 +114,7 @@ const props = defineProps<{
     state?: PlayerState
     hidden?: boolean
 
+    order?: { firstNight: number, otherNights: number }
     hideLeaves?: boolean
     warning?: boolean
     canSwap?: boolean

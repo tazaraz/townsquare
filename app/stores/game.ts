@@ -21,6 +21,7 @@ interface Teams<T> {
 }
 
 interface NightOrder {
+    id: string
     name: string
     image: string
     team: Team
@@ -88,7 +89,13 @@ export const useGame = defineStore('game', () => {
         }
     })
 
-    function calculateNightOrder(): {firstNight: NightOrder[], otherNights: NightOrder[]} {
+    /** Night order for the current script */
+    const scriptNightOrder = ref({ firstNight: [] as NightOrder[], otherNights: [] as NightOrder[] })
+    /** Night order for the current script, given the known current player roles */
+    const knownNightOrder = ref({ firstNight: [] as NightOrder[], otherNights: [] as NightOrder[] })
+
+    /** Calculate the night order */
+    function calculateNightOrder() {
         function sortByNightOrder(roles: Role[], night: "firstNight" | "otherNight"): NightOrder[] {
             return nightorderData[night]
                 // Map the role ids to the actual role objects
@@ -113,18 +120,29 @@ export const useGame = defineStore('game', () => {
                              (r.team === 'traveller' && players.list.some(p => p.role?.id === r.id)))
                 .map(c => {
                     return {
+                        id: c.id,
                         name: c.name,
                         image: c.image,
                         team: c.team,
                         players: players.list.filter(p => p.role?.id === c.id)
                     }
                 })
-        }
+        };
 
-        return {
-            firstNight: sortByNightOrder(gamestate.roles, "firstNight"),
-            otherNights: sortByNightOrder(gamestate.roles, "otherNight"),
-        }
+        const firstNight = sortByNightOrder(gamestate.roles, "firstNight");
+        let otherNights = sortByNightOrder(gamestate.roles, "otherNight");
+
+        // General night order for the current script
+        scriptNightOrder.value.firstNight = firstNight;
+        scriptNightOrder.value.otherNights = otherNights;
+
+        // Night order for the current script, given the known current player roles
+        const presentRoleIds = players.list.map(p => p.role?.id).filter((r): r is string => r !== undefined)
+
+        knownNightOrder.value.firstNight = firstNight.filter(r => presentRoleIds.includes(r.id) &&
+                                                             r.id !== 'minioninfo' && r.id !== 'demoninfo')
+        knownNightOrder.value.otherNights = otherNights.filter(r => presentRoleIds.includes(r.id) &&
+                                                             r.id !== 'minioninfo' && r.id !== 'demoninfo')
     }
 
     /**
@@ -317,7 +335,10 @@ export const useGame = defineStore('game', () => {
         demonBluffs,
         division,
 
+        scriptNightOrder,
+        knownNightOrder,
         calculateNightOrder,
+
         loadScript,
         loadRole,
         loadTravellers,

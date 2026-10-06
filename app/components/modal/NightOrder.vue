@@ -9,7 +9,7 @@
         <template #body>
             <div class="night-order text-right">
                 <h3>First night</h3>
-                <div v-for="role in firstNight"
+                <div v-for="role in game.scriptNightOrder.firstNight"
                     :class="['character', role.team, 'left', 'border-e']">
 
                     <div class="role-info my-auto me-2">
@@ -22,7 +22,7 @@
 
             <div class="night-order">
                 <h3>Other nights</h3>
-                <div v-for="role in otherNights"
+                <div v-for="role in game.scriptNightOrder.otherNights"
                     :class="['character', role.team, 'right', 'border-s']">
 
                     <NuxtImg :src="role.image" />
@@ -50,8 +50,6 @@ const emit = defineEmits<{
 }>()
 
 const game = useGame()
-
-const { firstNight, otherNights } = game.calculateNightOrder()
 
 </script>
 
