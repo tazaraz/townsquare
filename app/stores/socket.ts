@@ -195,10 +195,6 @@ export const useSocket = defineStore('socket', () => {
                     // If no edition is set, ignore
                     if (message.data.edition) {
                         game.loadScript(message.data.edition.roles)
-
-                        // If empty, these do nothing
-                        message.data.fabled.forEach((id: string) => game.toggleFabled(id))
-                        message.data.loric.forEach((id: string) => game.toggleLoric(id))
                         message.data.demonBluffs.forEach((id: string | undefined, i: number) => game.setBluff(i, id));
                     }
 
