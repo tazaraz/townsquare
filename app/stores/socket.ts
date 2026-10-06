@@ -294,6 +294,9 @@ export const useSocket = defineStore('socket', () => {
             case 'script':
                 if (gamestate.isHost) return
                 return game.loadScript(message.data)
+            case 'modifier':
+                if (gamestate.isHost) return
+                return game.toggleModifier(message.data.type, message.data.role)
         }
     }
 
