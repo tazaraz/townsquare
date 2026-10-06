@@ -68,7 +68,9 @@ export const usePlayers = defineStore('players', () => {
      */
     function claim(index: number, id: string) {
         players[index]!.socketId = id;
-        gamestate.seatIndex = index
+
+        if (gamestate.id === id)
+            gamestate.seatIndex = index
     }
 
     /**
