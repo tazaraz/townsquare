@@ -27,13 +27,14 @@
     "happy-dom": "^20.14.5",
     "playwright-core": "^1.63.0",
     "sass": "^1.102.0",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "ws": "^8.22.0"
   },
   "allowScripts": {
     "vue-demi@0.14.10": true,
     "esbuild@0.25.12": true,
-    "esbuild@0.28.2": true,
     "esbuild@0.27.2": true,
+    "esbuild@0.28.2": true,
     "@parcel/watcher@2.6.0": true,
     "argon2@0.45.1": true
   }
