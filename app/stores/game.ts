@@ -264,13 +264,13 @@ export const useGame = defineStore('game', () => {
         const available = type === 'fabled' ? availableFabled  : availableLoric
         const store     = type === 'fabled' ? gamestate.fabled : gamestate.loric
 
-        // Get the actual character associated with this name
-        const char = available.find(f => f.name == name)
+        // Get the actual character associated with this id
+        const char = available.find(f => f.id == id)
         if (!char)
             return false;
 
         // Toggle
-        const index = store.findIndex(f => f.name == char.name)
+        const index = store.findIndex(f => f.id == char.id)
         if (index < 0)
             store.push(char)
         else
