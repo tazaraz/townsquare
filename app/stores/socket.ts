@@ -58,20 +58,12 @@ export const useSocket = defineStore('socket', () => {
 
     function disconnect() {
         ws?.close()
-        ws = undefined;
         gamestate.reset('connection')
         gamestate.isHost = true
 
         for (const player of players.list) {
             player.socketId = undefined
         }
-    }
-
-    function reconnect() {
-        console.log('reconnect')
-        const townsquare = getUrlSessionId()
-        if (townsquare)
-            createWS(townsquare)
     }
 
     function createWS(townsquare: string) {
@@ -86,8 +78,8 @@ export const useSocket = defineStore('socket', () => {
         ws.onmessage = handleMessage
         ws.onclose = () => {
             // Show hosting tools again
-            disconnect()
             unobserveState()
+            ws = undefined;
         }
 
         // Create an awaitable promise that resolves when the socket is connected
