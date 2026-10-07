@@ -1,5 +1,5 @@
 <template>
-    <UApp :toaster="{ position: 'top-right' }">
+    <UApp :toaster="{ position: 'top-right', expand: false }">
         <UMain>
             <ClientOnly>
                 <Seats ref="seats"

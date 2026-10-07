@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
         if (!townsquareId || !password) {
             throw createError({
                 statusCode: 401,
-                statusMessage: 'Your session expired. Log in again',
+                statusMessage: 'Your session expired. Please log in again',
             })
         }
     }
