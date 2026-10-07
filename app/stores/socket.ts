@@ -222,10 +222,10 @@ export const useSocket = defineStore('socket', () => {
                 const seat = players.list.find(p => p.socketId == message.data.id)
                 if (!seat) return
 
-                if (gamestate.isHost)
-                    broadcast('leave', message.data)
-
                 seat.socketId = undefined
+                if (gamestate.isHost)
+                    broadcast('leave', { id: message.data.id })
+
                 return
             case 'claim':
                 if (gamestate.isHost) {

@@ -158,15 +158,12 @@ export default defineWebSocketHandler({
             return
         }
 
-        const message = {
+        // Notify the host of the disconnect. They can broadcast it to the players
+        sessions.get(townsquares.get(id)?.host!)?.peer?.send({
             origin: 'server',
             kind: 'leave',
-            data: { id: session.id, reason: `has disconnected (${details.code}: ${details.reason})` }
-        } satisfies ReceiveMessage
-
-        // Notify the connected clients of the disconnect
-        sessions.get(townsquares.get(id)?.host!)?.peer?.send(message)
-        townsquares.get(id)?.users.forEach(u => sessions.get(u)?.peer!.send(message))
+            data: { id: session.id }
+        } satisfies ReceiveMessage)
 
         townsquares.get(id)?.users.delete(session.id)
     },
