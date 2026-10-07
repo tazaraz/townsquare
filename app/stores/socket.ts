@@ -199,17 +199,17 @@ export const useSocket = defineStore('socket', () => {
                         })))
                     ) {
                         gamestate.reset('seats')
+
+                        message.data.players.forEach((
+                            { name, state, socketId }: { name: string, state: PlayerState, socketId: string }) => {
+                                // Only add new players, and don't add the same player twice
+                                if (!players.list.some(p => p.socketId === socketId && socketId !== undefined))
+                                    players.add(name)
+
+                                players.setState(players.length - 1, state)
+                            }
+                        );
                     }
-
-                    message.data.players.forEach((
-                        { name, state, socketId }: { name: string, state: PlayerState, socketId: string }) => {
-                            // Only add new players, and don't add the same player twice
-                            if (!players.list.some(p => p.socketId === socketId && socketId !== undefined))
-                                players.add(name)
-
-                            players.setState(players.length - 1, state)
-                        }
-                    );
                 }
 
                 // We have synced up, so we can now set our sessionId
