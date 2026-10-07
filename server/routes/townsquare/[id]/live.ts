@@ -8,11 +8,9 @@ interface Message extends Object {
     /** If this is a broadcasting message instead of a 1-to-1 message */
     broadcast?: boolean
     /**
-     * What kind of message is being sent
-     * Players should only `message` from other players. All other data has to come from the host/storyteller
+     * What kind of message is being sent. All data has to come from the host/storyteller
      */
-    kind: 'message' |
-          // Sync
+    kind: // Sync
           'sync' | 'script' | 'grimoire' | 'state' | 'player' | 'role' | 'modifier' | 'swap' | 'bluffs' |
           // UI state change
           'nominated' | 'marked' | 'night' | 'votelocked' |
@@ -291,11 +289,6 @@ export default defineWebSocketHandler({
                     return
                 }
 
-                // Reject data which does not go to the host, except `message`. Allow data from the host.
-                if (session.id !== townsquares.get(id)!.host &&
-                    message.kind !== 'message' && townsquares.get(id)!.host !== to.id)
-                    return;
-
                 // Make sure the player exists
                 if (!townsquares.get(id)!.users.has(to.id) && townsquares.get(id)!.host !== to.id) {
                     peer.send(createErrorMessage(`Could not find receipient '${message.to}'`))
@@ -355,4 +348,3 @@ const towncleanup = setInterval(() => {
         }
     }
 }, TOWNSQUARE_MAX_INACTIVITY)
-
