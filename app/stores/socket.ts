@@ -216,6 +216,7 @@ export const useSocket = defineStore('socket', () => {
                 gamestate.id = document.cookie.match(/id=([^;]+)/)?.[1]!
                 gamestate.sessionId = getUrlSessionId()!
 
+                return
             case 'leave':
                 // Get the player with this id
                 const seat = players.list.find(p => p.socketId == message.data.id)
