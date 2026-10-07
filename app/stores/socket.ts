@@ -62,6 +62,7 @@ export const useSocket = defineStore('socket', () => {
         return createWS(townsquare)
     }
 
+    /** Reonnects to the server using cookies */
     async function reconnect() {
         const townsquare = getUrlSessionId()
         if (townsquare) {
@@ -81,9 +82,11 @@ export const useSocket = defineStore('socket', () => {
         }
     }
 
+    /** Disconnects and cleans up most data. */
     function disconnect() {
         ws?.close()
         gamestate.reset('connection')
+        // Show hosting tools again
         gamestate.isHost = true
 
         for (const player of players.list) {
@@ -91,6 +94,10 @@ export const useSocket = defineStore('socket', () => {
         }
     }
 
+    /**
+     * Connects to a townsquare session.
+     * @param townsquare The townsquare connecting to
+     */
     function createWS(townsquare: string) {
         navigateTo(`/townsquare/${townsquare}`)
 
@@ -102,7 +109,6 @@ export const useSocket = defineStore('socket', () => {
         ws = new WebSocket(`/townsquare/${townsquare}/live`)
         ws.onmessage = handleMessage
         ws.onclose = () => {
-            // Show hosting tools again
             unobserveState()
             ws = undefined;
         }
