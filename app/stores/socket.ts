@@ -110,6 +110,7 @@ export const useSocket = defineStore('socket', () => {
         ws.onmessage = handleMessage
         ws.onclose = () => {
             unobserveState()
+            disconnect();
             ws = undefined;
         }
 
