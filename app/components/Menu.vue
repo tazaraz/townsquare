@@ -240,17 +240,19 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
         children: [
             socket.id ? {} : {
                 label: 'Connect to a game',
+                icon: 'i-carbon-connection-signal',
                 onSelect: () => sessionDialog.open({ create: false })
             },
             socket.id ? {} : {
                 label: 'Host a game',
+                icon: 'material-symbols-book-2-outline',
                 onSelect: () => sessionDialog.open({ create: true })
             },
-            socket.id ? {
+            !socket.id ?{} : {
                 label: 'Leave game',
-                icon: 'i-lucide-file-text',
+                icon: 'i-lucide-square-arrow-right-exit',
                 onSelect: () => socket.disconnect()
-            } : {},
+            },
             {
                 label: 'Load game',
                 onSelect: () => {
@@ -260,10 +262,10 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                     }
                 }
             },
-            {
-                label: '3',
-                description: 'Total connected players',
-                icon: 'i-lucide-file-text',
+            !socket.id ? {} : {
+                label: `${players.list.filter(p => p.socketId).length} connected`,
+                description: '',
+                icon: 'i-wordpress-connection',
             },
             {
                 description: 'Player role division',
