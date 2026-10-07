@@ -1,5 +1,5 @@
 <template>
-    <UApp>
+    <UApp :toaster="{ position: 'top-right' }">
         <UMain>
             <ClientOnly>
                 <Seats ref="seats"
@@ -13,21 +13,19 @@
 
 <script setup lang="ts">
 // github.com/ThePandemoniumInstitute/botc-release/
-import { ModalReferenceSheet, ModalTokenSelector, ModalNightOrder, Seats } from '#components'
+import { ModalTokenSelector, Seats } from '#components'
 
 const seatsComponent = useTemplateRef<typeof Seats>('seats')
 
-console.log("DATA JSON VALIDATION TODO")
+// Start the stores
 const game = useGame()
 const players = usePlayers()
+const socket = useSocket()
 
-onBeforeMount(() => {
-    game.loadScenario("tb")
-    for (const p of Array(8).keys()) {
-        players.add((p + 1).toString())
-    }
-    players.setRole(1, 'imp')
+onMounted(() => {
+    socket.reconnect()
 })
+
 
 
 const overlay = useOverlay();
