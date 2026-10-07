@@ -56,6 +56,30 @@ export const useSocket = defineStore('socket', () => {
         return createWS(townsquare)
     }
 
+    async function reconnect() {
+        const townsquare = getUrlSessionId()
+        if (townsquare) {
+            const res = await fetch(`/townsquare/${townsquare}/auth`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            })
+
+            if (res.status >= 300) {
+                useToast().add({
+                    title: 'Your session has expired',
+                    description: `Please log in again.`,
+                    icon: 'i-carbon-connection-signal',
+                    duration: 3000,
+                })
+                navigateTo(`/`)
+
+                return { status: res.status, text: res.statusText}
+            }
+
+            return createWS(townsquare)
+        }
+    }
+
     function disconnect() {
         ws?.close()
         gamestate.reset('connection')
