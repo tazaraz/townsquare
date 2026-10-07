@@ -105,27 +105,21 @@ describe('Game Store', () => {
         it('fabled correctly', () => {
             for (const fabled of game.availableFabled)
                 game.toggleModifier('fabled', fabled.id)
-
             expect(state.fabled.length).toBe(game.availableFabled.length)
 
             for (const fabled of game.availableFabled)
                 game.toggleModifier('fabled', fabled.id)
-
             expect(state.fabled.length).toBe(0)
         })
 
         it('loric correctly', () => {
-
             for (const loric of game.availableLoric)
-                game.toggleModifier('loric', loric.name)
-
+                game.toggleModifier('loric', loric.id)
             expect(state.loric.length).toBe(game.availableLoric.length)
 
             for (const loric of game.availableLoric)
-                game.toggleModifier('loric', loric.name)
-
+                game.toggleModifier('loric', loric.id)
             expect(state.fabled.length).toBe(0)
-
         })
     })
 })
