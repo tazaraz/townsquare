@@ -91,7 +91,7 @@ export const useSocket = defineStore('socket', () => {
     }
 
     function createWS(townsquare: string) {
-        window.history.pushState({}, '', `/townsquare/${townsquare}`)
+        navigateTo(`/townsquare/${townsquare}`)
 
         // Set some stuff
         gamestate.reset('connection')
@@ -250,6 +250,11 @@ export const useSocket = defineStore('socket', () => {
                 if (gamestate.isHost)
                     broadcast('leave', { id: message.data.id })
 
+                useToast().add({
+                    title: `${seat.name} has left the game`,
+                    icon: 'i-carbon-connection-signal',
+                    duration: 3000,
+                })
                 return
             case 'claim':
                 if (gamestate.isHost) {
@@ -359,6 +364,7 @@ export const useSocket = defineStore('socket', () => {
         create,
         connect,
         disconnect,
+        reconnect,
         closeTownsquare,
 
         syncDataToPlayers,
@@ -368,5 +374,8 @@ export const useSocket = defineStore('socket', () => {
         requestRename,
         requestClaim,
         requestUnclaim,
+
+        sendTo,
+        broadcast,
     }
 })
