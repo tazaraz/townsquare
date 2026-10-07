@@ -3,6 +3,9 @@ import { useToasts } from '~/components/composables/useToasts';
 import type { ReceiveMessage, SendMessage } from '~~/server/routes/townsquare/[id]/live';
 
 
+let pongTimeout: NodeJS.Timeout;
+
+
 export const useSocket = defineStore('socket', () => {
     const gamestate = useGamestate();
     const players = usePlayers();
