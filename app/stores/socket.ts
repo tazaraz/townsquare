@@ -298,10 +298,16 @@ export const useSocket = defineStore('socket', () => {
                 return players.setRole(message.data.index, message.data.role)
             case 'player':
                 if (gamestate.isHost) return
-                if (message.data.add)
+                if (message.data.add) {
                     return players.add(message.data.add)
-                else
-                    return players.remove(message.data.remove)
+                } else {
+                    players.remove(message.data.remove)
+
+                    if (gamestate.seatIndex === message.data.remove)
+                        gamestate.seatIndex = -1
+
+                    return
+                }
             case 'state':
                 if (gamestate.isHost) return
                 return players.setState(message.data.index, message.data.state)
