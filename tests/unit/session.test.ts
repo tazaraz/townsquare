@@ -8,6 +8,8 @@ const PLAYERS = 4
 const HOST = 'localhost:3000'
 /** Time the host should wait for all changes to process */
 const DELAY = 200
+/** The session for this test */
+const SESSION = '2'
 
 
 const cookies = new Map<Pinia, string>()
@@ -87,7 +89,7 @@ function itemsFrom(start: number, count: number) {
 }
 
 
-describe('Socket Store', () => {
+describe('Session', () => {
     let host: Pinia
     let players: Pinia[] = []
 
@@ -100,6 +102,20 @@ describe('Socket Store', () => {
     let pgame: ReturnType<typeof useGame>[] = []
     let pplayers: ReturnType<typeof usePlayers>[] = []
     let psocket: ReturnType<typeof useSocket>[] = []
+
+    async function createSeatedPlayers(seatStart: number, seatEnd: number, connectStart: number, connectEnd: number) {
+        for (const p of itemsFrom(seatStart, seatEnd))
+            hplayers.add(`Player ${p + 1}`)
+
+        for (const p of itemsFrom(connectStart, connectEnd)) {
+            activatePinia(players[p]!)
+            await psocket[p]!.connect(SESSION, SESSION)
+            psocket[p]!.requestClaim(p)
+        }
+        await delay()
+    }
+
+    const delay = () => new Promise(resolve => setTimeout(resolve, DELAY))
 
     beforeEach(async () => {
         host = createPinia()
@@ -121,7 +137,7 @@ describe('Socket Store', () => {
         }
 
         activatePinia(host)
-        const session = await hsocket.create('1', '1')
+        const session = await hsocket.create(SESSION, SESSION)
         if (session)
             expect.fail(session.text)
     })
@@ -131,113 +147,9 @@ describe('Socket Store', () => {
         hsocket.closeTownsquare();
     })
 
-    it('connects and disconnects', async () => {
-        for (const p of itemsFrom(0, PLAYERS)) {
-            activatePinia(players[p]!)
+    it('allows (un)claiming seats', async () => {
+        await createSeatedPlayers(0, PLAYERS / 2, 0, PLAYERS / 2)
 
-            await psocket[p]!.connect('1', '1')
-            expect(psocket[p]!.id).not.toBe('')
-            expect(pstate[p]!.sessionId).toBe('1')
-            expect(psocket[p]!.isHost).toBe(false)
-        }
-
-        // Cleanly disconnect half of the players
-        for (const p of itemsFrom(0, PLAYERS / 2)) {
-            activatePinia(players[p]!)
-
-            psocket[p]!.disconnect()
-            expect(psocket[p]!.id).toBe('')
-            expect(pstate[p]!.sessionId).toBe('')
-            expect(psocket[p]!.isHost).toBe(true)
-        }
-
-        // Force disconnect the other half of the players
-        hsocket.closeTownsquare()
-        await new Promise(resolve => setTimeout(resolve, DELAY))
-
-        for (const p of itemsFrom(PLAYERS / 2, PLAYERS / 2)) {
-            activatePinia(players[p]!)
-            expect(psocket[p]!.id).toBe('')
-            expect(pstate[p]!.sessionId).toBe('')
-            expect(psocket[p]!.isHost).toBe(true)
-        }
-    })
-
-    it('syncs state on connect', async () => {
-        activatePinia(host)
-        hgame.loadScript(["chef", "undertaker", "oracle", "sage", "ravenkeeper", "mayor", "recluse", "lunatic", "poisoner", "spy", "zombuul", "sentinel"])
-
-        expect(hstate.edition?.roles.length).toEqual(12)
-        expect(hgame.availableRoles.length).toEqual(11)
-        expect(hgame.assignedFabled.length).toEqual(1)
-
-        // Connect second half after script load
-        for (const p of itemsFrom(0, PLAYERS)) {
-            activatePinia(players[p]!)
-            await psocket[p]!.connect('1', '1')
-        }
-
-        // Check that all players have the same state
-        for (const p of itemsFrom(0, PLAYERS)) {
-            activatePinia(players[p]!)
-            expect(pgame[p]!.edition?.roles.length).toEqual(12)
-            expect(pgame[p]!.availableRoles.length).toEqual(11)
-            expect(pgame[p]!.assignedFabled.length).toEqual(1)
-        }
-    })
-
-    it('syncs on host state change', async () => {
-        for (const p of itemsFrom(0, PLAYERS))
-            hplayers.add(`Player ${p + 1}`)
-
-        for (const p of itemsFrom(0, PLAYERS)) {
-            activatePinia(players[p]!)
-            await psocket[p]!.connect('1', '1')
-        }
-
-        // Load the script
-        activatePinia(host)
-        hgame.loadScript(["chef", "undertaker", "oracle", "sage", "ravenkeeper", "mayor", "recluse", "lunatic", "poisoner", "spy", "zombuul", "sentinel"])
-        await new Promise(resolve => setTimeout(resolve, DELAY))
-
-        for (const p of itemsFrom(0, PLAYERS)) {
-            activatePinia(players[p]!)
-            expect(pgame[p]!.edition?.roles.length).toEqual(12)
-            expect(pgame[p]!.availableRoles.length).toEqual(11)
-            expect(pgame[p]!.assignedFabled.length).toEqual(1)
-        }
-
-        // Toggle a few fabled and loric
-        activatePinia(host)
-        hgame.toggleModifier('fabled', 'angel')
-        hgame.toggleModifier('fabled', 'duchess')
-        hgame.toggleModifier('fabled', 'ferryman')
-        hgame.toggleModifier('fabled', 'ferryman')  // enable and disable to test that it works
-
-        hgame.toggleModifier('loric', 'pope')
-
-        await new Promise(resolve => setTimeout(resolve, DELAY))
-        for (const p of itemsFrom(0, PLAYERS)) {
-            activatePinia(players[p]!)
-            expect(pgame[p]!.assignedFabled.map(f => f.id)).toContain('angel')
-            expect(pgame[p]!.assignedFabled.map(f => f.id)).toContain('duchess')
-            expect(pgame[p]!.assignedFabled.map(f => f.id)).not.toContain('ferryman')
-
-            expect(pgame[p]!.assignedLoric.map(l => l.id)).toContain('pope')
-        }
-    })
-
-    it('allows claiming seats', async () => {
-        for (const p of itemsFrom(0, PLAYERS / 2))
-            hplayers.add(`Player ${p + 1}`)
-
-        for (const p of itemsFrom(0, PLAYERS / 2)) {
-            activatePinia(players[p]!)
-            await psocket[p]!.connect('1', '1')
-            psocket[p]!.requestClaim(p)
-        }
-
-        await new Promise(resolve => setTimeout(resolve, DELAY))
         // Expect correct seat index for each player
         for (const p of itemsFrom(0, PLAYERS / 2)) {
             activatePinia(players[p]!)
@@ -248,12 +160,12 @@ describe('Socket Store', () => {
         // Try to claim already occupied seats
         for (const p of itemsFrom(PLAYERS / 2, PLAYERS / 2)) {
             activatePinia(players[p]!)
-            await psocket[p]!.connect('1', '1')
+            await psocket[p]!.connect(SESSION, SESSION)
             psocket[p]!.requestClaim(p - PLAYERS / 2)
         }
 
         // Expect non-seatedindex for each player
-        await new Promise(resolve => setTimeout(resolve, DELAY))
+        await delay()
         for (const p of itemsFrom(PLAYERS / 2, PLAYERS / 2)) {
             activatePinia(players[p]!)
             expect(psocket[p]?.seatIndex).toEqual(-1)
@@ -266,37 +178,86 @@ describe('Socket Store', () => {
 
         activatePinia(players[0]!)
         psocket[0]!.requestClaim(PLAYERS / 2)
-        await new Promise(resolve => setTimeout(resolve, DELAY))
+        await delay()
         expect(psocket[0]?.seatIndex).toEqual(0)
 
         // Unclaim and someone else can claim
         activatePinia(players[0]!)
         psocket[0]!.requestUnclaim()
-        await new Promise(resolve => setTimeout(resolve, DELAY))
+        await delay()
         expect(psocket[0]?.seatIndex).toEqual(-1)
 
         activatePinia(players[PLAYERS / 2]!)
         psocket[PLAYERS / 2]!.requestClaim(0)
-        await new Promise(resolve => setTimeout(resolve, DELAY))
+        await delay()
         expect(psocket[PLAYERS / 2]?.seatIndex).toEqual(0)
     })
 
     it('allows renaming', async () => {
-        for (const p of itemsFrom(0, 2))
-            hplayers.add(`Player ${p + 1}`)
-
-        for (const p of itemsFrom(0, 2)) {
-            activatePinia(players[p]!)
-            await psocket[p]!.connect('1', '1')
-            psocket[p]!.requestClaim(p)
-        }
+        await createSeatedPlayers(0, 2, 0, 2)
 
         // Request rename
-        await new Promise(resolve => setTimeout(resolve, DELAY))
+        await delay()
         psocket[0]!.requestRename('New Name')
-        await new Promise(resolve => setTimeout(resolve, DELAY))
+        await delay()
         expect(hplayers.list[0]!.name).toEqual('New Name')
         expect(pplayers[0]!.list[0]!.name).toEqual('New Name')
         expect(pplayers[1]!.list[0]!.name).toEqual('New Name')
+    })
+
+    it('processes swaps correctly', async () => {
+        await createSeatedPlayers(0, PLAYERS, 0, PLAYERS)
+
+        // Do a swap
+        activatePinia(host);
+        hplayers.swap(1, 2)
+        await delay()
+
+        expect(hplayers.list[1]?.name).toEqual('Player 3')
+        expect(hplayers.list[2]?.name).toEqual('Player 2')
+
+        for (const p of itemsFrom(0, PLAYERS)) {
+            activatePinia(players[p]!)
+            expect(pplayers[p]?.list[1]?.name).toEqual('Player 3')
+            expect(pplayers[p]?.list[2]?.name).toEqual('Player 2')
+        }
+    })
+
+    it('syncs roles and bluffs correctly', async () => {
+        await createSeatedPlayers(0, PLAYERS, 0, PLAYERS)
+
+        // Set bluffs
+        activatePinia(host)
+        hgame.loadScript('tb')
+        hplayers.setRole(0, 'undertaker')
+        hplayers.setRole(1, 'monk')
+        hplayers.setRole(2, 'saint')
+        hplayers.setRole(3, 'imp')
+
+        hgame.setBluff(0, 'mayor')
+        hgame.setBluff(2, 'baron')
+        await delay()
+
+        expect(hstate.demonBluffs[0]?.id).toEqual('mayor')
+        expect(hstate.demonBluffs[2]?.id).toEqual('baron')
+
+        hsocket.syncDataToPlayers()
+        await delay()
+
+        activatePinia(players[0]!)
+        expect(pplayers[0]!.list.map(r => r.role?.id)).toEqual(['undertaker', undefined, undefined, undefined])
+        expect(pstate[0]!.demonBluffs.map(b => b?.id)).toEqual([undefined, undefined, undefined])
+
+        activatePinia(players[1]!)
+        expect(pplayers[1]!.list.map(r => r.role?.id)).toEqual([undefined, 'monk', undefined, undefined])
+        expect(pstate[1]!.demonBluffs.map(b => b?.id)).toEqual([undefined, undefined, undefined])
+
+        activatePinia(players[2]!)
+        expect(pplayers[2]!.list.map(r => r.role?.id)).toEqual([undefined, undefined, 'saint', undefined])
+        expect(pstate[2]!.demonBluffs.map(b => b?.id)).toEqual([undefined, undefined, undefined])
+
+        activatePinia(players[3]!)
+        expect(pplayers[3]!.list.map(r => r.role?.id)).toEqual([undefined, undefined, undefined, 'imp'])
+        expect(pstate[3]!.demonBluffs.map(b => b?.id)).toEqual(['mayor', undefined, 'baron'])
     })
 })
