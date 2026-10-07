@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { useToasts } from '~/components/composables/useToasts';
 import type { ReceiveMessage, SendMessage } from '~~/server/routes/townsquare/[id]/live';
 
 
@@ -6,6 +7,8 @@ export const useSocket = defineStore('socket', () => {
     const gamestate = useGamestate();
     const players = usePlayers();
     const game = useGame();
+
+    const toasts = useToasts();
 
     /** Seat index of the current player */
     const seatIndex = computed(() => gamestate.seatIndex);
@@ -65,12 +68,7 @@ export const useSocket = defineStore('socket', () => {
             })
 
             if (res.status >= 300) {
-                useToast().add({
-                    title: 'Your session has expired',
-                    description: `Please log in again.`,
-                    icon: 'i-carbon-connection-signal',
-                    duration: 3000,
-                })
+                toasts.reconnectError(res.statusText)
                 navigateTo(`/`)
 
                 return { status: res.status, text: res.statusText}
@@ -137,6 +135,8 @@ export const useSocket = defineStore('socket', () => {
     async function _send({ broadcast, to, kind, data }: SendMessage) {
         if (!ws)
             reconnect()
+        if (!ws)
+            return toasts.sendWSFail()
 
         // if (target === 'direct' && !to) return 'Invalid message'
         const message: SendMessage = { to, kind, data };
@@ -171,6 +171,8 @@ export const useSocket = defineStore('socket', () => {
 
         switch (message.kind) {
             case 'ping':
+                clearTimeout(pongTimeout)
+                pongTimeout = setTimeout(() => toasts.pingpongTimeout(), 45000)
                 return sendTo('server', 'pong', true)
 
             case 'connected':
@@ -250,11 +252,7 @@ export const useSocket = defineStore('socket', () => {
                 if (gamestate.isHost)
                     broadcast('leave', { id: message.data.id })
 
-                useToast().add({
-                    title: `${seat.name} has left the game`,
-                    icon: 'i-carbon-connection-signal',
-                    duration: 3000,
-                })
+                toasts.leftGame(seat.name)
                 return
             case 'claim':
                 if (gamestate.isHost) {
@@ -315,6 +313,7 @@ export const useSocket = defineStore('socket', () => {
                 return game.loadScript(message.data)
             case 'modifier':
                 if (gamestate.isHost) return
+                toasts.modifier(message.data.type)
                 return game.toggleModifier(message.data.type, message.data.role)
         }
     }
