@@ -9,7 +9,7 @@ const HOST = 'localhost:3000'
 /** Time the host should wait for all changes to process */
 const DELAY = 200
 /** The session for this test */
-const SESSION = '2'
+const SESSION = '22222'
 
 
 const cookies = new Map<Pinia, string>()

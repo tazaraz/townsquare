@@ -9,7 +9,7 @@ const HOST = 'localhost:3000'
 /** Time the host should wait for all changes to process */
 const DELAY = 200
 /** The session for this test */
-const SESSION = '1'
+const SESSION = '11111'
 
 
 const cookies = new Map<Pinia, string>()
@@ -152,7 +152,7 @@ describe('Socket connection', () => {
 
             await psocket[p]!.connect(SESSION, SESSION)
             expect(psocket[p]!.id).not.toBe('')
-            expect(pstate[p]!.sessionId).toBe('1')
+            expect(pstate[p]!.sessionId).toBe(SESSION)
             expect(psocket[p]!.isHost).toBe(false)
         }
 
