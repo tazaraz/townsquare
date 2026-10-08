@@ -32,10 +32,7 @@ export const useToaster = defineStore('toaster', () => {
             label: 'Reload the page',
             color: 'neutral',
             variant: 'outline',
-            onClick: (e) => {
-                e?.stopPropagation()
-                location.reload()
-            }
+            onClick: () => location.reload()
         }
 
         toast.add({
@@ -47,7 +44,6 @@ export const useToaster = defineStore('toaster', () => {
                 color: 'primary',
                 variant: 'outline',
                 onClick: async (e) => {
-                    e?.stopPropagation()
                     if (await socket.reconnect()) {
                         toast.add({
                             title: 'Failed to reconnect',
@@ -85,26 +81,19 @@ export const useToaster = defineStore('toaster', () => {
         switch (data.buttons) {
             case 'confirm':
                 actions.push({ label: 'No', color: 'neutral', variant: 'outline', onClick: (e) => {
-                    e?.stopPropagation()
                     socket.sendTo(replyTo, 'message', { text: 'No', buttons: 'none' } satisfies DirectMessage)
                 }});
                 actions.push({ label: 'Yes', color: 'primary', variant: 'solid', onClick: (e) => {
-                    e?.stopPropagation()
                     socket.sendTo(replyTo, 'message', { text: 'Yes', buttons: 'none' } satisfies DirectMessage)
                 }});
                 break;
             case 'acknowledge':
-                actions.push({ label: 'Understood', color: 'neutral', variant: 'outline',
-                    onClick: (e) => e?.stopPropagation()
-                });
+                actions.push({ label: 'Understood', color: 'neutral', variant: 'outline' });
                 break;
             case 'dialog':
-                actions.push({ label: 'Understood', color: 'neutral', variant: 'outline',
-                    onClick: (e) => e?.stopPropagation()
-                });
+                actions.push({ label: 'Understood', color: 'neutral', variant: 'outline' });
             case 'reply':
                 actions.push({ label: 'Reply', color: 'primary', variant: 'solid', onClick: async (e) => {
-                    e?.stopPropagation()
                     const dialog = useOverlay().create(DialogInput).open({
                         title: 'Reply to the host',
                         placeholder: 'Type your message here...'
