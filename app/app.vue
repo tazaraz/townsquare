@@ -1,13 +1,13 @@
 <template>
     <UApp :toaster="{ position: 'top-right', expand: false }">
-        <UMain>
-            <ClientOnly>
+        <ClientOnly>
+            <UMain>
                 <Seats ref="seats"
                     @edit-player="editPlayer"
                     @edit-reminder="editReminder"/>
-            </ClientOnly>
-        </UMain>
-        <Menu />
+            </UMain>
+            <Menu />
+        </ClientOnly>
     </UApp>
 </template>
 
