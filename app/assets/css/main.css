@@ -10,3 +10,12 @@
     --fabled: #d5aa00;
     --loric: #869f42;
 }
+
+/* Because curser: pointer is not default for buttons */
+@layer base {
+   button,
+   [role="button"] {
+      @apply cursor-pointer;
+      @apply disabled:cursor-not-allowed;
+   }
+}
