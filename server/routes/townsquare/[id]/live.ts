@@ -179,7 +179,7 @@ export default defineWebSocketHandler({
         }
 
         if (!townsquares.has(id)) {
-            peer.close(1001, 'This townsquare has not seen activity for too long.')
+            peer.close(1001, 'This townsquare has not seen activity for too long, and is closing.')
             return
         }
 
@@ -284,8 +284,8 @@ export default defineWebSocketHandler({
                     return
                 }
 
+                // Make sure our target is inside this townsquare. We are not going to tell you you hit a valid id.
                 if (!message.to || !to ||
-                    // Make sure our target is inside this townsquare. We are not going to tell you you hit a valid id.
                     (to && !townsquares.get(id)!.users.has(to.id) && !(townsquares.get(id)!.host === to.id))
                 ) {
                     peer.send(createMessage('error', 'Your request could not be completed'))
