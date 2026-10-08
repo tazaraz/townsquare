@@ -106,7 +106,9 @@ export const useGamestate = defineStore('gamestate', () => {
         reset,
     }
 }, {
-    // persist: {
-    //     storage: sessionStorage
-    // },
+    persist: {
+        storage: piniaPluginPersistedstate.localStorage(),
+        debug: true,
+    },
+
 })
