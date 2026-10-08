@@ -217,14 +217,12 @@ export const useSocket = defineStore('socket', () => {
 
                     // If we are still timed out
                     setTimeout(() => {
-                        if (timedOut && id.value) toaster.connectionError()
+                        if (timedOut && id.value)
+                            toaster.connectionError()
+                        else
+                            toaster.restoredConnection()
                     })
                 }, 45000)
-
-                if (timedOut) {
-                    toaster.restoredConnection()
-                    timedOut = false
-                }
 
                 return sendTo('server', 'pong', true)
 
