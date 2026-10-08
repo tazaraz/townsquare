@@ -351,6 +351,14 @@ export const useSocket = defineStore('socket', () => {
             case 'swap':
                 if (gamestate.isHost) return
                 return players.swap(message.data.index1, message.data.index2)
+            case 'kick':
+                if (gamestate.isHost) return
+                players.kick(message.data.index)
+                if (!isHost.value && gamestate.seatIndex === message.data.index) {
+                    disconnect()
+                    toaster.serverError('You have been kicked from the session.')
+                }
+                return
             case 'role':
                 if (gamestate.isHost) return
                 return players.setRole(message.data.index, message.data.role)
@@ -390,6 +398,8 @@ export const useSocket = defineStore('socket', () => {
                     return broadcast('player', { add: args[0] })
                 case 'remove':
                     return broadcast('player', { remove: args[0] })
+                case 'kick':
+                    return broadcast('kick', { index: args[0] })
                 case 'swap':
                     return broadcast('swap', { index1: args[0], index2: args[1] })
                 case 'setName':

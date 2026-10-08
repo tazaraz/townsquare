@@ -62,6 +62,17 @@ export const usePlayers = defineStore('players', () => {
     }
 
     /**
+     * Kicks the player from the session.
+     * @param index The player located at the seat.
+     */
+    function kick(index: number) {
+        if (!players[index]?.socketId)
+            return
+
+        players[index].socketId = undefined
+    }
+
+    /**
      * Claims a seat for a player
      * @param index Index of the seat
      * @param id The websocket ID
@@ -221,6 +232,7 @@ export const usePlayers = defineStore('players', () => {
         get,
         remove,
         swap,
+        kick,
         claim,
         unclaim,
 
