@@ -1,16 +1,15 @@
 import { defineStore } from 'pinia';
-import { useToasts } from '~/components/composables/useToasts';
 import type { ReceiveMessage, SendMessage } from '~~/server/routes/townsquare/[id]/live';
 
 
 let pongTimeout: NodeJS.Timeout;
+let timedOut = false;
 
 
 export const useSocket = defineStore('socket', () => {
     const gamestate = useGamestate();
     const players = usePlayers();
     const game = useGame();
-
     const toasts = useToasts();
 
     /** Seat index of the current player */
@@ -72,7 +71,7 @@ export const useSocket = defineStore('socket', () => {
             })
 
             if (res.status >= 300) {
-                toasts.reconnectError(res.statusText)
+                toasts.serverError(res.statusText)
                 navigateTo(`/`)
 
                 return { status: res.status, text: res.statusText}
@@ -112,6 +111,8 @@ export const useSocket = defineStore('socket', () => {
             unobserveState()
             disconnect();
             ws = undefined;
+            if (e.code == 1006)
+                toasts.serverError('The connection was abruptly stopped. Please reload the page.')
         }
 
         // Create an awaitable promise that resolves when the socket is connected
@@ -146,7 +147,7 @@ export const useSocket = defineStore('socket', () => {
         if (!ws)
             reconnect()
         if (!ws)
-            return toasts.sendWSFail()
+            return toasts.connectionError()
 
         // if (target === 'direct' && !to) return 'Invalid message'
         const message: SendMessage = { to, kind, data };
@@ -180,9 +181,19 @@ export const useSocket = defineStore('socket', () => {
         const message: ReceiveMessage = JSON.parse(event.data);
 
         switch (message.kind) {
+            case 'error':
+                return toasts.showDirectMessage({
+                    title: 'The laws of the universe dictate that:',
+                    text: message.data,
+                    buttons: 'none'
+                })
             case 'ping':
                 clearTimeout(pongTimeout)
-                pongTimeout = setTimeout(() => toasts.pingpongTimeout(), 45000)
+                pongTimeout = setTimeout(() => {timedOut = true; toasts.connectionError()}, 45000)
+                if (timedOut) {
+                    toasts.restoredConnection()
+                    timedOut = false
+                }
                 return sendTo('server', 'pong', true)
 
             case 'connected':

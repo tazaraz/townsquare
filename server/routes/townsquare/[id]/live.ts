@@ -154,7 +154,7 @@ export default defineWebSocketHandler({
         }
 
         if (!id) {
-            console.error(`Townsquare Id ${id} does not exist`)
+            console.error(`The townsquare '${id}' does not exist`)
             return
         }
 
@@ -172,7 +172,7 @@ export default defineWebSocketHandler({
         const id = getTownsquareId(peer)
 
         if (!id) {
-            peer.close(1008, 'Could not find session')
+            peer.close(1008, 'Could not find your session')
             return
         }
 
@@ -268,7 +268,7 @@ export default defineWebSocketHandler({
                     ? sessions.get(townsquares.get(id)!.host)
                     : sessions.get(message.to!)
                 if (!to) {
-                    peer.send(createErrorMessage(`Could not find recipient '${message.to}'`))
+                    peer.send(createErrorMessage(`'${message.to}' is not a valid recipient`))
                     return
                 }
 

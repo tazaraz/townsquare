@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     if (!townsquareId || !townsquares.has(townsquareId)) {
         throw createError({
             statusCode: 404,
-            statusMessage: 'Could not find the townsquare',
+            statusMessage: `Could not find townsquare '${townsquareId}'`,
         })
     }
 
