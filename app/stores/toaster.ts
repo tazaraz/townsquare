@@ -63,7 +63,7 @@ export const useToaster = defineStore('toaster', () => {
     const restoredConnection = () => toast.add({
         title: 'Connection restored',
         icon: 'i-carbon-connection-signal',
-        duration: 3000,
+        duration: 1500,
     })
 
     const modifier = (type: 'fabled' | 'loric') => toast.add({
