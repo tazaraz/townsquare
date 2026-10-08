@@ -11,6 +11,15 @@ export const useToasts = defineStore('toasts', () => {
         title: message,
         icon: 'i-material-symbols-error-outline-rounded',
         color: 'warning',
+        duration: 5000,
+    })
+
+    const serverNotification = (message: string) => toast.add({
+        title: h('span', { class: 'italic text-neutral-500' }, ['The laws of the universe dictate that:']),
+        description: h('span', { class: 'text-lg font-bold' }, [message]),
+        icon: 'i-boxicons-law',
+        color: 'primary',
+        duration: 5000,
     })
 
     const leftGame = (name: string) => toast.add({
@@ -144,6 +153,7 @@ export const useToasts = defineStore('toasts', () => {
 
     return {
         serverError,
+        serverNotification,
         connectionError,
         leftGame,
         restoredConnection,

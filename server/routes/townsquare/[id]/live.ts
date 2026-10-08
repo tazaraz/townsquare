@@ -12,13 +12,13 @@ interface Message extends Object {
      */
     kind: 'message' |
           // Sync
-          'sync' | 'script' | 'grimoire' | 'state' | 'player' | 'role' | 'modifier' | 'swap' | 'bluffs' |
+          'sync' | 'script' | 'grimoire' | 'state' | 'player' | 'role' | 'modifier' | 'swap' | 'bluffs' | 'kick' |
           // UI state change
           'nominated' | 'marked' | 'night' | 'votelocked' |
           // Player actions
           'claim' | 'unclaim' | 'rename' | 'nominate' | 'voting' |
           // Server specific
-          'ping' | 'pong' | 'error' | 'leave' | 'connected' | 'close'
+          'ping' | 'pong' | 'error' | 'notification' | 'leave' | 'connected' | 'close'
     // TODO: 'grimoire' | 'nominate' | 'voting' | 'nominated' | 'marked' | 'night' | 'votelocked'
 
     /** The payload */
@@ -86,14 +86,15 @@ export function createSession(townsquare: string): Session {
 }
 
 /**
- * Creates an error `Message` to send
- * @param error The error information to send
+ * Creates a `ReceiveMessage` to send
+ * @param kind The kind of message to send
+ * @param message The message to send
  */
-function createErrorMessage(error: string): ReceiveMessage {
+function createMessage(kind: 'error' | 'notification', message: string): ReceiveMessage {
     return {
         origin: 'server',
-        kind: 'error',
-        data: error
+        kind,
+        data: message
     }
 }
 
@@ -185,8 +186,7 @@ export default defineWebSocketHandler({
         const session = sessions.values().find(c => c.peer?.id == peer.id);
         // Sanity check
         if (!session) {
-            console.error(`Could not find ${peer.id} for communication`)
-            peer.send(createErrorMessage('Could not find your session on the server'))
+            peer.send(createMessage('error', 'Could not find your session on the server'))
             return
         }
 
@@ -195,7 +195,7 @@ export default defineWebSocketHandler({
              sessions.get(townsquares.get(id)!.host)!.peer!.id !== peer.id) {
             // Send warning after 3 messages per second (PING_INTERVAL window size)
             if (session.messageCount++ > (3 * PING_INTERVAL) / 1000)
-                peer.send(createErrorMessage('You are sending too many data packets. Slow down what you\'re doing!'))
+                peer.send(createMessage('error', 'You are sending too many data packets. You should down what you\'re doing!'))
 
             // Kick after 5 messages per second
             if (session.messageCount++ > (5 * PING_INTERVAL) / 1000) {
@@ -269,13 +269,13 @@ export default defineWebSocketHandler({
                     ? sessions.get(townsquares.get(id)!.host)
                     : sessions.get(message.to!)
                 if (!to) {
-                    peer.send(createErrorMessage(`'${message.to}' is not a valid recipient`))
+                    peer.send(createMessage('notification', `'${message.to}' is not a valid recipient`))
                     return
                 }
 
                 // Prevent the host sending to the host
                 if (peer.id === to.peer?.id) {
-                    peer.send(createErrorMessage('You cannot send messages to yourself'))
+                    peer.send(createMessage('notification', 'You cannot send messages to yourself'))
                     return
                 }
 
@@ -283,13 +283,13 @@ export default defineWebSocketHandler({
                     // Make sure our target is inside this townsquare. We are not going to tell you you hit a valid id.
                     (to && !townsquares.get(id)!.users.has(to.id) && !(townsquares.get(id)!.host === to.id))
                 ) {
-                    peer.send(createErrorMessage('Malformed message'))
+                    peer.send(createMessage('error', 'Your request could not be completed'))
                     return
                 }
 
                 // Make sure the player exists
                 if (!townsquares.get(id)!.users.has(to.id) && townsquares.get(id)!.host !== to.id) {
-                    peer.send(createErrorMessage(`Could not find receipient '${message.to}'`))
+                    peer.send(createMessage('notification', `Could not find receipient '${message.to}'`))
                     return;
                 }
 
@@ -300,7 +300,7 @@ export default defineWebSocketHandler({
                 } satisfies ReceiveMessage)
             }
         } catch {
-            peer.send(createErrorMessage('Malformed message'))
+            peer.send(createMessage('error', 'Could not parse your message.'))
         }
     },
 

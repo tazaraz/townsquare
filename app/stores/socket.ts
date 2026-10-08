@@ -183,12 +183,10 @@ export const useSocket = defineStore('socket', () => {
         const message: ReceiveMessage = JSON.parse(event.data);
 
         switch (message.kind) {
+            case 'notification':
+                return toasts.serverNotification(message.data)
             case 'error':
-                return toasts.showDirectMessage({
-                    title: 'The laws of the universe dictate that:',
-                    text: message.data,
-                    buttons: 'none'
-                })
+                return toasts.serverError(message.data)
             case 'ping':
                 clearTimeout(pongTimeout)
                 pongTimeout = setTimeout(() => {timedOut = true; toasts.connectionError()}, 45000)
