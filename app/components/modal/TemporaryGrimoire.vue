@@ -89,17 +89,21 @@ const playerList = () => players.list
     .filter(p => p.connected)
 
 function randomizeSeats() {
-    if (!fixTravellers.value) {
-        players.list.splice(0, players.list.length, ...game.shuffleArray(players.list))
-        return
-    }
-
-    const shuffledNonTravellers = game.shuffleArray(
-        players.list.filter(player => player.role?.team !== "traveller")
+    // Shuffle the players, but keep travellers in their seat if fixTravellers is true
+    const roles = game.shuffleArray(
+        players.list
+            .filter(player => !fixTravellers.value || player.role?.team !== "traveller")
+            .map(player => player.role)
     )
 
     let index = 0
 
+    for (const player of players.list) {
+        if (!fixTravellers.value || player.role?.team !== "traveller") {
+            player.role = roles[index++]!
+        }
+    }
+}
 
 function show() {
     console.log(players.list[targetPlayer.value!]!.socketId)
