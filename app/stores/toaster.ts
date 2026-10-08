@@ -2,7 +2,7 @@ import { DialogInput, Token } from "#components";
 import type { ButtonProps } from "@nuxt/ui";
 import { defineStore } from 'pinia';
 
-export const useToasts = defineStore('toasts', () => {
+export const useToaster = defineStore('toaster', () => {
     const socket = useSocket()
 
     const toast = useToast();

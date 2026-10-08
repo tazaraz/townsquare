@@ -10,7 +10,7 @@ export const useSocket = defineStore('socket', () => {
     const gamestate = useGamestate();
     const players = usePlayers();
     const game = useGame();
-    const toasts = useToasts();
+    const toaster = useToaster();
 
     /** Seat index of the current player */
     const seatIndex = computed(() => gamestate.seatIndex);
@@ -74,7 +74,7 @@ export const useSocket = defineStore('socket', () => {
             })
 
             if (res.status >= 300) {
-                toasts.serverError(res.statusText)
+                toaster.serverError(res.statusText)
                 disconnect()
 
                 return { status: res.status, text: res.statusText}
@@ -118,7 +118,7 @@ export const useSocket = defineStore('socket', () => {
             ws = undefined
 
             if (e.code == 1006)
-                toasts.serverError('The connection was abruptly stopped. Please reload the page.')
+                toaster.serverError('The connection was abruptly stopped. Please reload the page.')
             if (e.code > 1001)
                 disconnect();
         }
@@ -159,7 +159,7 @@ export const useSocket = defineStore('socket', () => {
         if (!ws)
             await reconnect()
         if (!ws)
-            return toasts.connectionError()
+            return toaster.connectionError()
 
         // if (target === 'direct' && !to) return 'Invalid message'
         const message: SendMessage = { to, kind, data };
@@ -195,9 +195,9 @@ export const useSocket = defineStore('socket', () => {
 
         switch (message.kind) {
             case 'notification':
-                return toasts.serverNotification(message.data)
+                return toaster.serverNotification(message.data)
             case 'error':
-                return toasts.serverError(message.data)
+                return toaster.serverError(message.data)
             case 'ping':
             case 'pong':
                 clearTimeout(pongTimeout)
@@ -208,12 +208,12 @@ export const useSocket = defineStore('socket', () => {
 
                     // If we are still timed out
                     setTimeout(() => {
-                        if (timedOut) toasts.connectionError()
+                        if (timedOut) toaster.connectionError()
                     })
                 }, 45000)
 
                 if (timedOut) {
-                    toasts.restoredConnection()
+                    toaster.restoredConnection()
                     timedOut = false
                 }
 
@@ -302,7 +302,7 @@ export const useSocket = defineStore('socket', () => {
                 if (gamestate.isHost)
                     broadcast('leave', { id: message.data.id })
 
-                toasts.leftGame(seat.name)
+                toaster.leftGame(seat.name)
                 return
             case 'message':
                 const player = players.list.find(p => p.socketId === message.origin)
@@ -310,7 +310,7 @@ export const useSocket = defineStore('socket', () => {
                     return
 
                 message.data.title = isHost.value ? `${player!.name} says to you:` : `A raven whispers to you:`
-                toasts.showDirectMessage(message.data, isHost.value ? message.origin : 'host')
+                toaster.showDirectMessage(message.data, isHost.value ? message.origin : 'host')
                 return
             case 'claim':
                 if (gamestate.isHost) {
@@ -377,7 +377,7 @@ export const useSocket = defineStore('socket', () => {
                 return game.loadScript(message.data)
             case 'modifier':
                 if (gamestate.isHost) return
-                toasts.modifier(message.data.type)
+                toaster.modifier(message.data.type)
                 return game.toggleModifier(message.data.type, message.data.role)
         }
     }

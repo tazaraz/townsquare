@@ -83,7 +83,6 @@ const emit = defineEmits<{
 
 const players = usePlayers()
 const socket = useSocket()
-const toasts = useToasts()
 
 
 const overlay = useOverlay();
