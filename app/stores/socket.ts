@@ -115,18 +115,24 @@ export const useSocket = defineStore('socket', () => {
         ws.onmessage = handleMessage
         ws.onclose = (e) => {
             unobserveState()
-            disconnect();
-            ws = undefined;
+            ws = undefined
+
             if (e.code == 1006)
                 toasts.serverError('The connection was abruptly stopped. Please reload the page.')
+            if (e.code > 1001)
+                disconnect();
         }
 
         // Create an awaitable promise that resolves when the socket is connected
         return new Promise<void>((resolve) => {
+            // If we reconnect, this is still in localStorage. Unset.
+            if (id.value !== '')
+                gamestate.id = ''
+
             const stop = watch(() => gamestate.id, (id) => {
                 if (id) {
-                    stop()
                     resolve()
+                    stop()
                 }
             })
         })
