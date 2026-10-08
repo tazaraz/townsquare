@@ -188,10 +188,8 @@ export default defineWebSocketHandler({
 
         const session = sessions.values().find(c => c.peer?.id == peer.id);
         // Sanity check
-        if (!session) {
-            peer.send(createMessage('error', 'Could not find your session on the server'))
+        if (!session)
             return
-        }
 
         if (sessions.get(townsquares.get(id)!.host)?.peer === undefined) {
             peer.send(createMessage('notification', 'The storyteller is not connected. Wait for them to reconnect.'))
