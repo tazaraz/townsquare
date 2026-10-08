@@ -453,7 +453,7 @@ defineExpose({
 
     width: 100%;
     min-height: 100%;
-    position: absolute;
+    position: fixed;
 }
 
 #wheel {
