@@ -34,6 +34,29 @@
                 viewportWrapper: 'absolute bottom-full top-auto start-0 flex w-full justify-center',
                 viewport: 'origin-[bottom_center]'
             }">
+            <template #game-content="{ item }">
+                <div class="isolate grid p-2 grid-cols-2 gap-2">
+                    <div v-for="child in ((item as any).children)"
+                        class="text-sm rounded-md transition-colors hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3">
+
+                        <UIcon :name="child.icon" class="size-5 text-dimmed" />
+                        <div v-if="!child.toggle">
+                            <span :class="['font-medium', child.class]">{{ child.label }}</span>
+                            <span class="text-muted line-clamp-2">{{ child.description }}</span>
+                        </div>
+                        <div v-else>
+                            <USwitch v-if="child.toggle === 'flavour'"
+                                v-model="ui.showFlavor"
+                                :label="child.label"
+                                :class="['font-medium', child.class]"/>
+                            <USwitch v-else-if="child.toggle === 'nightorder'"
+                                v-model="ui.showNightOrder"
+                                :label="child.label"
+                                :class="['font-medium', child.class]"/>
+                        </div>
+                    </div>
+                </div>
+            </template>
             <template #modifier-label>
                 <span v-if="game.assignedFabled.length > 0" class="text-(--fabled)">Fabled</span>
                 <span v-if="game.assignedFabled.length > 0 && game.assignedLoric.length > 0" class="px-1"> ⁄ </span>
@@ -42,11 +65,11 @@
             <template #modifier-content="{ item }">
                 <div class="isolate grid p-2 grid-cols-2 gap-2">
                     <div v-for="child in ((item as any).children as Role[])"
-                        class="flex text-sm text-left rounded-md p-3 transition-colors hover:bg-elevated/50"
+                        class="text-sm rounded-md transition-colors hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3"
                         @click="referenceSheet.open({ kind: child.team as any })">
 
                         <NuxtImg :src="child.image" class="w-[64px] h-[64px]" />
-                        <div class="m-auto ms-2">
+                        <div>
                             <span :class="`font-medium text-(--${child.team})`">{{ child.name }}</span>
                             <span class="text-muted line-clamp-2">{{ child.ability }}</span>
                         </div>
@@ -72,6 +95,19 @@
                         <NuxtImg :src="(item as Role).image" class="w-[32px] h-[32px]" />
                         <span class="m-auto ms-2">{{ (item as Role).name }}</span>
                     </div>
+                </template>
+
+                <template #flavour="{ item }">
+                    <USwitch
+                        v-model="ui.showFlavor"
+                        :label="(item as any).label"
+                        :class="['font-medium', (item as any).class]"/>
+                </template>
+                <template #night-order="{ item }">
+                    <USwitch
+                        v-model="ui.showNightOrder"
+                        :label="(item as any).label"
+                        :class="['font-medium', (item as any).class]"/>
                 </template>
             </UNavigationMenu>
         </template>
@@ -248,7 +284,7 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 icon: 'material-symbols-book-2-outline',
                 onSelect: () => sessionDialog.open({ create: true })
             },
-            !socket.id ?{} : {
+            !socket.id ? {} : {
                 label: 'Leave game',
                 icon: 'i-lucide-square-arrow-right-exit',
                 onSelect: () => socket.disconnect()
