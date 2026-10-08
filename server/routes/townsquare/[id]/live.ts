@@ -258,7 +258,7 @@ export default defineWebSocketHandler({
                 if (peer.id !== sessions.get(townsquares.get(id)!.host)?.peer?.id)
                     return;
 
-                console.log(`Broadcasting message from ${session.id} to ${townsquares.get(id)!.users.size} users`)
+                // console.log(`Broadcasting from ${session.id} to ${townsquares.get(id)!.users.size} users: ${JSON.stringify(message.data)}`)
 
                 // Send to everyone
                 townsquares.get(id)!.users.forEach(u => {
