@@ -39,6 +39,8 @@ export const useSocket = defineStore('socket', () => {
         if (res.status >= 300)
             return { status: res.status, text: res.statusText}
 
+        gamestate.reset('connection')
+        gamestate.reset('game')
         return createWS(townsquare)
     }
 
@@ -58,6 +60,7 @@ export const useSocket = defineStore('socket', () => {
         if (res.status >= 300)
             return { status: res.status, text: res.statusText}
 
+        gamestate.reset('connection')
         return createWS(townsquare)
     }
 
@@ -72,7 +75,7 @@ export const useSocket = defineStore('socket', () => {
 
             if (res.status >= 300) {
                 toasts.serverError(res.statusText)
-                navigateTo(`/`)
+                disconnect()
 
                 return { status: res.status, text: res.statusText}
             }
@@ -85,9 +88,11 @@ export const useSocket = defineStore('socket', () => {
 
     /** Disconnects and cleans up most data. */
     function disconnect() {
+        navigateTo(`/`)
         ws?.close()
-        gamestate.reset('connection')
+
         // Show hosting tools again
+        gamestate.reset('connection')
         gamestate.isHost = true
 
         for (const player of players.list) {
@@ -103,7 +108,6 @@ export const useSocket = defineStore('socket', () => {
         navigateTo(`/townsquare/${townsquare}`)
 
         // Set some stuff
-        gamestate.reset('connection')
         gamestate.isHost = false;
         unobserveState()
 
