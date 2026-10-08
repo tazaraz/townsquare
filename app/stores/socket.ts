@@ -77,7 +77,9 @@ export const useSocket = defineStore('socket', () => {
                 return { status: res.status, text: res.statusText}
             }
 
-            return createWS(townsquare)
+            await createWS(townsquare)
+            if (!gamestate.isHost)
+                sendTo('host', 'sync', true)
         }
     }
 
@@ -107,7 +109,7 @@ export const useSocket = defineStore('socket', () => {
 
         ws = new WebSocket(`/townsquare/${townsquare}/live`)
         ws.onmessage = handleMessage
-        ws.onclose = () => {
+        ws.onclose = (e) => {
             unobserveState()
             disconnect();
             ws = undefined;
