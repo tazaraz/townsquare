@@ -112,6 +112,9 @@ class PlayerCircle {
             // Get the token elements in the DOM
             this.seats.elements = gsap.utils.toArray<HTMLElement>("#wheel > .seat")
             this.setWheelVisualization(ui.orientation.user)
+            // Orient the wheel to the correct orientation on load
+            gsap.set("#wheel", { rotation: this.wheel.orentation })
+
             this.updateOrder(true)
         })
     }
@@ -222,7 +225,7 @@ class PlayerCircle {
 
         // Make sure each value is in the range [0, this.seats.max)
         const slots = offsets.map(wrap);
-        return {selected: slots.indexOf(wrap(rotationOffset)), slots};
+        return {selected: slots.indexOf(wrap(-rotationOffset)), slots};
     }
 
     /**
@@ -386,7 +389,6 @@ class PlayerCircle {
             top: this.wheel.y,
             xPercent: -50,
             yPercent: -50,
-            rotation: this.wheel.orentation
         })
 
         gsap.set("#wheel .player", {
