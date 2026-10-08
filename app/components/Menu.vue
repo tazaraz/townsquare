@@ -312,7 +312,17 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 label: 'Demon bluffs',
                 class: 'text-(--demon)',
                 onSelect: () => demonBluffs.open({ editable: false })
-            }
+            },
+            {
+                toggle: 'flavour',
+                label: 'Show flavour text',
+                slot: 'flavour' as const
+            },
+            {
+                label: 'Show night order',
+                toggle: 'nightorder',
+                slot: 'night-order' as const
+            },
         ]
     }
 ], game.assignedFabled.length + game.assignedLoric.length == 0 ? [] : [
