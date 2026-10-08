@@ -11,7 +11,7 @@
             <UIcon v-if="player.socketId" name="material-symbols-person"/>{{ player.name }}
         </UButton>
 
-        <template #content>
+        <template v-if="!ui.grimoire.temporary"  #content>
             <div class="flex flex-col gap-2 p-2">
                 <UInput
                     :disabled="index !== socket.seatIndex && !socket.isHost"
