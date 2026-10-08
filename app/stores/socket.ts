@@ -394,6 +394,10 @@ export const useSocket = defineStore('socket', () => {
                 if (gamestate.isHost) return
                 toaster.modifier(message.data.type)
                 return game.toggleModifier(message.data.type, message.data.role)
+
+            case 'grimoire':
+                if (gamestate.isHost) return
+                return useUI().showTemporaryGrimoire(message.data)
         }
     }
 

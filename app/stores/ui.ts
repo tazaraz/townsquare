@@ -4,6 +4,8 @@ export const useUI = defineStore('UI', () => {
     const uistate = useGamestate().ui
     const players = useGamestate().players
 
+    const toast = useToast()
+
     /** Whether the Seats are shown in a circle */
     const centered = computed(() => uistate.orientation.rendered === 'center')
 
@@ -36,12 +38,47 @@ export const useUI = defineStore('UI', () => {
             // Copy old state
             oldGrimoire.value.splice(0, oldGrimoire.value.length, ...players)
             // Insert a temporary copy
-            players.splice(0, players.length, ...structuredClone(toRaw(players)))
-        } else {
-            // Restore
-            players.splice(0, players.length, ...oldGrimoire.value)
-            oldGrimoire.value.length = 0
-        }
+
+    function showTemporaryGrimoire(grimoire: any) {
+        const game = useGame()
+
+        // Show the grimoire toast to the player
+        toast.add({
+            title: 'A raven is bringing you the storyteller\'s grimoire',
+            description: 'Be careful, it cannot be unseen',
+            icon: 'i-material-symbols-book-2-outline',
+            color: 'info',
+            close: false,
+            actions: [{
+                label: 'I am ready',
+                color: 'info',
+                onClick: () => {
+                    toggleTemporaryGrimoire()
+
+                    // Update the players to match the grimoire
+                    players.splice(0, players.length, ...grimoire.map((p: any) => ({
+                        name: p.name,
+                        role: game.loadRole(p.role),
+                        reminders: p.reminders,
+                        state: p.state,
+                    })))
+
+                    // Add a notification allowing them to close the grimoire
+                    toast.add({
+                        title: 'You are viewing the storyteller\'s grimoire',
+                        icon: 'i-material-symbols-book-2-outline',
+                        color: 'error',
+                        close: false,
+                        actions: [{
+                            label: 'I\'ve seen enough',
+                            onClick: () => toggleTemporaryGrimoire()
+                        }],
+                        duration: 0,
+                    })
+                }
+            }],
+            duration: 0,
+        })
     }
 
     return {
@@ -50,6 +87,8 @@ export const useUI = defineStore('UI', () => {
         centered,
         formatReminderText,
         runAction,
-        toggleTemporaryGrimoire
+
+        toggleTemporaryGrimoire,
+        showTemporaryGrimoire,
     }
 })

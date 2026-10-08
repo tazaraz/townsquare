@@ -6,7 +6,11 @@
             <div class="flex flex-col gap-3">
                 <div class="flex flex-col gap-2">
                     <span class="text-muted">
-                        This feature allows you to edit the player <UKbd>names</UKbd>, <UKbd>seats</UKbd>, <UKbd>states</UKbd> and <UKbd>reminders</UKbd> (etc.), without actually permutating the game state. <b>Note:</b> Disabling this feature resets the grimoire to the original state.
+                        This feature allows you to edit the player <UKbd>names</UKbd>, <UKbd>seats</UKbd>, <UKbd>states</UKbd> and <UKbd>reminders</UKbd> (etc.), without actually permutating the game state. Disabling this feature resets the grimoire to the original state.
+
+                        <div class="text-center text-xs text-warning-500 mt-2 mx-auto">
+                            <b>Note:</b> If you reload while this is active, the temporary grimoire will become the new grimoire.
+                        </div>
                     </span>
 
                     <UAlert
@@ -15,10 +19,11 @@
                         class="w-fit mx-auto">
                         <template #description>
                             <USwitch
+                                v-model:model-value="ui.grimoire.temporary"
+                                @click="ui.toggleTemporaryGrimoire()"
                                 label="Temporary grimoire"
                                 description="Enable or disable this feature"
-                                :default-value="ui.grimoire.temporary"
-                                @change="ui.toggleTemporaryGrimoire()"/>
+                                class="font-medium"/>
                         </template>
                     </UAlert>
                 </div>
@@ -41,6 +46,20 @@
             <ModalFooter>
                 <template #center>
                     <UButton
+                        label="Show to:"
+                        color="secondary"
+                        :class="targetPlayer === undefined || ui.grimoire.temporary === false ? 'bg-gray-500!':''"
+                        :disabled="targetPlayer === undefined || ui.grimoire.temporary === false"
+                        @click="show"/>
+                    <USelect
+                        v-model="targetPlayer"
+                        value-key="index"
+                        :placeholder="playerList().length === 0 ? 'No players' : 'select player'"
+                        :items="playerList()"
+                        :content="{ position: 'item-aligned' }"/>
+                </template>
+                <template #right>
+                    <UButton
                         label="Close"
                         color="neutral"
                         @click="emit('close')"/>
@@ -58,8 +77,16 @@ const emit = defineEmits<{
 const game = useGame()
 const players = usePlayers();
 const ui = useUI()
+const socket = useSocket()
 
+/** Where this message is going */
+const targetPlayer = ref<number | undefined>(undefined)
+/** Whether to keep travellers in their seat when randomizing */
 const fixTravellers = ref(false)
+
+const playerList = () => players.list
+    .map((p, i) => ({ label: p.name, index: i, connected: p.socketId !== undefined }))
+    .filter(p => p.connected)
 
 function randomizeSeats() {
     if (!fixTravellers.value) {
@@ -73,11 +100,17 @@ function randomizeSeats() {
 
     let index = 0
 
-    for (let i = 0; i < players.list.length; i++) {
-        if (players.list[i]!.role?.team !== "traveller") {
-            players.list[i] = shuffledNonTravellers[index++]!
-        }
-    }
 
+function show() {
+    console.log(players.list[targetPlayer.value!]!.socketId)
+    socket.sendTo(players.list[targetPlayer.value!]!.socketId!, 'grimoire',
+        players.list.map(p => ({
+            name: p.name,
+            role: p.role?.id,
+            reminders: p.reminders,
+            state: p.state,
+        }))
+    )
 }
+
 </script>
