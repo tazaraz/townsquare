@@ -275,6 +275,14 @@ export const useSocket = defineStore('socket', () => {
 
                 toasts.leftGame(seat.name)
                 return
+            case 'message':
+                const player = players.list.find(p => p.socketId === message.origin)
+                if (isHost.value && !player)
+                    return
+
+                message.data.title = isHost.value ? `${player!.name} says to you:` : `A raven whispers to you:`
+                toasts.showDirectMessage(message.data, isHost.value ? message.origin : 'host')
+                return
             case 'claim':
                 if (gamestate.isHost) {
                     // Check if it is possible to claim this seat, and if the user is not claiming two seats

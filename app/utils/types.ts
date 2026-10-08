@@ -112,3 +112,18 @@ export interface UI {
         lastAction: NavigationMenuItem
     }
 }
+
+export interface DirectMessage {
+    /** The text of the message */
+    text: string
+    /** What buttons to show to the user */
+    buttons: 'none' | 'acknowledge' | 'confirm' | 'reply' | 'dialog'
+
+    /** Icon to show */
+    icon?: string
+    /** If a token is to be shown */
+    role?: Role['id']
+
+    /** Set automatically upon receiving the message */
+    title?: string
+}

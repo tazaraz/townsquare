@@ -10,7 +10,8 @@ interface Message extends Object {
     /**
      * What kind of message is being sent. All data has to come from the host/storyteller
      */
-    kind: // Sync
+    kind: 'message' |
+          // Sync
           'sync' | 'script' | 'grimoire' | 'state' | 'player' | 'role' | 'modifier' | 'swap' | 'bluffs' |
           // UI state change
           'nominated' | 'marked' | 'night' | 'votelocked' |
