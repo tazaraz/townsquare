@@ -142,7 +142,7 @@ export const useSocket = defineStore('socket', () => {
 
     /** Send a direct message */
     const sendTo = (to: SendMessage['to'], kind: SendMessage['kind'], data: any) => _send({ to, kind, data})
-    /** Send a global message. Used only by the `host` */
+    /** Send a global message. Can only be used by the `host` */
     const broadcast = (kind: SendMessage['kind'], data: any) => _send({ broadcast: true, kind, data })
 
     /**
@@ -183,6 +183,7 @@ export const useSocket = defineStore('socket', () => {
         }
     }
 
+    /** Handles messages received from the server */
     function handleMessage(event: MessageEvent) {
         const message: ReceiveMessage = JSON.parse(event.data);
 
@@ -261,8 +262,10 @@ export const useSocket = defineStore('socket', () => {
                             name: p.name, state: p.state, socketId: p.socketId
                         })))
                     ) {
+                        // Reset the seats, and re-add all players
                         gamestate.reset('seats')
 
+                        // Update the state
                         message.data.players.forEach((
                             { name, state, socketId }: { name: string, state: PlayerState, socketId: string }) => {
                                 // Only add new players, and don't add the same player twice
