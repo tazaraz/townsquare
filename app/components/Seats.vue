@@ -199,30 +199,30 @@ class PlayerCircle {
      * Calculates the order of tokens based on the current origin
      * @returns An array of token indices in their current order
      */
-    tokenOrder(): {selected: number, slots: number[]} {
+    tokenOrder(rotationOffset: number): {selected: number, slots: number[]} {
         const size = this.seats.elements.length;
-        const radius = Math.floor(size / 2);
+        const rotation = ((rotationOffset % size) + size) % size;
 
-        // Create an array of offsets: [0, ..., size, -size, ... ,-1]
-        const offset = Array.from({ length: size }, (_, i) => {
-            return i <= Math.floor(size / 2) ? i : i - size;
-        });
-
-        // Calculate the direction to shift the array based on the seat index
-        const direction = Math.sign(this.centreSeatIndex);
-
-        // Put the seat indexes into the array
-        for (let i = 0; i < Math.abs(this.centreSeatIndex); i++) {
-            const index = (i + radius + 1) % size;
-            offset[index]! += direction * size;
-        }
-
+        // Wraps a value to the range [0, this.seats.max)
         const wrap = (value: number) => ((value % this.seats.max) + this.seats.max) % this.seats.max;
 
-        // Make sure each value is in the range [0, this.seats.max)
-        const slots = offset.map(wrap);
-        return {selected: slots.indexOf(wrap(this.centreSeatIndex)), slots};
+        /**
+         * Create an array of offsets: [0, ..., size, -size, ... ,-1]
+         * Add the rotation offset of the wheel: [0 + off, ..., size + off, -size - off, ... , -1 - off]
+         * Then for the rotation of the elements, wrap the array around.
+         *
+         * This results in an array where indices are mapped to their current position in the wheel,
+         * and the selected index is the one that is closest to 0.
+         */
+        const offsets = Array.from({ length: size },
+            // Construct the array
+            (_, i) => (i <= Math.floor(size / 2) ? i : i - size) - rotationOffset)
+            // Wrap
+            .map((_, i, arr) => arr[(i + rotation) % size]!);
 
+        // Make sure each value is in the range [0, this.seats.max)
+        const slots = offsets.map(wrap);
+        return {selected: slots.indexOf(wrap(rotationOffset)), slots};
     }
 
     /**
@@ -234,10 +234,10 @@ class PlayerCircle {
         const rotation = (gsap.getProperty("#wheel", "rotation") as number) - this.wheel.orentation
         // Calculate the offset based on the rotation and the number of slots
         const offset = Math.round(rotation / (360 / this.seats.max))
-        this.centreSeatIndex = ((- offset) % this.seats.max + this.seats.max) % this.seats.max
+        this.centreSeatIndex = ((-offset) % this.seats.max + this.seats.max) % this.seats.max
 
         // Update the slots based on the new origin
-        const {selected, slots} = this.tokenOrder()
+        const {selected, slots} = this.tokenOrder(offset)
 
         // Update the class of the selected token in the DOM
         if (ui.orientation.rendered !== "center") {
