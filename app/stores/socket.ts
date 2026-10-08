@@ -224,14 +224,14 @@ export const useSocket = defineStore('socket', () => {
                 if (gamestate.isHost)
                     unobserveState = observeState()
 
-                if (!gamestate.isHost) {
-                    sendTo('host', 'sync', true)
-                } else {
-                    // We have synced up, so we can now set our sessionId
-                    gamestate.id = document.cookie.match(/id=([^;]+)/)?.[1]!
-                    gamestate.sessionId = getUrlSessionId()!
-                }
-                return
+                if (!gamestate.isHost)
+                    return sendTo('host', 'sync', true)
+
+                gamestate.id = document.cookie.match(/id=([^;]+)/)?.[1]!
+                gamestate.sessionId = getUrlSessionId()!
+                // We are the host, so we need to sync the data to the players on connect.
+                // Trigger a request for sync on the players
+                return broadcast('connected', true)
 
             // Sync state to the player
             case 'sync':
