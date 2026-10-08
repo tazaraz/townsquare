@@ -267,10 +267,10 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 description: '',
                 icon: 'i-wordpress-connection',
             },
-            {
-                description: 'Player role division',
-                icon: 'i-lucide-file-text',
-                slot: 'division' as const
+            socket.isHost || socket.seatIndex < 0 ? {} : {
+                label: 'Message storyteller',
+                icon: 'i-material-symbols-chat-outline',
+                onSelect: () => messageHost()
             },
             {
                 label: 'Demon bluffs',
@@ -343,9 +343,18 @@ async function syncRoleData() {
     })
 
     const yes = await confirm.result;
-    console.log(yes)
     if (yes) {
         socket.syncDataToPlayers();
     }
 }
+
+async function messageHost() {
+    const input = inputDialog.open({ title: 'What do you want to say', placeholder: 'Message...' })
+
+    const value = await input.result as string | undefined;
+    if (value) {
+        socket.sendTo('host', 'message', { text: value, buttons: 'dialog' } satisfies DirectMessage)
+    }
+}
+
 </script>
