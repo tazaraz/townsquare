@@ -80,9 +80,18 @@ export const useSocket = defineStore('socket', () => {
                 return { status: res.status, text: res.statusText}
             }
 
+            // Create a copy of the seatindex
+            const seatIndex = gamestate.seatIndex
+            gamestate.seatIndex = -1
+
             await createWS(townsquare)
-            if (!gamestate.isHost)
+            if (!gamestate.isHost) {
+                // Resync
                 sendTo('host', 'sync', true)
+
+                // Request seat again, but we reset preemtively if that fails to not lock up state
+                requestClaim(seatIndex)
+            }
         }
     }
 
