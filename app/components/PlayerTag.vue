@@ -1,5 +1,6 @@
 <template>
-    <UPopover class="player-tag"
+    <UPopover v-model:open="open"
+            class="player-tag"
             mode="click"
             arrow
             :content="{side: ui.centered ? 'left' : 'bottom'}"
@@ -46,12 +47,12 @@
                 <UButton v-if="socket.isHost"
                     :label="ui.swapping == index ? 'Cancel swap' : 'Swap seats'"
                     variant="outline"
-                    @click="ui.swapping == index ? ui.swapping = -1 : ui.swapping = index"/>
+                    @click="(ui.swapping == index ? ui.swapping = -1 : ui.swapping = index); open=!open"/>
                 <UButton v-if="socket.isHost"
                     color="error"
                     label="Remove player"
                     variant="outline"
-                    @click="players.remove(index)"/>
+                    @click="players.remove(index); open=!open"/>
             </div>
         </template>
     </UPopover>
@@ -67,6 +68,7 @@ const socket = useSocket()
 const ui = useUI()
 const players = usePlayers()
 
+const open = ref(false)
 const name = ref(`${props.player.name}`);
 
 function resetFields(open: boolean) {
