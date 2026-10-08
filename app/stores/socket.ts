@@ -281,6 +281,10 @@ export const useSocket = defineStore('socket', () => {
                                 players.setState(players.length - 1, state)
                             }
                         );
+
+                        // Check if the received seat socketId is still identical to ours
+                        if (players.list[gamestate.seatIndex]?.socketId !== id.value)
+                            gamestate.seatIndex = -1
                     }
                 }
 
