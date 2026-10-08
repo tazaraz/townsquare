@@ -190,6 +190,11 @@ export default defineWebSocketHandler({
             return
         }
 
+        if (sessions.get(townsquares.get(id)!.host)?.peer === undefined) {
+            peer.send(createMessage('notification', 'The storyteller is not connected. Wait for them to reconnect.'))
+            return
+        }
+
         // If this is not the host, apply rate limiting
         if (!sessions.get(townsquares.get(id)!.host)?.peer?.id ||  // prevent compare against undefined
              sessions.get(townsquares.get(id)!.host)!.peer!.id !== peer.id) {
