@@ -186,7 +186,7 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 onSelect: () => addModifier('loric')
             },
             {
-                label: 'Display info',
+                label: 'Communicate with a player',
                 description: 'Either a token or text',
                 class: `${disabledItemCss.value} text-(--traveller)`,
                 disabled: !scenarioIsSelected.value,
