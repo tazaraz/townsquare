@@ -217,7 +217,7 @@ export const useSocket = defineStore('socket', () => {
 
                     // If we are still timed out
                     setTimeout(() => {
-                        if (!id.value) return
+                        if (id.value) return
                         if (timedOut)
                             toaster.connectionError()
                         else
