@@ -19,7 +19,7 @@ interface Message extends Object {
           'claim' | 'unclaim' | 'rename' | 'nominate' | 'voting' |
           // Server specific
           'ping' | 'pong' | 'error' | 'notification' | 'leave' | 'connected' | 'close'
-    // TODO: 'grimoire' | 'nominate' | 'voting' | 'nominated' | 'marked' | 'night' | 'votelocked'
+    // TODO: 'nominate' | 'voting' | 'nominated' | 'marked' | 'night' | 'votelocked'
 
     /** The payload */
     data: any
