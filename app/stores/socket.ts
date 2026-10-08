@@ -157,7 +157,7 @@ export const useSocket = defineStore('socket', () => {
      */
     async function _send({ broadcast, to, kind, data }: SendMessage) {
         if (!ws)
-            reconnect()
+            await reconnect()
         if (!ws)
             return toasts.connectionError()
 
