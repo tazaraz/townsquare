@@ -28,16 +28,47 @@ export const useUI = defineStore('UI', () => {
         action();
     }
 
+    let notification: typeof toast.toasts.value[0]
     const oldGrimoire: Ref<Player[]> = ref([]);
     /**
      * Changes the grimoire to allow for non-persisting changes
      */
     function toggleTemporaryGrimoire() {
         uistate.grimoire.temporary = !uistate.grimoire.temporary
+
         if (uistate.grimoire.temporary) {
             // Copy old state
             oldGrimoire.value.splice(0, oldGrimoire.value.length, ...players)
             // Insert a temporary copy
+            players.splice(0, players.length, ...structuredClone(toRaw(players)))
+
+            // The host can toggle this much easier, so we only show the notification for them
+            if (useSocket().isHost) {
+                notification = toast.add({
+                    title: 'Temporary grimoire enabled',
+                    icon: 'i-material-symbols-error-outline-rounded',
+                    color: 'error',
+                    close: false,
+                    actions: [{
+                        label: 'Disable',
+                        onClick: () => toggleTemporaryGrimoire()
+                    }],
+                    duration: 0,
+                })
+            }
+        } else {
+            if (oldGrimoire.value.length === 0) {
+                // Somebody reloaded while the grimoire was open, so we just reset the players to their current state
+                players.splice(0, players.length, ...structuredClone(toRaw(players)))
+            } else {
+                // Restore
+                players.splice(0, players.length, ...oldGrimoire.value)
+                oldGrimoire.value.length = 0
+            }
+
+            toast.remove(notification?.id)
+        }
+    }
 
     function showTemporaryGrimoire(grimoire: any) {
         const game = useGame()
