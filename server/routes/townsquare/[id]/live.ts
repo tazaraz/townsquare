@@ -160,6 +160,9 @@ export default defineWebSocketHandler({
             return
         }
 
+        // Unset the peer
+        session.peer = undefined;
+
         // Notify the host of the disconnect. They can broadcast it to the players
         sessions.get(townsquares.get(id)?.host!)?.peer?.send({
             origin: 'server',
