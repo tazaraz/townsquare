@@ -14,7 +14,7 @@
             </div>
         </template>
 
-        <NuxtImg v-if="scenario.image" :src="scenario.image" class="h-full mx-auto" />
+        <NuxtImg v-if="scenario.image" :src="scenario.image" class="max-h-[350px] h-full mx-auto" />
         <template #footer>
             <UButton :label="scenario.button" @click="emit('selected')"/>
         </template>

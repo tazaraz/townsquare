@@ -16,7 +16,7 @@
                     </template>
                 </template>
                 <template #full>
-                    <NuxtImg src="/sprites/editions/custom.webp" class="h-full mx-auto" />
+                    <NuxtImg src="/sprites/editions/custom.webp" class="max-h-[350px] h-full mx-auto" />
                     <template v-for="scenario in scenarios">
                         <ModalSelectScenarioCard
                             v-if="scenario.type === 'full'"
@@ -25,7 +25,7 @@
                     </template>
                 </template>
                 <template #teensyville>
-                    <NuxtImg src="/sprites/editions/custom.webp" class="h-full mx-auto" />
+                    <NuxtImg src="/sprites/editions/custom.webp" class="max-h-[350px] h-full mx-auto" />
                     <template v-for="scenario in scenarios">
                         <ModalSelectScenarioCard
                             v-if="scenario.type === 'teensyville'"
@@ -53,7 +53,7 @@
                             </UButton>
                         </template>
 
-                        <NuxtImg src="/sprites/editions/custom.webp" class="h-full mx-auto" />
+                        <NuxtImg src="/sprites/editions/custom.webp" class="max-h-[350px] mx-auto" />
 
                         <template #footer>
                             <div class="flex flex-wrap gap-2">
