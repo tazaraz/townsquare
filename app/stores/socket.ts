@@ -192,12 +192,24 @@ export const useSocket = defineStore('socket', () => {
             case 'error':
                 return toasts.serverError(message.data)
             case 'ping':
+            case 'pong':
                 clearTimeout(pongTimeout)
-                pongTimeout = setTimeout(() => {timedOut = true; toasts.connectionError()}, 45000)
+                pongTimeout = setTimeout(() => {
+                    // We have timed out, but verify it is true.
+                    timedOut = true;
+                    sendTo('server', 'ping', true)
+
+                    // If we are still timed out
+                    setTimeout(() => {
+                        if (timedOut) toasts.connectionError()
+                    })
+                }, 45000)
+
                 if (timedOut) {
                     toasts.restoredConnection()
                     timedOut = false
                 }
+
                 return sendTo('server', 'pong', true)
 
             case 'connected':

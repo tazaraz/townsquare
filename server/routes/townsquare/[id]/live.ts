@@ -225,12 +225,16 @@ export default defineWebSocketHandler({
             let message: SendMessage = message_raw.json()
 
             // Do ping pong if required
-            if (message.kind == 'pong') {
+            if (message.kind == 'pong' || message.kind == 'ping') {
                 if (!session.alive) {
                     // Reset the statistics
                     session.alive = true;
                     session.messageCount = 0;
                 }
+                // Confirm the ping from the client
+                if (message.kind == 'ping')
+                    peer.send({ origin: 'server', kind: 'pong', data: undefined } satisfies ReceiveMessage)
+
                 return
             }
 
