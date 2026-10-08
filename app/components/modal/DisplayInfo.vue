@@ -51,20 +51,22 @@
         <template #footer>
             <ModalFooter>
                 <template #center>
-                    <span class="my-auto">Show to:</span>
-                    <USelect
-                        v-model="targetPlayer"
-                        value-key="index"
-                        :placeholder="playerList().length === 0 ? 'No seated players' : 'Select a player'"
-                        :items="playerList()"
-                        :content="{ position: 'item-aligned' }"/>
                     <UButton
-                        label="Show"
+                        label="Show to:"
                         color="secondary"
+                        :class="requiredData === 'token' && !roleToken ||
+                                   requiredData === 'select' && rolePlayers.length === 0 ||
+                                   targetPlayer === undefined ? 'bg-gray-500!':''"
                         :disabled="requiredData === 'token' && !roleToken ||
                                    requiredData === 'select' && rolePlayers.length === 0 ||
                                    targetPlayer === undefined"
                         @click="show"/>
+                    <USelect
+                        v-model="targetPlayer"
+                        value-key="index"
+                        :placeholder="playerList().length === 0 ? 'No players' : 'select player'"
+                        :items="playerList()"
+                        :content="{ position: 'item-aligned' }"/>
                 </template>
                 <template #right>
                     <UButton label="Close" color="neutral" @click="emit('close')"/>
@@ -100,8 +102,8 @@ const index = ref<number>(4)
 
 
 const playerList = () => players.list
-                            .map((p, i) => ({ label: p.name, index: i, connected: p.socketId !== undefined }))
-                            .filter(p => p.connected)
+    .map((p, i) => ({ label: p.name, index: i, connected: p.socketId !== undefined }))
+    .filter(p => p.connected)
 
 
 async function editToken() {
