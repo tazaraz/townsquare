@@ -92,7 +92,11 @@ export const useSocket = defineStore('socket', () => {
                 // Request seat again, but we reset preemtively if that fails to not lock up state
                 requestClaim(seatIndex)
             }
+
+            return true;
         }
+
+        return { status: 404, text: 'No townsquare to reconnect to' }
     }
 
     /** Disconnects and cleans up most data. */
