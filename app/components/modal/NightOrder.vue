@@ -1,6 +1,6 @@
 <template>
     <UModal
-        :title="`${game.edition.name} Reference Sheet`"
+        :title="`${game.script.name} Reference Sheet`"
         :ui="{
             content: 'max-w-screen-sm',
             body: 'grid gap-20 grid-cols-1 md:grid-cols-2',

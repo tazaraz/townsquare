@@ -32,8 +32,8 @@ export const useGame = defineStore('game', () => {
     const gamestate = useGamestate()
     const players   = usePlayers()
 
-    /** The edition and script being played*/
-    const edition = computed(() => gamestate.edition);
+    /** The script being played */
+    const script = computed(() => gamestate.script);
 
     /** Contains all roles available at the moment */
     const availableRoles = computed(() => gamestate.roles);
@@ -147,9 +147,9 @@ export const useGame = defineStore('game', () => {
 
     /**
      * Loads a scenario from the editions or supplied data, and populates the game state with the roles and fabled roles of that edition
-     * @param game Either an array of role ids (for custom scripts), or an edition id (for predefined editions)
+     * @param game Either an array of role ids (for custom scripts), or an edition id (for predefined scripts)
      */
-    function loadScript(game: (EditionJSON | string)[] | string) {
+    function loadScript(game: (ScriptJSON | string)[] | string) {
         // If our previous session was for a different townsquare, we need to reset the game state
         gamestate.reset('game')
 
@@ -157,13 +157,13 @@ export const useGame = defineStore('game', () => {
         if (Array.isArray(game)) {
             // Find the metadata
             const idx = game.findIndex(i => typeof i === 'object' && i.id === "_meta")
-            const metadata = (idx !== -1 ? game.splice(idx, 1)[0] : undefined) as EditionJSON | undefined
+            const metadata = (idx !== -1 ? game.splice(idx, 1)[0] : undefined) as ScriptJSON | undefined
             if (metadata && metadata.name === undefined)
                 throw new DataFormatError(`The scenario is missing the required name.`)
 
             // Map the rest to roles, filter out duplicates
             const roles = [...new Set(game.map(role => typeof role === "object" ? role.id : role) as string[])]
-            gamestate.edition = {
+            gamestate.script = {
                 id: "custom",
                 name: metadata?.name ?? "Custom script",
                 author: metadata?.author,
@@ -177,18 +177,18 @@ export const useGame = defineStore('game', () => {
             if (!raw)
                 throw new NotFoundError(`Edition ${game} not found in editions data`)
 
-            gamestate.edition = {
+            gamestate.script = {
                 id: raw.id,
                 name: raw.name,
                 author: raw.author,
                 description: raw.description,
-                level: raw.level as keyof Edition['level'],
+                level: raw.level as keyof Script['level'],
                 roles: raw.roles,
             }
         }
 
         // Load the roles and fabled roles
-        for (const charId of gamestate.edition.roles) {
+        for (const charId of gamestate.script.roles) {
             // Get the role from the roles data
             let char = loadRole(charId);
             switch (char.team) {
@@ -321,7 +321,7 @@ export const useGame = defineStore('game', () => {
 
 
     return {
-        edition,
+        script,
         availableRoles,
         availableTeamRoles,
         assignedTeamRoles,

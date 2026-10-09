@@ -9,13 +9,13 @@ export function validRoleEditionId(id: string): id is RoleEdition {
     return ["tb", "bmr", "snv", "carousel", "fabled", "loric", ""].includes(id)
 }
 
-export interface EditionJSON {
+export interface ScriptJSON {
     id: "_meta"
     name: string
     author: string
 }
 
-export interface Edition {
+export interface Script {
     id:  "tb" | "bmr" | "snv" | string
     name: string | "Custom script"
     author?: "The Pandemonium Institute" | string

@@ -10,8 +10,8 @@ export const MAX_ACTIVE_PLAYERS = 15;
  * However, you probably should be using one other wrapper stores instead.
  */
 export const useGamestate = defineStore('gamestate', () => {
-    /** Which edition we are playing */
-    const edition: Ref<Edition | undefined> = ref(undefined)
+    /** Which script we are playing */
+    const script: Ref<Script | undefined> = ref(undefined)
     /** The roles and their definitions */
     const roles: Ref<Role[]> = ref([])
     /** Fabled roles */
@@ -77,7 +77,7 @@ export const useGamestate = defineStore('gamestate', () => {
                 break;
             case 'game':
                 useReminders().reset()
-                edition.value = undefined
+                script.value = undefined
                 roles.value.length = 0;
                 fabled.value.length = 0;
                 loric.value.length = 0;
@@ -89,7 +89,7 @@ export const useGamestate = defineStore('gamestate', () => {
     }
 
     return {
-        edition,
+        script,
         roles,
         fabled,
         loric,

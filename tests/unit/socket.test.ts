@@ -182,7 +182,7 @@ describe('Socket connection', () => {
         activatePinia(host)
         hgame.loadScript(["chef", "undertaker", "oracle", "sage", "ravenkeeper", "mayor", "recluse", "lunatic", "poisoner", "spy", "zombuul", "sentinel"])
 
-        expect(hstate.edition?.roles.length).toEqual(12)
+        expect(hstate.script?.roles.length).toEqual(12)
         expect(hgame.availableRoles.length).toEqual(11)
         expect(hgame.assignedFabled.length).toEqual(1)
 
@@ -195,7 +195,7 @@ describe('Socket connection', () => {
         // Check that all players have the same state
         for (const p of itemsFrom(0, PLAYERS)) {
             activatePinia(players[p]!)
-            expect(pgame[p]!.edition?.roles.length).toEqual(12)
+            expect(pgame[p]!.script?.roles.length).toEqual(12)
             expect(pgame[p]!.availableRoles.length).toEqual(11)
             expect(pgame[p]!.assignedFabled.length).toEqual(1)
         }
@@ -211,7 +211,7 @@ describe('Socket connection', () => {
 
         for (const p of itemsFrom(0, PLAYERS)) {
             activatePinia(players[p]!)
-            expect(pgame[p]!.edition?.roles.length).toEqual(12)
+            expect(pgame[p]!.script?.roles.length).toEqual(12)
             expect(pgame[p]!.availableRoles.length).toEqual(11)
             expect(pgame[p]!.assignedFabled.length).toEqual(1)
         }

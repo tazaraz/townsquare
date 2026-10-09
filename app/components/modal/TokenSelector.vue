@@ -9,7 +9,7 @@
                 :style="{ '--token-size': `${ui.tokenSize * 0.8}px` }"
                 :items="tabs"
                 :ui="{ list: `mb-3 ${kind == 'role' ? '' : 'hidden'}` }">
-                <template #edition>
+                <template #script>
                     <template v-for="item in items">
                         <Token v-if="(item as Role).team !== 'traveller'"
                             :class="[(item as Role).team || undefined, hasBackdrop((item as Role).id)]"
@@ -31,7 +31,7 @@
                             @click="!isDisabled((item as Role).id) && emitToken(item)"/>
                     </template>
                     <div v-else-if="items.length === 0 && !showTravellers" class="text-center">
-                        There are no travellers in this edition.
+                        There are no travellers in this script.
                     </div>
                     <template v-else v-for="item in game.loadTravellers()">
                         <Token v-if="item.team === 'traveller'"
@@ -121,8 +121,8 @@ const activeTab = ref('0')
 const showTravellers = ref(false)
 const tabs = [
     {
-        label: 'Edition roles',
-        slot: 'edition'
+        label: 'Script roles',
+        slot: 'script'
     },
     {
         label: 'Travellers',

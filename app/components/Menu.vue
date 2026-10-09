@@ -132,7 +132,7 @@ import {
     ModalReferenceSheet,
     ModalNightOrder,
     ModalGameSetup,
-    ModalSelectScenario,
+    ModalSelectScript,
     ModalTokenSelector,
     ModalTemporaryGrimoire,
     ModalDisplayInfo,
@@ -159,7 +159,7 @@ const socket = useSocket();
 const referenceSheet = overlay.create(ModalReferenceSheet)
 const nightOrder = overlay.create(ModalNightOrder)
 const gameSetup = overlay.create(ModalGameSetup)
-const selectScenario = overlay.create(ModalSelectScenario)
+const selectScript = overlay.create(ModalSelectScript)
 const tokenSelector = overlay.create(ModalTokenSelector)
 const displayInfo = overlay.create(ModalDisplayInfo)
 const temporaryGrimoire = overlay.create(ModalTemporaryGrimoire)
@@ -198,10 +198,10 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
         } : undefined,
         children: [
             {
-                label: 'Select edition',
+                label: 'Select script',
                 description: 'Define with what roles you are playing',
                 class: 'text-sky-300',
-                onSelect: () => selectScenario.open(),
+                onSelect: () => selectScript.open(),
             },
             {
                 label: 'Game setup',

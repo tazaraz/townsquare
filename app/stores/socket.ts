@@ -246,7 +246,7 @@ export const useSocket = defineStore('socket', () => {
                 // Send data to the joined player as host
                 if (gamestate.isHost) {
                     sendTo(message.origin, 'sync', {
-                        edition: gamestate.edition,
+                        edition: gamestate.script,
                         fabled: gamestate.fabled.map(r => r.id),
                         loric: gamestate.loric.map(r => r.id),
                         demonBluffs: gamestate.players.find(p => p.role?.team === 'demon')?.socketId === message.origin
@@ -262,9 +262,9 @@ export const useSocket = defineStore('socket', () => {
 
                 // Receive data from the host
                 else {
-                    // If no edition is set, ignore
-                    if (message.data.edition) {
-                        game.loadScript(message.data.edition.roles)
+                    // If no script is set, ignore
+                    if (message.data.script) {
+                        game.loadScript(message.data.script.roles)
                         message.data.demonBluffs.forEach((id: string | undefined, i: number) => game.setBluff(i, id));
                     }
 

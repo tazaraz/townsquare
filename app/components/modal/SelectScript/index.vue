@@ -1,6 +1,6 @@
 <template>
     <UModal
-        title="Load the scenario"
+        title="Load a script"
         :ui="{ content: 'max-w-screen-2xl', body: 'flex flex-col', footer: 'flex relative'}">
         <template #body>
             <UTabs
@@ -8,29 +8,29 @@
                 :items="tabs"
                 :ui="{ content: 'mb-3' }">
                 <template #core>
-                    <template v-for="scenario in scenarios">
-                        <ModalSelectScenarioCard
+                    <template v-for="scenario in scripts">
+                        <ModalSelectScriptCard
                             v-if="scenario.type === 'core'"
-                            :scenario="scenario"
+                            :script="scenario"
                             @selected="scenario.onSelect"/>
                     </template>
                 </template>
                 <template #full>
                     <NuxtImg src="/sprites/editions/custom.webp" class="max-h-[350px] h-full mx-auto" />
-                    <template v-for="scenario in scenarios">
-                        <ModalSelectScenarioCard
-                            v-if="scenario.type === 'full'"
-                            :scenario="scenario"
-                            @selected="scenario.onSelect"/>
+                    <template v-for="script in scripts">
+                        <ModalSelectScriptCard
+                            v-if="script.type === 'full'"
+                            :script="script"
+                            @selected="script.onSelect"/>
                     </template>
                 </template>
                 <template #teensyville>
                     <NuxtImg src="/sprites/editions/custom.webp" class="max-h-[350px] h-full mx-auto" />
-                    <template v-for="scenario in scenarios">
-                        <ModalSelectScenarioCard
-                            v-if="scenario.type === 'teensyville'"
-                            :scenario="scenario"
-                            @selected="scenario.onSelect"/>
+                    <template v-for="script in scripts">
+                        <ModalSelectScriptCard
+                            v-if="script.type === 'teensyville'"
+                            :script="script"
+                            @selected="script.onSelect"/>
                     </template>
                 </template>
                 <template #upload>
@@ -88,7 +88,7 @@
 
                                     <template #description>
                                         <template v-for="role, i in game.availableRoles">
-                                            <span :style="`color: var(--${role.team})`">{{ role.name }}</span>
+                                            <span :class="`text-(--${role.team})`">{{ role.name }}</span>
                                             <template v-if="i < game.availableRoles.length - 1">,&nbsp;</template>
                                         </template>
                                     </template>
@@ -122,7 +122,7 @@ const emit = defineEmits<{
     close: []
 }>()
 
-const scenarios = [
+const scripts = [
     ...editionData.map(s => ({
         id: s.id,
         name: s.name,
