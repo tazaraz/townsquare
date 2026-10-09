@@ -18,46 +18,50 @@
                     v-model="name"
                     :color="name == '' ? 'error' : 'primary'"
                     @change="socket.isHost ? players.setName(index, name) : socket.requestRename(name)"/>
-                <UAlert v-if="socket.isHost" variant="outline">
-                    <template #description>
-                        <USwitch
-                            label="Is alive"
-                            :default-value="!(player.state & PlayerState.Alive)"
-                            @change="players.setState(index, PlayerState.Dead)"/>
-                        <USwitch
-                            label="Can vote"
-                            :default-value="!(player.state & PlayerState.Voteless)"
-                            class="mt-2"
-                            @change="players.setState(index, PlayerState.Voteless)"/>
-                    </template>
-                </UAlert>
-                <UButton v-if="!socket.isHost && socket.seatIndex < 0"
-                    label="Claim seat"
-                    variant="outline"
-                    @click="socket.requestClaim(index)"/>
-                <UButton v-else-if="!socket.isHost && index === socket.seatIndex"
-                    label="Unclaim seat"
-                    variant="outline"
-                    @click="socket.requestUnclaim()"/>
-                <UButton v-else-if="!socket.isHost && index !== socket.seatIndex"
-                    label="Unclaim current seat"
-                    variant="outline"
-                    @click="socket.requestUnclaim()"/>
-
-                <UButton v-if="socket.isHost"
-                    :label="ui.swapping == index ? 'Cancel swap' : 'Swap seats'"
-                    variant="outline"
-                    @click="(ui.swapping == index ? ui.swapping = -1 : ui.swapping = index); open=!open"/>
-                <UButton v-if="socket.isHost && players.list[index]?.socketId"
-                    color="error"
-                    label="Kick player"
-                    variant="subtle"
-                    @click="players.kick(index); open=!open"/>
-                <UButton v-if="socket.isHost"
-                    color="error"
-                    label="Remove seat"
-                    variant="subtle"
-                    @click="players.remove(index); open=!open"/>
+                <template v-if="socket.isHost">
+                    <UAlert variant="outline">
+                        <template #description>
+                            <USwitch
+                                label="Is alive"
+                                :default-value="!(player.state & PlayerState.Alive)"
+                                @change="players.setState(index, PlayerState.Dead)"/>
+                            <USwitch
+                                label="Can vote"
+                                :default-value="!(player.state & PlayerState.Voteless)"
+                                class="mt-2"
+                                @change="players.setState(index, PlayerState.Voteless)"/>
+                        </template>
+                    </UAlert>
+                    <UButton
+                        :label="ui.swapping == index ? 'Cancel swap' : 'Swap seats'"
+                        variant="outline"
+                        @click="(ui.swapping == index ? ui.swapping = -1 : ui.swapping = index); open=!open"/>
+                    <UButton v-if="players.list[index]?.socketId"
+                        color="error"
+                        label="Kick player"
+                        variant="subtle"
+                        @click="players.kick(index); open=!open"/>
+                    <UButton
+                        color="error"
+                        label="Remove seat"
+                        variant="subtle"
+                        @click="players.remove(index); open=!open"/>
+                </template>
+                <template v-else>
+                    <UButton v-if="socket.seatIndex < 0"
+                        label="Claim seat"
+                        variant="outline"
+                        @click="socket.requestClaim(index)"/>
+                    <UButton v-else-if="index === socket.seatIndex"
+                        label="Unclaim seat"
+                        variant="outline"
+                        @click="socket.requestUnclaim()"/>
+                    <UButton v-else-if="index !== socket.seatIndex"
+                        label="Unclaim current seat"
+                        variant="outline"
+                        color="warning"
+                        @click="socket.requestUnclaim()"/>
+                </template>
             </div>
         </template>
     </UPopover>
