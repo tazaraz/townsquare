@@ -52,7 +52,11 @@ export interface Reminder {
 }
 
 export type TokenKind = "role" | "fabled" | "loric" | "reminder"
-export type PlayerState = "alive" | "dead" | "voteless"
+export enum PlayerState {
+    Alive = 0,
+    Dead = 1,
+    Voteless = 2,
+}
 
 export interface Player {
     /** Shown name in the UI */

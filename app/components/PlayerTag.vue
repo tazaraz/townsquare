@@ -22,13 +22,13 @@
                     <template #description>
                         <USwitch
                             label="Is alive"
-                            :default-value="player.state === 'alive'"
-                            @change="players.setState(index, player.state === 'alive' ? 'dead' : 'alive')"/>
-                        <USwitch v-if="player.state !== 'alive'"
-                            label="Has a deathvote"
-                            :default-value="player.state === 'dead'"
+                            :default-value="!(player.state & PlayerState.Alive)"
+                            @change="players.setState(index, PlayerState.Dead)"/>
+                        <USwitch
+                            label="Can vote"
+                            :default-value="!(player.state & PlayerState.Voteless)"
                             class="mt-2"
-                            @change="players.setState(index, player.state === 'dead' ? 'voteless' : 'dead')"/>
+                            @change="players.setState(index, PlayerState.Voteless)"/>
                     </template>
                 </UAlert>
                 <UButton v-if="!socket.isHost && socket.seatIndex < 0"

@@ -12,13 +12,12 @@
                 <NuxtImg src="/sprites/token.png" :class="{
                     background,
                     hidden: hidden,
-                    dead: state && state !== 'alive'
+                    dead: (state ?? 0) & PlayerState.Dead,
                 }" />
                 <!-- Dead token -->
-                <NuxtImg v-if="state == 'dead'" src="/sprites/token.png" :class="[
-                    'background small',
-                    hidden?'hidden':''
-                ]" />
+                <NuxtImg v-if="(state ?? 0) & PlayerState.Dead && !((state ?? 0) & PlayerState.Voteless)"
+                    src="/sprites/token.png"
+                    :class="['background small', hidden?'hidden':'']" />
 
                 <template v-if="!hidden && data">
                     <!-- Overflow hidden section -->

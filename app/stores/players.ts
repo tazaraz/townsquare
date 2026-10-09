@@ -20,7 +20,7 @@ export const usePlayers = defineStore('players', () => {
             name,
             role: undefined,
             reminders: [],
-            state: "alive",
+            state: PlayerState.Alive,
 
             isVoting: false,
             isMarked: false,
@@ -176,7 +176,7 @@ export const usePlayers = defineStore('players', () => {
         const player = get(index);
         if (!player) return false;
 
-        player.state = state;
+        player.state ^= state;
         return true;
     }
 

@@ -21,7 +21,7 @@
                     <Token
                         class="w-[120px] m-auto"
                         :data="roleToken"
-                        state="alive"
+                        :state="PlayerState.Alive"
                         kind="role"
                         :hide-leaves="true"
                         @click="editToken" />
