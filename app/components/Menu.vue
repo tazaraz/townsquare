@@ -41,11 +41,7 @@
                         @click="child.onSelect?.()">
 
                         <UIcon :name="child.icon" class="size-5 text-dimmed" />
-                        <div v-if="!child.toggle">
-                            <span :class="['font-medium', child.class]">{{ child.label }}</span>
-                            <span class="text-muted line-clamp-2">{{ child.description }}</span>
-                        </div>
-                        <div v-else>
+                        <div v-if="child.toggle">
                             <USwitch v-if="child.toggle === 'flavour'"
                                 v-model="ui.showFlavor"
                                 :label="child.label"
@@ -54,6 +50,17 @@
                                 v-model="ui.showNightOrder"
                                 :label="child.label"
                                 :class="['font-medium', child.class]"/>
+                        </div>
+                        <div v-else-if="child.division" @click="referenceSheet.open({ kind: 'role' })">
+                            <template v-for="c, k of child.division" >
+                                <span v-if="k !== 'traveller' && c !== 0" :class="`text-(--${k}) me-3`" :key="k">
+                                    <UIcon name="material-symbols-person" /> {{ c }}
+                                </span>
+                            </template>
+                        </div>
+                        <div v-else>
+                            <span :class="['font-medium', child.class]">{{ child.label }}</span>
+                            <span class="text-muted line-clamp-2">{{ child.description }}</span>
                         </div>
                     </button>
                 </div>
@@ -67,7 +74,7 @@
                 <div class="isolate grid p-2 grid-cols-2 gap-2">
                     <button v-for="child in ((item as any).children as Role[])"
                         class="text-sm rounded-md transition-colors hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3"
-                        @click="referenceSheet.open({ kind: child.team as any })">
+                        @click="referenceSheet.open({ kind: child.team as 'fabled' | 'loric' })">
 
                         <NuxtImg :src="child.image" class="w-[64px] h-[64px]" />
                         <div>
@@ -96,6 +103,14 @@
                         <NuxtImg :src="(item as Role).image" class="w-[32px] h-[32px]" />
                         <span class="m-auto ms-2">{{ (item as Role).name }}</span>
                     </div>
+                </template>
+
+                <template #division="{ item }">
+                    <template v-for="c, k of (item as any).division" >
+                        <span v-if="k !== 'traveller' && c !== 0" :class="`text-(--${k}) me-3`" :key="k">
+                            <UIcon name="material-symbols-person" /> {{ c }}
+                        </span>
+                    </template>
                 </template>
 
                 <template #flavour="{ item }">
@@ -309,10 +324,14 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 icon: 'i-material-symbols-chat-outline',
                 onSelect: () => messageHost()
             },
-            {
+            socket.isHost || socket.seatIndex < 0 ? {} : {
                 label: 'Demon bluffs',
                 class: 'text-(--demon)',
                 onSelect: () => demonBluffs.open({ editable: false })
+            },
+            {
+                division: game.division,
+                slot: 'division' as const
             },
             {
                 toggle: 'flavour',
