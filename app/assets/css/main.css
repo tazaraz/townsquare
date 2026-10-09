@@ -2,14 +2,23 @@
 @import "@nuxt/ui";
 
 @theme {
-    --townsfolk: #1f65ff;
-    --outsider: #46d5ff;
-    --minion: #ff6900;
-    --demon: #ce0100;
-    --traveller: #cc04ff;
-    --fabled: #d5aa00;
-    --loric: #869f42;
+   --townsfolk: #1f65ff;
+   --outsider: #46d5ff;
+   --minion: #ff6900;
+   --demon: #ce0100;
+   --traveller: #cc04ff;
+   --fabled: #d5aa00;
+   --loric: #869f42;
 }
+
+@source inline("text-(--townsfolk)");
+@source inline("text-(--outsider)");
+@source inline("text-(--minion)");
+@source inline("text-(--demon)");
+@source inline("text-(--traveller)");
+@source inline("text-(--fabled)");
+@source inline("text-(--loric)");
+
 
 /* Because curser: pointer is not default for buttons */
 @layer base {
