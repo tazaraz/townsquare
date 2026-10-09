@@ -42,8 +42,8 @@
                         v-model="rolePlayers"
                         value-key="index"
                         multiple
-                        :placeholder="playerList().length === 0 ? 'No seated players' : 'Select a player'"
-                        :items="playerList()"
+                        placeholder="Select a player"
+                        :items="players.list.map((p, i) => ({ label: p.name, index: i }))"
                         :content="{ position: 'item-aligned' }"/>
                 </div>
             </div>
@@ -64,8 +64,8 @@
                     <USelect
                         v-model="targetPlayer"
                         value-key="index"
-                        :placeholder="playerList().length === 0 ? 'No players' : 'select player'"
-                        :items="playerList()"
+                        placeholder="select player"
+                        :items="players.list.map((p, i) => ({ label: p.name, index: i }))"
                         :content="{ position: 'item-aligned' }"/>
                 </template>
                 <template #right>
@@ -99,11 +99,6 @@ const rolePlayers = ref<number[]>([])
 const targetPlayer = ref<number | undefined>(undefined)
 /** The selected text */
 const index = ref<number>(4)
-
-
-const playerList = () => players.list
-    .map((p, i) => ({ label: p.name, index: i, connected: p.socketId !== undefined }))
-    .filter(p => p.connected)
 
 
 async function editToken() {

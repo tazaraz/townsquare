@@ -54,8 +54,8 @@
                     <USelect
                         v-model="targetPlayer"
                         value-key="index"
-                        :placeholder="playerList().length === 0 ? 'No players' : 'select player'"
-                        :items="playerList()"
+                        placeholder="select player"
+                        :items="players.list.map((p, i) => ({ label: p.name, index: i }))"
                         :content="{ position: 'item-aligned' }"/>
                 </template>
                 <template #right>
@@ -83,10 +83,6 @@ const socket = useSocket()
 const targetPlayer = ref<number | undefined>(undefined)
 /** Whether to keep travellers in their seat when randomizing */
 const fixTravellers = ref(false)
-
-const playerList = () => players.list
-    .map((p, i) => ({ label: p.name, index: i, connected: p.socketId !== undefined }))
-    .filter(p => p.connected)
 
 function randomizeSeats() {
     // Shuffle the players, but keep travellers in their seat if fixTravellers is true
