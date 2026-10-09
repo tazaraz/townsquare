@@ -116,6 +116,9 @@ class PlayerCircle {
             gsap.set("#wheel", { rotation: this.wheel.orentation })
 
             this.updateOrder(true)
+
+            if (useSocket().seatIndex > 0)
+                this.scrollTo(useSocket().seatIndex)
         })
     }
 
