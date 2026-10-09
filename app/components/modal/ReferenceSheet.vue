@@ -36,7 +36,7 @@
                         <div class="name w-full md:w-6">
                             <h3 class="px-6 border-b-2 md:border-0 md:rotate-270">traveller</h3>
                         </div>
-                        <div class="flex-grow py-3 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+                        <div class="flex-grow py-3 grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                             <div v-for="role in game.availableTeamRoles.traveller" :key="role.id"
                                 class="role flex items-center">
 
