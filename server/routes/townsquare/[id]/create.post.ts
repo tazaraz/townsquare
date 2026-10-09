@@ -23,8 +23,13 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-
-    if (townsquares.has(townsquareId)) {
+    /** Allow creation of a new townsquare if:
+     *  - it does not exist yet
+     *  - There are no users registered and the host is not connected
+    */
+    if (townsquares.has(townsquareId) &&
+        townsquares.get(townsquareId)!.users.size > 0 &&
+        sessions.get(townsquares.get(townsquareId)!.host)?.peer) {
         throw createError({
             statusCode: 403,
             statusMessage: 'Townsquare ID is already in use',
