@@ -74,8 +74,6 @@ export interface Player {
     isMarked: boolean
     /** Whether this player is nominated */
     nominated: {
-        /** Whether the player is currently nominated */
-        currently: boolean,
         /** Whether the player has already been nominated */
         been: boolean,
         /** Whether the player has nominated someone else */

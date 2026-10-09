@@ -25,7 +25,6 @@ export const usePlayers = defineStore('players', () => {
             isVoting: false,
             isMarked: false,
             nominated: {
-                currently: false,
                 been: false,
                 has: false
             }
