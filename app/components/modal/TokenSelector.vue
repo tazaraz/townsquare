@@ -1,6 +1,6 @@
 <template>
     <UModal
-        :title="`Select the ${kind}` + (kind === 'role' ? ` for ${playerName}` : '')"
+        :title="`Select a ${kind}` + (kind === 'role' ? ` for ${playerName}` : '')"
         :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}">
         <template #body>
             <UTabs
