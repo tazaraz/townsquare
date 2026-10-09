@@ -200,12 +200,14 @@ export default defineWebSocketHandler({
         if (!sessions.get(townsquares.get(id)!.host)?.peer?.id ||  // prevent compare against undefined
              sessions.get(townsquares.get(id)!.host)!.peer!.id !== peer.id) {
             // Send warning after 3 messages per second (PING_INTERVAL window size)
-            if (session.messageCount++ > (3 * PING_INTERVAL) / 1000)
+            if (session.messageCount++ === (2 * PING_INTERVAL) / 1000)
                 peer.send(createMessage('error', 'You are sending too many data packets. You should down what you\'re doing!'))
 
             // Kick after 5 messages per second
-            if (session.messageCount++ > (5 * PING_INTERVAL) / 1000) {
+            if (session.messageCount++ > (3 * PING_INTERVAL) / 1000) {
+                peer.send(createMessage('error', 'You have been kicked due to spamming.'))
                 peer.close(1008, 'You have been kicked due to spamming')
+
                 sessions.get(townsquares.get(id)!.host)?.peer?.send({
                     origin: 'server',
                     kind: 'leave',
