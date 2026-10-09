@@ -132,7 +132,7 @@ export const useSocket = defineStore('socket', () => {
 
             if (e.code == 1006)
                 toaster.serverError('The connection was abruptly stopped. Please reload the page.')
-            if (e.code > 1001)
+            if (e.code > 1000)
                 disconnect();
         }
 
@@ -221,7 +221,7 @@ export const useSocket = defineStore('socket', () => {
 
                     // If we are still timed out
                     setTimeout(() => {
-                        if (id.value) return
+                        if (id.value || !getUrlSessionId()) return
                         if (timedOut)
                             toaster.connectionError()
                     })
@@ -248,7 +248,7 @@ export const useSocket = defineStore('socket', () => {
                 // Send data to the joined player as host
                 if (gamestate.isHost) {
                     sendTo(message.origin, 'sync', {
-                        edition: gamestate.script,
+                        script: gamestate.script,
                         fabled: gamestate.fabled.map(r => r.id),
                         loric: gamestate.loric.map(r => r.id),
                         demonBluffs: gamestate.players.find(p => p.role?.team === 'demon')?.socketId === message.origin
