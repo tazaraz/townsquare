@@ -51,10 +51,10 @@
                                 :label="child.label"
                                 :class="['font-medium', child.class]"/>
                         </div>
-                        <div v-else-if="child.division" @click="referenceSheet.open({ kind: 'role' })">
-                            <template v-for="c, k of child.division" >
-                                <span v-if="k !== 'traveller' && c !== 0" :class="`text-(--${k}) me-3`" :key="k">
-                                    <UIcon name="material-symbols-person" /> {{ c }}
+                        <div v-else-if="child.info">
+                            <template v-for="i of child.info">
+                                <span v-if="i" :class="`inline-flex gap-1 me-2 ${i.icon.color}`">
+                                    <UIcon :name="i.icon.name" class="my-auto"/> {{ i.count }}
                                 </span>
                             </template>
                         </div>
@@ -105,10 +105,10 @@
                     </div>
                 </template>
 
-                <template #division="{ item }">
-                    <template v-for="c, k of (item as any).division" >
-                        <span v-if="k !== 'traveller' && c !== 0" :class="`text-(--${k}) me-3`" :key="k">
-                            <UIcon name="material-symbols-person" /> {{ c }}
+                <template #info="{ item }">
+                    <template v-for="i of (item as any).info">
+                        <span v-if="i" :class="`inline-flex gap-1 me-2 ${i.icon.color}`">
+                            <UIcon :name="i.icon.name" class="my-auto"/> {{ i.count }}
                         </span>
                     </template>
                 </template>
@@ -329,9 +329,36 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 class: 'text-(--demon)',
                 onSelect: () => demonBluffs.open({ editable: false })
             },
-            {
-                division: game.division,
-                slot: 'division' as const
+            players.length < 6 ? {} : {
+                info: [{
+                        icon: { name: 'material-symbols-groups', color: 'text-success' },
+                        count: players.length
+                    }, {
+                        icon: { name: 'mingcute-heartbeat-2-fill', color: 'text-error' },
+                        count: players.list.filter(p => !(p.state & PlayerState.Dead)).length
+                    }, {
+                        icon: { name: 'material-symbols-how-to-vote', color: 'text-neutral' },
+                        count: players.list.filter(p => !(p.state & PlayerState.Voteless)).length
+                    }, {
+                        icon: { name: 'material-symbols-person', color: 'text-(--townsfolk)' },
+                        count: game.division!.townsfolk
+                    }, {
+                        icon: { name: 'material-symbols-person', color: 'text-(--outsider)' },
+                        count: game.division!.outsider
+                    }, {
+                        icon: { name: 'material-symbols-person', color: 'text-(--minion)' },
+                        count: game.division!.minion
+                    }, {
+                        icon: { name: 'material-symbols-person', color: 'text-(--demon)' },
+                        count: game.division!.demon
+                    },
+                    game.division!.traveller === 0 ? undefined : {
+                        icon: { name: 'material-symbols-person', color: 'text-(--traveller)' },
+                        count: game.division!.traveller
+                    }
+                ],
+                slot: 'info' as const,
+                onSelect: () => referenceSheet.open({ kind: 'role' })
             },
             {
                 toggle: 'flavour',
