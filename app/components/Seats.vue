@@ -276,9 +276,11 @@ class PlayerCircle {
         if (ui.orientation.rendered === "center" || index === ui.grimoire.selectedToken) return false;
 
         // Index offset calculation, bearing in mind rotationary nature of the wheel
-        const m = this.seats.elements.length
-        const indexOffset = ((index - this.centreSeatIndex + m / 2) % m + m) % m - m / 2;
-
+        const m = this.seats.max;
+        // Difference between the current index and the centre index
+        const diff = this.seats.slots[index]! - this.centreSeatIndex;
+        // Wrap the difference to the range [-m/2, m/2]
+        const indexOffset = ((diff + m / 2) % m + m) % m - m / 2;
         const rotation = gsap.getProperty("#wheel", "rotation") as number;
 
         gsap.to("#wheel", {
