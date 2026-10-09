@@ -220,8 +220,6 @@ export const useSocket = defineStore('socket', () => {
                         if (id.value) return
                         if (timedOut)
                             toaster.connectionError()
-                        else
-                            toaster.restoredConnection()
                     })
                 }, 45000)
 
