@@ -9,8 +9,13 @@ export default defineConfig({
                     name: 'unit',
                     include: ['tests/unit/*.{test,spec}.ts'],
                     environment: 'nuxt',
+                    setupFiles: ['tests/setup.ts'],
                 },
             }),
-        ]
+        ],
+        onConsoleLog: (l) => {
+            // Hide '<Suspense> is an experimental feature and its API will likely change.' warning.
+            return !l.startsWith('<Suspense>');
+        }
     }
 })
