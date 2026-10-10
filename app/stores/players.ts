@@ -8,7 +8,7 @@ export const usePlayers = defineStore('players', () => {
 
     /** Contains the list of players, or the temporary state of the list of players */
     const list = computed(() => players as Player[])
-
+    /** Length of the amount of players */
     const length = computed(() => players.length)
 
     /**
