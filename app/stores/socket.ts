@@ -224,7 +224,7 @@ export const useSocket = defineStore('socket', () => {
                         if (id.value || !getUrlSessionId()) return
                         if (timedOut)
                             toaster.connectionError()
-                    })
+                    }, 500)
                 }, 45000)
 
                 return sendTo('server', 'pong', true)
@@ -284,16 +284,14 @@ export const useSocket = defineStore('socket', () => {
                         // Update the state
                         message.data.players.forEach((
                             { name, state, socketId }: { name: string, state: PlayerState, socketId: string }) => {
-                                // Only add new players, and don't add the same player twice
-                                if (!players.list.some(p => p.socketId === socketId && socketId !== undefined))
-                                    players.add(name)
-
+                                players.add(name)
                                 players.setState(players.length - 1, state)
+                                players.claim(players.length - 1, socketId)
                             }
                         );
 
                         // Check if the received seat socketId is still identical to ours
-                        if (players.list[gamestate.seatIndex]?.socketId !== id.value)
+                        if (players.get(gamestate.seatIndex)?.socketId !== id.value)
                             gamestate.seatIndex = -1
                     }
                 }
@@ -325,8 +323,8 @@ export const useSocket = defineStore('socket', () => {
             case 'claim':
                 if (gamestate.isHost) {
                     // Check if it is possible to claim this seat, and if the user is not claiming two seats
-                    if (!players.list[message.data.index] ||
-                        players.list[message.data.index]!.socketId !== undefined ||
+                    if (!players.get(message.data.index) ||
+                        players.get(message.data.index)!.socketId !== undefined ||
                         players.list.some(p => p.socketId === message.origin)) {
                         return
                     }
@@ -339,7 +337,7 @@ export const useSocket = defineStore('socket', () => {
             case 'unclaim':
                 if (gamestate.isHost) {
                     // Verify that this player can unclaim
-                    if (players.list[message.data.index]?.socketId !== message.origin)
+                    if (players.get(message.data.index)?.socketId !== message.origin)
                         return
 
                     broadcast('unclaim', message.data)
@@ -349,13 +347,18 @@ export const useSocket = defineStore('socket', () => {
             case 'rename':
                 if (gamestate.isHost) {
                     // Verify that this player is renaming itself
-                    if (players.list[message.data.index]?.socketId !== message.origin)
+                    if (players.get(message.data.index)?.socketId !== message.origin)
                         return
 
                     broadcast('rename', message.data)
                 }
 
                 return players.setName(message.data.index, message.data.name)
+            case 'nominate':
+                if (gamestate.isHost) {
+
+                }
+                return
 
             /** The following code should only be received by players, and the host should ignore them */
             case 'swap':

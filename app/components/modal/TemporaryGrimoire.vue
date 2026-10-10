@@ -102,8 +102,7 @@ function randomizeSeats() {
 }
 
 function show() {
-    console.log(players.list[targetPlayer.value!]!.socketId)
-    socket.sendTo(players.list[targetPlayer.value!]!.socketId!, 'grimoire',
+    socket.sendTo(players.get(targetPlayer.value!)!.socketId!, 'grimoire',
         players.list.map(p => ({
             name: p.name,
             role: p.role?.id,

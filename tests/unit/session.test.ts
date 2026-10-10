@@ -154,7 +154,7 @@ describe('Session', () => {
         for (const p of itemsFrom(0, PLAYERS / 2)) {
             activatePinia(players[p]!)
             expect(psocket[p]?.seatIndex).toEqual(p)
-            expect(hplayers.list[p]?.socketId).not.toBe(undefined)
+            expect(hplayers.get(p)?.socketId).not.toBe(undefined)
         }
 
         // Try to claim already occupied seats
@@ -169,7 +169,7 @@ describe('Session', () => {
         for (const p of itemsFrom(PLAYERS / 2, PLAYERS / 2)) {
             activatePinia(players[p]!)
             expect(psocket[p]?.seatIndex).toEqual(-1)
-            expect(hplayers.list[p]?.socketId).toBe(undefined)
+            expect(hplayers.get(p)?.socketId).toBe(undefined)
         }
 
         // Try to claim seat while already seated
@@ -200,7 +200,7 @@ describe('Session', () => {
         await delay()
         psocket[0]!.requestRename('New Name')
         await delay()
-        expect(hplayers.list[0]!.name).toEqual('New Name')
+        expect(hplayers.get(0)!.name).toEqual('New Name')
         expect(pplayers[0]!.list[0]!.name).toEqual('New Name')
         expect(pplayers[1]!.list[0]!.name).toEqual('New Name')
     })
@@ -213,8 +213,8 @@ describe('Session', () => {
         hplayers.swap(1, 2)
         await delay()
 
-        expect(hplayers.list[1]?.name).toEqual('Player 3')
-        expect(hplayers.list[2]?.name).toEqual('Player 2')
+        expect(hplayers.get(1)?.name).toEqual('Player 3')
+        expect(hplayers.get(2)?.name).toEqual('Player 2')
 
         for (const p of itemsFrom(0, PLAYERS)) {
             activatePinia(players[p]!)

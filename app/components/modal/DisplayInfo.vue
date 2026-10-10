@@ -126,10 +126,10 @@ async function addCustom() {
 }
 
 function show() {
-    socket.sendTo(players.list[targetPlayer.value!]!.socketId!, 'message', {
+    socket.sendTo(players.get(targetPlayer.value!)!.socketId!, 'message', {
         text: texts[index.value]!.label
             + (texts[index.value]!.required === 'select'
-                ? `: ${rolePlayers.value.map(i => players.list[i]!.name).join(', ')}`
+                ? `: ${rolePlayers.value.map(i => players.get(i)!.name).join(', ')}`
                 : ''),
         buttons: texts[index.value]!.toastButtons,
         role: texts[index.value]!.required === 'token' ? roleToken.value?.id : undefined,

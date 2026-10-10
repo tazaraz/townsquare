@@ -36,7 +36,7 @@
                         :label="ui.swapping == index ? 'Cancel swap' : 'Swap seats'"
                         variant="outline"
                         @click="(ui.swapping == index ? ui.swapping = -1 : ui.swapping = index); open=!open"/>
-                    <UButton v-if="players.list[index]?.socketId"
+                    <UButton v-if="players.get(index)?.socketId"
                         color="error"
                         label="Kick player"
                         variant="subtle"
