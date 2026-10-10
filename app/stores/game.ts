@@ -279,6 +279,11 @@ export const useGame = defineStore('game', () => {
         return true;
     }
 
+    /** 
+     * Sets a demon bluff
+     * @param index Index of the bluff to set
+     * @param role Role to set as the bluff, or `undefined` to clear the bluff
+     */
     function setBluff(index: number, role: string | undefined): boolean {
         if (index < 0 && 3 < index) return false;
         try {
