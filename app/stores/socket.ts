@@ -40,7 +40,6 @@ export const useSocket = defineStore('socket', () => {
             return { status: res.status, text: res.statusText}
 
         gamestate.reset('connection')
-        gamestate.reset('game')
         return createWS(townsquare)
     }
 
