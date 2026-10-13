@@ -109,7 +109,6 @@ async function editToken() {
 
     const selected = await selector.result as Role | "unset" | undefined
     if (selected && selected !== "unset") {
-        console.log(selected)
         roleToken.value = selected
     }
 }
