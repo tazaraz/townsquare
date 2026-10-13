@@ -61,10 +61,7 @@ class PlayerCircle {
         /** y coordinate of center of wheel */
         y: 0,
         /** Radius of the wheel. Double it to get height and width of the wheel */
-        radius: {
-            x: 200,
-            y: 200
-        },
+        radius: 200,
         /** Initial orientation of the wheel. 0 points right */
         orentation: 0,
         /** Positioning of the reminder */
@@ -191,8 +188,8 @@ class PlayerCircle {
         };
 
         const vars: gsap.TweenVars = {
-            x: (this.wheel.radius.x - elSize) * Math.cos(radians),
-            y: (this.wheel.radius.y - elSize) * Math.sin(radians),
+            x: (this.wheel.radius - elSize) * Math.cos(radians),
+            y: (this.wheel.radius - elSize) * Math.sin(radians),
             xPercent: -50,
             yPercent: -50,
         }
@@ -320,14 +317,14 @@ class PlayerCircle {
             // Vertical
             case "top":
             case "bottom":
-                this.wheel.radius.x = this.wheel.radius.y = screenSize * 2.5
+                this.wheel.radius = screenSize * 2.5
                 this.seats.max = Math.ceil(Math.pow(screenSize, 1/2.5)) * 4;
                 ui.tokenSize = Math.min(Math.max(110, screenSize * 0.22), 160)
                 break;
             // Horizontal
             case 'left':
             case "right":
-                this.wheel.radius.x = this.wheel.radius.y = screenSize * 3.5
+                this.wheel.radius = screenSize * 3.5
                 this.seats.max = Math.ceil(Math.pow(screenSize, 1/2)) * 3;
                 ui.tokenSize = Math.min(Math.max(100, screenSize * 0.22), 140)
                 break;
@@ -335,16 +332,7 @@ class PlayerCircle {
             case "center":
                 this.seats.max = players.length;
                 ui.tokenSize = Math.min(Math.max(100, (screenSize * 1.5) / this.seats.max), 150)
-                const dynamic = this.seats.max * ui.tokenSize * 0.29;
-                const fixed = screenSize / 3;
-                // Make an elliptic curve
-                if (dynamic < fixed) {
-                    this.wheel.radius.x = this.wheel.radius.y = dynamic
-                } else {
-                    this.wheel.radius.x = this.wheel.radius.y = dynamic
-                    this.wheel.radius.x = fixed + this.seats.max * ui.tokenSize * 0.02;
-                    this.wheel.radius.y = this.seats.max * ui.tokenSize * 0.23
-                }
+                this.wheel.radius = this.seats.max * ui.tokenSize * 0.23
                 break;
         }
 
@@ -360,21 +348,21 @@ class PlayerCircle {
         switch (position) {
             case "top":
                 this.wheel.x = w_width / 2
-                this.wheel.y = w_height * 0.05 + this.wheel.radius.x + ui.tokenSize / 2
+                this.wheel.y = w_height * 0.05 + this.wheel.radius + ui.tokenSize / 2
                 this.wheel.orentation = -90
                 break;
             case "bottom":
                 this.wheel.x = w_width / 2
-                this.wheel.y = w_height * 0.85 - this.wheel.radius.x - ui.tokenSize / 2
+                this.wheel.y = w_height * 0.85 - this.wheel.radius - ui.tokenSize / 2
                 this.wheel.orentation = 90
                 break;
             case "left":
-                this.wheel.x = w_width * 0.10 + this.wheel.radius.x + ui.tokenSize / 2
+                this.wheel.x = w_width * 0.10 + this.wheel.radius + ui.tokenSize / 2
                 this.wheel.y = w_height / 2
                 this.wheel.orentation = 180
                 break;
             case "right":
-                this.wheel.x = w_width * 0.90 - this.wheel.radius.x - ui.tokenSize / 2
+                this.wheel.x = w_width * 0.90 - this.wheel.radius - ui.tokenSize / 2
                 this.wheel.y = w_height / 2
                 this.wheel.orentation = 0
                 break;
