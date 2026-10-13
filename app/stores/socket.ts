@@ -80,7 +80,7 @@ export const useSocket = defineStore('socket', () => {
             }
 
             // Create a copy of the seatindex
-            const seatIndex = gamestate.seatIndex
+            const seatIndex = Number(gamestate.seatIndex)
             gamestate.seatIndex = -1
 
             await createWS(townsquare)
@@ -89,6 +89,7 @@ export const useSocket = defineStore('socket', () => {
                 sendTo('host', 'sync', true)
 
                 // Request seat again, but we reset preemtively if that fails to not lock up state
+                console.log(`Requesting seat ${seatIndex} again`)
                 requestClaim(seatIndex)
             }
 
@@ -127,11 +128,13 @@ export const useSocket = defineStore('socket', () => {
         ws.onmessage = handleMessage
         ws.onclose = (e) => {
             unobserveState()
-            ws = undefined
+            ws = undefined;
 
             if (e.code == 1006)
                 toaster.serverError('The connection was abruptly stopped. Please reload the page.')
-            if (e.code > 1000)
+            // Firefox does onclose with code 1001 on reload, but we dont want to destroy the session on reload,
+            // so serverside uses 1012 for close instead of 1001.
+            if (e.code > 1001)
                 disconnect();
         }
 

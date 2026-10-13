@@ -182,7 +182,7 @@ export default defineWebSocketHandler({
         }
 
         if (!townsquares.has(id)) {
-            peer.close(1001, 'This townsquare has not seen activity for too long, and is closing.')
+            peer.close(1012, 'This townsquare has not seen activity for too long, and is closing.')
             return
         }
 
@@ -243,7 +243,7 @@ export default defineWebSocketHandler({
                 // Ensure this is the host
                 if (peer.id === sessions.get(townsquares.get(id)!.host)?.peer?.id) {
                     for (const connectionId of townsquares.get(id)!.users) {
-                        sessions.get(connectionId)?.peer?.close(1001, 'The host has closed this townsquare.')
+                        sessions.get(connectionId)?.peer?.close(1012, 'The host has closed this townsquare.')
                         sessions.delete(connectionId)
                     }
 
@@ -349,7 +349,7 @@ const towncleanup = setInterval(() => {
         if (townsquare.lastActivity < date - TOWNSQUARE_MAX_INACTIVITY) {
             // Close the user session
             for (const connectionId of townsquare.users) {
-                sessions.get(connectionId)?.peer?.close(1001, 'This townsquare has not seen activity for too long.')
+                sessions.get(connectionId)?.peer?.close(1012, 'This townsquare has not seen activity for too long.')
                 sessions.delete(connectionId)
             }
 
