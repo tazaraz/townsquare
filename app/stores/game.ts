@@ -281,7 +281,7 @@ export const useGame = defineStore('game', () => {
         return true;
     }
 
-    /** 
+    /**
      * Sets a demon bluff
      * @param index Index of the bluff to set
      * @param role Role to set as the bluff, or `undefined` to clear the bluff
@@ -335,7 +335,6 @@ export const useGame = defineStore('game', () => {
         }
     }
 
-
     /**
      * Uses Fisher-Yates random shuffle for a somewhat acceptable shuffle
      * @param array The array to be shuffled
@@ -356,13 +355,12 @@ export const useGame = defineStore('game', () => {
 
     return {
         script,
+
         availableRoles,
         availableTeamRoles,
         assignedTeamRoles,
-
         availableFabled,
         assignedFabled,
-
         availableLoric,
         assignedLoric,
 

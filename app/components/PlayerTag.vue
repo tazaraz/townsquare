@@ -19,6 +19,7 @@
                     :color="name == '' ? 'error' : 'primary'"
                     @change="socket.isHost ? players.setName(index, name) : socket.requestRename(name)"/>
                 <template v-if="socket.isHost">
+                    <!-- Player state management -->
                     <UAlert variant="outline">
                         <template #description>
                             <USwitch
@@ -32,6 +33,8 @@
                                 @change="players.setState(index, PlayerState.Voteless)"/>
                         </template>
                     </UAlert>
+
+                    <!-- Nomination management -->
                     <UAlert variant="outline" color="info">
                         <template #description>
                             <div class="flex flex-col">
@@ -64,6 +67,8 @@
                             </div>
                         </template>
                     </UAlert>
+
+                    <!-- Player management -->
                     <UButton
                         :label="ui.swapping == index ? 'Cancel swap' : 'Swap seats'"
                         variant="outline"
@@ -80,6 +85,7 @@
                         @click="players.remove(index); open=!open"/>
                 </template>
                 <template v-else>
+                    <!-- Only allow nominatons when target has not been nominated, and socket has not nominated -->
                     <UButton v-if="game.nomination.open &&
                                    !player.nominated.been && !players.get(socket.seatIndex)?.nominated.has"
                         label="Nominate"
@@ -102,6 +108,7 @@
                     <UButton v-else-if="index === socket.seatIndex"
                         label="Unclaim seat"
                         variant="outline"
+                        color="warning"
                         @click="socket.requestUnclaim()"/>
                     <UButton v-else-if="index !== socket.seatIndex && player.socketId === undefined"
                         label="Unclaim current seat"
