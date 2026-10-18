@@ -93,6 +93,9 @@
                         color="neutral"
                         disabled
                         @click="socket.requestNominate(index)"/>
+
+                    <!-- Seat claiming -->
+                    <UButton v-if="socket.seatIndex < 0 && player.socketId === undefined"
                         label="Claim seat"
                         variant="outline"
                         @click="socket.requestClaim(index)"/>

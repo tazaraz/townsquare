@@ -20,7 +20,6 @@ export const useSocket = defineStore('socket', () => {
     const id = computed(() => gamestate.id);
 
     let unobserveState = () => {}
-
     let ws: WebSocket | undefined = undefined;
 
     /**
@@ -173,8 +172,11 @@ export const useSocket = defineStore('socket', () => {
     async function _send({ broadcast, to, kind, data }: SendMessage) {
         if (!ws)
             await reconnect()
-        if (!ws)
+        if (!ws){
+            if (!getUrlSessionId())
+                return
             return toaster.connectionError()
+        }
 
         // if (target === 'direct' && !to) return 'Invalid message'
         const message: SendMessage = { to, kind, data };
@@ -186,9 +188,9 @@ export const useSocket = defineStore('socket', () => {
     }
 
     const requestNominate = (index: number) => sendTo('host', 'nominate', { index } )
-    const requestRename   = (name: string) => sendTo('host', 'rename', { name, index: gamestate.seatIndex } )
+    const requestRename   = (name: string) => sendTo('host', 'rename', { name } )
     const requestClaim    = (index: number) => sendTo('host', 'claim', { index } )
-    const requestUnclaim  = () => sendTo('host', 'unclaim', { index: gamestate.seatIndex } )
+    const requestUnclaim  = () => sendTo('host', 'unclaim', undefined )
     const requestVoting   = () => sendTo('host', 'vote', undefined )
 
     function syncDataToPlayers() {
@@ -236,11 +238,12 @@ export const useSocket = defineStore('socket', () => {
                 if (gamestate.isHost)
                     unobserveState = observeState()
 
+                gamestate.id = document.cookie.match(/id=([^;]+)/)?.[1]!
+                gamestate.sessionId = getUrlSessionId()!
+
                 if (!gamestate.isHost)
                     return sendTo('host', 'sync', true)
 
-                gamestate.id = document.cookie.match(/id=([^;]+)/)?.[1]!
-                gamestate.sessionId = getUrlSessionId()!
                 // We are the host, so we need to sync the data to the players on connect.
                 // Trigger a request for sync on the players
                 return broadcast('connected', true)
@@ -305,10 +308,6 @@ export const useSocket = defineStore('socket', () => {
                     }
                 }
 
-                // We have synced up, so we can now set our sessionId
-                gamestate.id = document.cookie.match(/id=([^;]+)/)?.[1]!
-                gamestate.sessionId = getUrlSessionId()!
-
                 return
             case 'leave':
                 // Get the player with this id
@@ -345,20 +344,26 @@ export const useSocket = defineStore('socket', () => {
                 return players.claim(message.data.index, message.data.id)
             case 'unclaim':
                 if (gamestate.isHost) {
-                    // Verify that this player can unclaim
-                    if (players.get(message.data.index)?.socketId !== message.origin)
-                        return
+                    const index = players.list.findIndex(p => p.socketId === message.origin)
+                    if (index < 0) return
 
+                    message.data = { index }
+                    broadcast('voting', { index, voting: false })
                     broadcast('unclaim', message.data)
                 }
 
+                players.vote(message.data.index, false)
                 return players.unclaim(message.data.index)
             case 'rename':
-                if (gamestate.isHost) {
-                    // Verify that this player is renaming itself
-                    if (players.get(message.data.index)?.socketId !== message.origin)
-                        return
+                // No namechanges during nomination
+                if (gamestate.nomination.open)
+                    return
 
+                if (gamestate.isHost) {
+                    const index = players.list.findIndex(p => p.socketId === message.origin)
+                    if (index < 0) return
+
+                    message.data.index = index
                     broadcast('rename', message.data)
                 }
 
