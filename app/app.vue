@@ -2,6 +2,8 @@
     <UApp :toaster="{ position: 'top-right', expand: false }">
         <ClientOnly>
             <UMain>
+                <Welcome/>
+
                 <Seats ref="seats"
                     @edit-player="editPlayer"
                     @edit-reminder="editReminder"/>
