@@ -83,9 +83,13 @@ function activatePinia(pinia: Pinia) {
         document.cookie = cookie
 }
 
-
-function itemsFrom(start: number, count: number) {
-    return Array(Math.floor(count)).fill(0).map((_, i) => Math.floor(start) + i).values()
+/**
+ * Creates an iterable of numbers from start to end (exclusive).
+ * @param start Start of the range
+ * @param end End of the range
+ */
+export function range(start: number, end: number) {
+    return Array(Math.floor(end - start)).fill(0).map((_, i) => Math.floor(start) + i).values()
 }
 
 
@@ -103,11 +107,11 @@ describe('Socket connection', () => {
     let pplayers: ReturnType<typeof usePlayers>[] = []
     let psocket: ReturnType<typeof useSocket>[] = []
 
-    async function createConnectedPlayers(seatStart: number, seatEnd: number, connectStart: number, connectEnd: number){
-        for (const p of itemsFrom(seatStart, seatEnd))
+    async function createConnectedPlayers(start: number, end: number){
+        for (const p of range(start, end))
             hplayers.add(`Player ${p + 1}`)
 
-        for (const p of itemsFrom(connectStart, connectEnd)) {
+        for (const p of range(start, end)) {
             activatePinia(players[p]!)
             await psocket[p]!.connect(SESSION, SESSION)
         }
@@ -124,6 +128,12 @@ describe('Socket connection', () => {
         hgame = useGame()
         hplayers = usePlayers()
         hsocket = useSocket()
+
+        pstate.length = 0
+        pgame.length = 0
+        pplayers.length = 0
+        psocket.length = 0
+        players.length = 0
 
         for (const p of Array(PLAYERS).keys()) {
             players.push(createPinia())
@@ -147,7 +157,7 @@ describe('Socket connection', () => {
     })
 
     it('connects and disconnects', async () => {
-        for (const p of itemsFrom(0, PLAYERS)) {
+        for (const p of range(0, PLAYERS)) {
             activatePinia(players[p]!)
 
             await psocket[p]!.connect(SESSION, SESSION)
@@ -157,7 +167,7 @@ describe('Socket connection', () => {
         }
 
         // Cleanly disconnect half of the players
-        for (const p of itemsFrom(0, PLAYERS / 2)) {
+        for (const p of range(0, PLAYERS / 2)) {
             activatePinia(players[p]!)
 
             psocket[p]!.disconnect()
@@ -170,7 +180,7 @@ describe('Socket connection', () => {
         hsocket.closeTownsquare()
         await delay()
 
-        for (const p of itemsFrom(PLAYERS / 2, PLAYERS / 2)) {
+        for (const p of range(PLAYERS / 2, PLAYERS)) {
             activatePinia(players[p]!)
             expect(psocket[p]!.id).toBe('')
             expect(pstate[p]!.sessionId).toBe('')
@@ -179,21 +189,34 @@ describe('Socket connection', () => {
     })
 
     it('syncs state on connect', async () => {
+        await createConnectedPlayers(0, PLAYERS / 2)
+
         activatePinia(host)
         hgame.loadScript(["chef", "undertaker", "oracle", "sage", "ravenkeeper", "mayor", "recluse", "lunatic", "poisoner", "spy", "zombuul", "sentinel"])
+        await delay()
 
         expect(hstate.script?.roles.length).toEqual(12)
         expect(hgame.availableRoles.length).toEqual(11)
         expect(hgame.assignedFabled.length).toEqual(1)
 
-        // Connect second half after script load
-        for (const p of itemsFrom(0, PLAYERS)) {
+        for (const p of range(0, PLAYERS / 2)) {
             activatePinia(players[p]!)
-            await psocket[p]!.connect(SESSION, SESSION)
+            expect(pgame[p]!.script?.roles.length).toEqual(12)
+            expect(pgame[p]!.availableRoles.length).toEqual(11)
+            expect(pgame[p]!.assignedFabled.length).toEqual(1)
+        }
+        for (const p of range(PLAYERS / 2, PLAYERS)) {
+            activatePinia(players[p]!)
+            expect(pgame[p]!.script?.roles.length).toEqual(undefined)
+            expect(pgame[p]!.availableRoles.length).toEqual(0)
+            expect(pgame[p]!.assignedFabled.length).toEqual(0)
         }
 
+        // Connect second half after script load
+        await createConnectedPlayers(PLAYERS / 2, PLAYERS)
+
         // Check that all players have the same state
-        for (const p of itemsFrom(0, PLAYERS)) {
+        for (const p of range(0, PLAYERS)) {
             activatePinia(players[p]!)
             expect(pgame[p]!.script?.roles.length).toEqual(12)
             expect(pgame[p]!.availableRoles.length).toEqual(11)
@@ -202,14 +225,14 @@ describe('Socket connection', () => {
     })
 
     it('syncs on host state change', async () => {
-        await createConnectedPlayers(0, PLAYERS, 0, PLAYERS)
+        await createConnectedPlayers(0, PLAYERS)
 
         // Load the script
         activatePinia(host)
         hgame.loadScript(["chef", "undertaker", "oracle", "sage", "ravenkeeper", "mayor", "recluse", "lunatic", "poisoner", "spy", "zombuul", "sentinel"])
         await delay()
 
-        for (const p of itemsFrom(0, PLAYERS)) {
+        for (const p of range(0, PLAYERS)) {
             activatePinia(players[p]!)
             expect(pgame[p]!.script?.roles.length).toEqual(12)
             expect(pgame[p]!.availableRoles.length).toEqual(11)
@@ -226,7 +249,7 @@ describe('Socket connection', () => {
         hgame.toggleModifier('loric', 'pope')
 
         await delay()
-        for (const p of itemsFrom(0, PLAYERS)) {
+        for (const p of range(0, PLAYERS)) {
             activatePinia(players[p]!)
             expect(pgame[p]!.assignedFabled.map(f => f.id)).toContain('angel')
             expect(pgame[p]!.assignedFabled.map(f => f.id)).toContain('duchess')
@@ -237,7 +260,7 @@ describe('Socket connection', () => {
     })
 
     it('prevents unauthorized messages', async () => {
-        await createConnectedPlayers(0, PLAYERS, 0, PLAYERS)
+        await createConnectedPlayers(0, PLAYERS)
 
         await delay()
         expect(hplayers.list.length).toBe(4)
