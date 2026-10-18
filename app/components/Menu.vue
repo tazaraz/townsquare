@@ -2,6 +2,7 @@
     <UHeader
         class="relative z-10"
         mode="slideover"
+        v-model:open="isOpen"
         :ui="{ container: 'px-4!', left: 'h-full' }">
         <template #toggle="{ toggle }">
             <UChip :show="ui.grimoire.temporary"
@@ -31,36 +32,65 @@
             :ui="{
                 // Make sure the popover faces upward: it will not detect overflow.
                 root: 'min-w-[400px]',
-                viewportWrapper: 'absolute bottom-full top-auto start-0 flex w-full justify-center',
+                viewportWrapper: 'absolute bottom-full top-auto start-0 flex w-full',
                 viewport: 'origin-[bottom_center]'
             }">
-            <template #game-content="{ item }">
-                <div class="isolate grid p-2 grid-cols-2 gap-2">
+            <!-- During time of coding, this is the only way to edit the items. #slot="{item}" does not work. -->
+            <template #storyteller-content="{ item }">
+                <div class="isolate grid p-2 grid-cols-2 gap-2 text-sm">
                     <button v-for="child in ((item as any).children)"
-                        class="text-sm rounded-md transition-colors hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3"
-                        @click="child.onSelect?.()">
+                        :class="['rounded-md transition hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3',child.disabled]"
+                        @click="!child.disabled && child.onSelect?.()">
+
+                        <UIcon :name="child.icon" class="size-5 text-dimmed" />
+                        <div v-if="child.toggle">
+                            <USwitch v-if="child.toggle === 'nominations'"
+                                @click="game.setNominations(!game.nomination.open)"
+                                v-model:model-value="game.nomination.open"
+                                :label="child.label"
+                                :disabled="child.disabled !== undefined"
+                                color="info"
+                                :ui="{label: 'text-muted'}"
+                                class="font-medium text-start"/>
+                        </div>
+                        <div v-else class="text-start">
+                            <span :class="['font-medium', child.class]">{{ child.label }}</span>
+                            <span :class="['text-muted line-clamp-2']">{{ child.description }}</span>
+                        </div>
+                    </button>
+                </div>
+            </template>
+            <template #game-content="{ item }">
+                <div class="isolate grid p-2 grid-cols-2 gap-2 text-sm">
+                    <button v-for="child in ((item as any).children)"
+                        :class="['rounded-md transition hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3',child.disabled]"
+                        @click="!child.disabled && child.onSelect?.()">
 
                         <UIcon :name="child.icon" class="size-5 text-dimmed" />
                         <div v-if="child.toggle">
                             <USwitch v-if="child.toggle === 'flavour'"
                                 v-model="ui.showFlavor"
                                 :label="child.label"
-                                :class="['font-medium', child.class]"/>
+                                :disabled="child.disabled !== undefined"
+                                :ui="{label: 'text-muted'}"
+                                :class="['font-medium text-start', child.class]"/>
                             <USwitch v-else-if="child.toggle === 'nightorder'"
                                 v-model="ui.showNightOrder"
                                 :label="child.label"
-                                :class="['font-medium', child.class]"/>
+                                :disabled="child.disabled !== undefined"
+                                :ui="{label: 'text-muted'}"
+                                :class="['font-medium text-start', child.class]"/>
                         </div>
                         <div v-else-if="child.info">
                             <template v-for="i of child.info">
-                                <span v-if="i" :class="`inline-flex gap-1 me-2 ${i.icon.color}`">
+                                <span v-if="i" :class="`inline-flex gap-1 me-2 ${i.icon.class}`">
                                     <UIcon :name="i.icon.name" class="my-auto"/> {{ i.count }}
                                 </span>
                             </template>
                         </div>
-                        <div v-else>
-                            <span :class="['font-medium', child.class]">{{ child.label }}</span>
-                            <span class="text-muted line-clamp-2">{{ child.description }}</span>
+                        <div v-else class="text-start">
+                            <span :class="['font-medium', child.color]">{{ child.label }}</span>
+                            <span :class="['text-muted line-clamp-2']">{{ child.description }}</span>
                         </div>
                     </button>
                 </div>
@@ -71,9 +101,9 @@
                 <span v-if="game.assignedLoric.length > 0" class="text-(--loric)">Loric</span>
             </template>
             <template #modifier-content="{ item }">
-                <div class="isolate grid p-2 grid-cols-2 gap-2">
-                    <button v-for="child in ((item as any).children as Role[])"
-                        class="text-sm rounded-md transition-colors hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3"
+                <div class="isolate grid p-2 grid-cols-2 gap-2 text-sm">
+                    <button v-for="child in ((item as any).children)"
+                        :class="['rounded-md transition hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3',child.disabled]"
                         @click="referenceSheet.open({ kind: child.team as 'fabled' | 'loric' })">
 
                         <NuxtImg :src="child.image" class="w-[64px] h-[64px]" />
@@ -107,23 +137,46 @@
 
                 <template #info="{ item }">
                     <template v-for="i of (item as any).info">
-                        <span v-if="i" :class="`inline-flex gap-1 me-2 ${i.icon.color}`">
+                        <span v-if="i" :class="`inline-flex gap-1 me-2 ${i.icon.class}`">
                             <UIcon :name="i.icon.name" class="my-auto"/> {{ i.count }}
                         </span>
                     </template>
+                </template>
+
+                <template #nominations="{ item }">
+                    <USwitch
+                        @click="game.setNominations(!game.nomination.open); sidebarTimeoutClose"
+                        v-model:model-value="game.nomination.open"
+                        :label="(item as any).label"
+                        :disabled="(item as any).disabled !== undefined"
+                        color="info"
+                        :ui="{label: 'text-muted'}"
+                        class="font-medium text-start"/>
                 </template>
 
                 <template #flavour="{ item }">
                     <USwitch
                         v-model="ui.showFlavor"
                         :label="(item as any).label"
-                        :class="['font-medium', (item as any).class]"/>
+                        :ui="{label: 'text-muted'}"
+                        :class="['font-medium text-start', (item as any).class]"/>
                 </template>
                 <template #night-order="{ item }">
                     <USwitch
+                        @click="sidebarTimeoutClose"
                         v-model="ui.showNightOrder"
                         :label="(item as any).label"
-                        :class="['font-medium', (item as any).class]"/>
+                        :ui="{label: 'text-muted'}"
+                        :class="['font-medium text-start', (item as any).class]"/>
+                </template>
+
+                <template #ui-orientation="{ item }">
+                    Token orientation: <USelect v-model="ui.orientation.user" size="xs" :items="[
+                        {label: 'Left', value: 'left'},
+                        {label: 'Top', value: 'top'},
+                        {label: 'Right', value: 'right'},
+                        {label: 'Bottom', value: 'bottom'},
+                    ]" @change="sidebarTimeoutClose"/>
                 </template>
             </UNavigationMenu>
         </template>
@@ -161,7 +214,6 @@ defineShortcuts({
     g: () => {
         ui.hidden = !ui.hidden
     },
-
 })
 
 
@@ -185,8 +237,8 @@ const sessionDialog = overlay.create(DialogSession)
 const inputDialog = overlay.create(DialogInput)
 
 
+const isOpen = ref(false);
 const scenarioIsSelected = computed(() => game.availableRoles.length > 0)
-const disabledItemCss = computed(() => scenarioIsSelected.value ? '' : 'opacity-50 cursor-not-allowed')
 
 
 const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
@@ -211,19 +263,20 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
             text: '!',
             size: 'xl'
         } : undefined,
+        slot: 'storyteller' as const,
         children: [
             {
                 label: 'Select script',
-                description: 'Define with what roles you are playing',
                 class: 'text-sky-300',
+                description: 'Define with what roles you are playing',
                 onSelect: () => selectScript.open(),
             },
             {
                 label: 'Game setup',
                 description: 'Select roles and assign them to players.',
-                class: `text-sky-300 ${disabledItemCss.value}`,
-                disabled: !scenarioIsSelected.value,
-                onSelect: () =>  gameSetup.open(),
+                class: `text-sky-300`,
+                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
+                onSelect: async () => { await gameSetup.open(); isOpen.value = !isOpen.value },
             },
             {
                 label: 'Add / Remove Fabled',
@@ -240,43 +293,42 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
             {
                 label: 'Communicate with a player',
                 description: 'Either a token or text',
-                class: `${disabledItemCss.value} text-(--traveller)`,
-                disabled: !scenarioIsSelected.value,
+                class: `text-(--traveller)`,
+                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
                 onSelect: () => displayInfo.open()
             },
             {
                 label: `${ui.grimoire.temporary ? '!' : ''} Temporary Grimoire`,
                 description: `Allows non-persistent modifications`,
-                class: `${disabledItemCss.value} text-(--traveller) ${ui.grimoire.temporary ? 'text-error' : ''}`,
-                disabled: !scenarioIsSelected.value,
+                class: `text-(--traveller) ${ui.grimoire.temporary ? 'text-error' : ''}`,
+                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
                 onSelect: () => temporaryGrimoire.open()
             },
             {
                 label: 'Set demon bluffs',
                 description: 'They probably need it',
-                class: `${disabledItemCss.value} text-(--demon)`,
-                disabled: !scenarioIsSelected.value,
+                class: `text-(--demon)`,
+                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
                 onSelect: () => demonBluffs.open({ editable: true })
             },
             {
                 label: 'Hand out roles & bluffs',
                 description: '',
-                class: `${disabledItemCss.value} text-(--minion)`,
-                disabled: !scenarioIsSelected.value,
+                class: `text-(--minion)`,
+                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
                 onSelect: () => syncRoleData()
             },
             {
-                label: 'Add a player',
-                description: (players.length >= MAX_PLAYERS ? 'Max players reached' : ''),
-                class:       (players.length >= MAX_PLAYERS ? 'opacity-50 cursor-not-allowed' : ''),
-                disabled:     players.length >= MAX_PLAYERS,
-                onSelect: () => addPlayer(),
+                toggle: 'nominations',
+                label: 'Allow player nominations',
+                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
+                slot: 'nominations' as const,
             },
             {
-                label: 'Clear all player roles',
-                class: `${disabledItemCss.value}`,
-                disabled: !scenarioIsSelected.value,
-                onSelect: () => players.list.forEach(p => (p.role = undefined))
+                label: players.length < MAX_PLAYERS ? 'Add a player' : 'Max players reached',
+                class:       (players.length >= MAX_PLAYERS ? 'opacity-50 cursor-not-allowed' : ''),
+                disabled:     players.length >= MAX_PLAYERS,
+                onSelect: async () => addPlayer(),
             },
             {
                 ...ui.grimoire.lastAction,
@@ -286,8 +338,9 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
 ], [
     {
         label: 'Game',
-        class: 'grid-cols-1',
+        class: 'text-info',
         defaultOpen: true,
+        icon: 'i-material-symbols-light-chess-pawn-rounded',
         slot: 'game' as const,
         children: [
             socket.id ? {} : {
@@ -309,7 +362,7 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 label: 'Load game',
                 onSelect: () => {
                     game.loadScript("tb")
-                    for (const p of Array(8).keys()) {
+                    for (const p of Array(6).keys()) {
                         players.add((p + 1).toString())
                     }
                 }
@@ -331,29 +384,29 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
             },
             players.length < 6 ? {} : {
                 info: [{
-                        icon: { name: 'material-symbols-groups', color: 'text-success' },
+                        icon: { name: 'material-symbols-groups', class: 'text-success' },
                         count: players.length
                     }, {
-                        icon: { name: 'mingcute-heartbeat-2-fill', color: 'text-error' },
+                        icon: { name: 'mingcute-heartbeat-2-fill', class: 'text-error' },
                         count: players.list.filter(p => !(p.state & PlayerState.Dead)).length
                     }, {
-                        icon: { name: 'material-symbols-how-to-vote', color: 'text-neutral' },
+                        icon: { name: 'material-symbols-how-to-vote', class: 'text-neutral' },
                         count: players.list.filter(p => !(p.state & PlayerState.Voteless)).length
                     }, {
-                        icon: { name: 'material-symbols-person', color: 'text-(--townsfolk)' },
+                        icon: { name: 'material-symbols-person', class: 'text-(--townsfolk)' },
                         count: game.division!.townsfolk
                     }, {
-                        icon: { name: 'material-symbols-person', color: 'text-(--outsider)' },
+                        icon: { name: 'material-symbols-person', class: 'text-(--outsider)' },
                         count: game.division!.outsider
                     }, {
-                        icon: { name: 'material-symbols-person', color: 'text-(--minion)' },
+                        icon: { name: 'material-symbols-person', class: 'text-(--minion)' },
                         count: game.division!.minion
                     }, {
-                        icon: { name: 'material-symbols-person', color: 'text-(--demon)' },
+                        icon: { name: 'material-symbols-person', class: 'text-(--demon)' },
                         count: game.division!.demon
                     },
                     game.division!.traveller === 0 ? undefined : {
-                        icon: { name: 'material-symbols-person', color: 'text-(--traveller)' },
+                        icon: { name: 'material-symbols-person', class: 'text-(--traveller)' },
                         count: game.division!.traveller
                     }
                 ],
@@ -369,6 +422,10 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 label: 'Show night order',
                 toggle: 'nightorder',
                 slot: 'night-order' as const
+            },
+            {
+                select: 'ui-orientation',
+                slot: 'ui-orientation' as const
             },
         ]
     }
@@ -403,6 +460,10 @@ function cleanMenu(menu: NavigationMenuItem[][]){
     }
 
     return menu.filter(group => group.length > 0)
+}
+
+async function sidebarTimeoutClose() {
+    setTimeout(() => isOpen.value = !isOpen.value, 500)
 }
 
 async function addPlayer() {
