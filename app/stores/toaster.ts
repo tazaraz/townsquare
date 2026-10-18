@@ -3,7 +3,8 @@ import type { ButtonProps } from "@nuxt/ui";
 import { defineStore } from 'pinia';
 
 export const useToaster = defineStore('toaster', () => {
-    const socket = useSocket()
+    const players = usePlayers();
+    const socket = useSocket();
 
     const toast = useToast();
 
@@ -70,6 +71,23 @@ export const useToaster = defineStore('toaster', () => {
         title: h('span', { class: `text-(--${type})` }, [`The host modified the ${type} roles`]),
     })
 
+    const nominationRequest = (nominator: number, nominee: number) => toast.add({
+        title: 'Nomination request',
+        description: `${players.get(nominator)?.name} wants to nominate ${players.get(nominee)?.name}`,
+        icon: 'i-mdi-hand-pointing-right',
+        actions: [{
+            label: 'Accept',
+            color: 'primary',
+            variant: 'solid',
+            onClick: () => players.setNominated(nominee, nominator)
+        }, {
+            label: 'I see',
+            color: 'neutral',
+            variant: 'outline',
+        }],
+        duration: 0,
+    })
+
     /**
      * This function allows for communication between the host and players through direct messages. It can display messages with different button configurations, such as 'reply', 'confirm', 'acknowledge', or 'custom'. Depending on the type of message, it will show appropriate buttons for user interaction.
      * @param data The data to send
@@ -123,7 +141,7 @@ export const useToaster = defineStore('toaster', () => {
                     h(Token, { kind: 'role', data: role, style: 'width: 70px' }),
                 ]),
                 actions,
-                duration: 0,
+                duration: data.duration ?? 0,
             })
         }
 
@@ -135,7 +153,7 @@ export const useToaster = defineStore('toaster', () => {
                                        : undefined,
                 icon: data.icon,
                 actions,
-                duration: data.buttons === 'none' ? 3000 : 0,
+                duration: data.buttons === 'none' ? data.duration ?? 3000 : 0,
             })
         }
     }
@@ -147,6 +165,7 @@ export const useToaster = defineStore('toaster', () => {
         leftGame,
         restoredConnection,
         modifier,
+        nominationRequest,
 
         showDirectMessage,
     }

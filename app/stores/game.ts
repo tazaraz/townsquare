@@ -70,6 +70,8 @@ export const useGame = defineStore('game', () => {
     const assignedLoric = computed(() => gamestate.loric)
     /** The demon bluffs */
     const demonBluffs = computed(() => gamestate.demonBluffs)
+    /** The current nomination session */
+    const nomination = computed(() => gamestate.nomination)
 
     /**
      * What amount of players to have for each team
@@ -294,6 +296,33 @@ export const useGame = defineStore('game', () => {
         }
     }
 
+    /**
+     * Whether it is possible to nominate players
+     * @param open Nomination state
+     */
+    function setNominations(open: boolean) {
+        gamestate.nomination.open = open
+        gamestate.nomination.hand = -1
+        gamestate.nomination.nominator = -1
+        gamestate.nomination.nominee = -1
+    }
+
+    /**
+     * Marks a player for execution, or unmarks them if `player` is `-1`
+     * @param player The player to mark for execution. Set to `-1` to unset
+     * @param votes How many votes this player received.
+     * @returns
+     */
+    function setMarked(player: number, votes: number) {
+        const p = players.get(player)
+
+        if (p) {
+            gamestate.nomination.nominator = -1
+            gamestate.nomination.nominee = -1
+        }
+        gamestate.nomination.marked = p ? { player, votes } : undefined
+    }
+
     /** Contains selected roles during setup */
     const setupSelected = ref<Role[]>(players.list.map(p => p.role).filter(r => r !== undefined))
 
@@ -338,6 +367,7 @@ export const useGame = defineStore('game', () => {
         assignedLoric,
 
         demonBluffs,
+        nomination,
         division,
 
         scriptNightOrder,
@@ -350,6 +380,8 @@ export const useGame = defineStore('game', () => {
 
         toggleModifier,
         setBluff,
+        setNominations,
+        setMarked,
 
         setupSelected,
         setupAssignRandomly,

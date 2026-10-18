@@ -189,7 +189,7 @@ export const useSocket = defineStore('socket', () => {
     const requestRename   = (name: string) => sendTo('host', 'rename', { name, index: gamestate.seatIndex } )
     const requestClaim    = (index: number) => sendTo('host', 'claim', { index } )
     const requestUnclaim  = () => sendTo('host', 'unclaim', { index: gamestate.seatIndex } )
-    const requestVoting   = () => sendTo('host', 'voting', { index: gamestate.seatIndex } )
+    const requestVoting   = () => sendTo('host', 'vote', undefined )
 
     function syncDataToPlayers() {
         for (const [index, player] of players.list.entries()) {
@@ -260,6 +260,7 @@ export const useSocket = defineStore('socket', () => {
                             name: p.name,
                             state: p.state,
                             socketId: p.socketId,
+                            nominated: p.nominated,
                         })),
                     })
                 }
@@ -285,10 +286,16 @@ export const useSocket = defineStore('socket', () => {
 
                         // Update the state
                         message.data.players.forEach((
-                            { name, state, socketId }: { name: string, state: PlayerState, socketId: string }) => {
+                            { name, state, socketId, nominated }: {
+                                name: string
+                                state: PlayerState
+                                socketId: string
+                                nominated: { been: boolean, has: boolean }
+                            }) => {
                                 players.add(name)
                                 players.setState(players.length - 1, state)
                                 players.claim(players.length - 1, socketId)
+                                players.get(players.length - 1)!.nominated = nominated
                             }
                         );
 
@@ -358,8 +365,29 @@ export const useSocket = defineStore('socket', () => {
                 return players.setName(message.data.index, message.data.name)
             case 'nominate':
                 if (gamestate.isHost) {
+                    if (!gamestate.nomination.open || gamestate.nomination.nominee > 0)
+                        return
 
+                    const nominator = players.list.findIndex(p => p.socketId === message.origin)
+                    if (nominator < 0) return
+
+                    toaster.nominationRequest(nominator, message.data.index)
                 }
+                return
+            case 'vote':
+                if (gamestate.isHost) {
+                    const index = players.list.findIndex(p => p.socketId === message.origin)
+                    if (index < 0) return
+
+                    if (players.voteLocked(index))
+                        return
+
+                    message.data = { index }
+                    broadcast('voting', { index, voting: !players.list[index]!.isVoting })
+                }
+
+                // Toggle the voting state of the player
+                players.list[message.data.index]!.isVoting = !players.list[message.data.index]!.isVoting
                 return
 
             /** The following code should only be received by players, and the host should ignore them */
@@ -402,10 +430,21 @@ export const useSocket = defineStore('socket', () => {
                 if (gamestate.isHost) return
                 toaster.modifier(message.data.type)
                 return game.toggleModifier(message.data.type, message.data.role)
-
             case 'grimoire':
                 if (gamestate.isHost) return
                 return useUI().showTemporaryGrimoire(message.data)
+            case 'nomination':
+                if (gamestate.isHost) return
+                game.nomination.open       = message.data.open ?? game.nomination.open
+                game.nomination.speed      = message.data.speed ?? game.nomination.speed
+                game.nomination.hand       = message.data.hand ?? game.nomination.hand
+                game.nomination.marked     = message.data.marked ?? game.nomination.marked
+                game.nomination.nominator  = message.data.nominator ?? game.nomination.nominator
+                game.nomination.nominee    = message.data.nominee ?? game.nomination.nominee
+                return
+            case 'voting':
+                if (gamestate.isHost) return
+                return players.list[message.data.index]!.isVoting = message.data.voting
         }
     }
 
@@ -425,6 +464,9 @@ export const useSocket = defineStore('socket', () => {
                     return broadcast('rename', { index: args[0], name: args[1] })
                 case 'setState':
                     return broadcast('state', { index: args[0], state: args[1] })
+                case 'setNominated':
+                    return broadcast('nomination', { nominee: args[0], nominator: args[1] })
+
             }
         }))
 
@@ -435,6 +477,14 @@ export const useSocket = defineStore('socket', () => {
                     return broadcast('script', args[0])
                 case 'toggleModifier':
                     return broadcast('modifier', { type: args[0], role: args[1] })
+                case 'setNominations':
+                    return broadcast('nomination', { open: args[0] })
+                case 'setMarked':
+                    return broadcast('nomination', {
+                        marked: { player: args[0], votes: args[1], },
+                        nominator: game.nomination.nominator,
+                        nominee: game.nomination.nominee,
+                    })
             }
         }))
 

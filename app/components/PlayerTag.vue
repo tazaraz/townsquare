@@ -32,6 +32,38 @@
                                 @change="players.setState(index, PlayerState.Voteless)"/>
                         </template>
                     </UAlert>
+                    <UAlert variant="outline" color="info">
+                        <template #description>
+                            <div class="flex flex-col">
+                                <!-- Warning if player has or has been nominated already -->
+                                <span v-if="player.nominated.has || player.nominated.been || players.get(targetPlayer!)?.nominated.been"
+                                    class="text-warning mb-1 max-w-[200px]">
+                                    <template v-if="player.nominated.has || player.nominated.been">
+                                        {{ player.name }} has already
+                                        {{ !player.nominated.has && player.nominated.been ? 'been' : '' }}
+                                        nominated{{ players.get(targetPlayer!)?.nominated.been ? ', and ' : '' }}
+                                    </template>
+                                    <template v-if="players.get(targetPlayer!)?.nominated.been">
+                                        {{ players.get(targetPlayer!)?.name }} has already been nominated
+                                    </template>
+                                    today.
+                                </span>
+
+                                <span class="mb-1">Is nominating:</span>
+                                <USelect
+                                    v-model="targetPlayer"
+                                    value-key="index"
+                                    placeholder="select player"
+                                    :items="players.list.map((p, i) => ({ label: p.name, index: i }))"
+                                    :content="{ position: 'item-aligned' }"/>
+                                <UButton v-if="targetPlayer !== undefined"
+                                    label="Confirm"
+                                    color="info"
+                                    class="mt-2"
+                                    @click="players.setNominated(targetPlayer, index, true)"/>
+                            </div>
+                        </template>
+                    </UAlert>
                     <UButton
                         :label="ui.swapping == index ? 'Cancel swap' : 'Swap seats'"
                         variant="outline"
@@ -48,7 +80,19 @@
                         @click="players.remove(index); open=!open"/>
                 </template>
                 <template v-else>
-                    <UButton v-if="socket.seatIndex < 0"
+                    <UButton v-if="game.nomination.open &&
+                                   !player.nominated.been && !players.get(socket.seatIndex)?.nominated.has"
+                        label="Nominate"
+                        variant="outline"
+                        color="info"
+                        @click="socket.requestNominate(index)"/>
+                    <UButton v-else-if="game.nomination.open"
+                        :label="players.get(socket.seatIndex)?.nominated.has ?
+                            'You already nominated' : 'Already been nominated'"
+                        variant="outline"
+                        color="neutral"
+                        disabled
+                        @click="socket.requestNominate(index)"/>
                         label="Claim seat"
                         variant="outline"
                         @click="socket.requestClaim(index)"/>
@@ -56,7 +100,7 @@
                         label="Unclaim seat"
                         variant="outline"
                         @click="socket.requestUnclaim()"/>
-                    <UButton v-else-if="index !== socket.seatIndex"
+                    <UButton v-else-if="index !== socket.seatIndex && player.socketId === undefined"
                         label="Unclaim current seat"
                         variant="outline"
                         color="warning"
@@ -73,12 +117,14 @@ const props = defineProps<{
     player: Player
 }>()
 
+const game = useGame()
 const socket = useSocket()
 const ui = useUI()
 const players = usePlayers()
 
 const open = ref(false)
 const name = ref(`${props.player.name}`);
+const targetPlayer = ref<number | undefined>(undefined)
 
 function resetFields(open: boolean) {
     // If we just closed the popover, ignore

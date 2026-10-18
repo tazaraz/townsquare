@@ -68,10 +68,10 @@ export interface Player {
     /** State of the player in the UI */
     state: PlayerState
 
+    /** Whether the player can vote at all */
+    voteLocked: boolean
     /** Whether this player is currently voting */
     isVoting: boolean
-    /** This player is marked for death */
-    isMarked: boolean
     /** Whether this player is nominated */
     nominated: {
         /** Whether the player has already been nominated */
@@ -85,6 +85,23 @@ export interface Player {
 }
 
 export type WheelOrientation = "center" | "top" | "right" | "bottom" | "left"
+
+export interface Nomination {
+    /** Whether players can nominate */
+    open: boolean
+    /** The player marked for death */
+    marked: { player: number, votes: number } | undefined;
+
+    /** The player who has nominated */
+    nominator: number
+    /** The player that is being nominated */
+    nominee: number
+
+    /** Index where the hand points to. */
+    hand: number
+    /** Speed of the hand in seconds */
+    speed: number
+}
 
 export interface UI {
     /** Whether the UI is in its hidden state */
@@ -120,6 +137,8 @@ export interface DirectMessage {
     text: string
     /** What buttons to show to the user */
     buttons: 'none' | 'acknowledge' | 'confirm' | 'reply' | 'dialog'
+    /** How long the message is visible */
+    duration?: number
 
     /** Icon to show */
     icon?: string

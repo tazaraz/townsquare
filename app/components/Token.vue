@@ -31,7 +31,7 @@
                             <div class="leaf top">
                                 <template v-for="i in (data as Role).reminders.length">
                                     <NuxtImg :style="{
-                                        // Range step with .25 in both directions. (length - 1) can be zero, so defaul to 0
+                                        // Range step with .25 in both directions. (length - 1) can be zero, so default to 0
                                         '--offset': ((i - 1) - ((data as Role).reminders.length - 1) / 2) * 0.5 || 0
                                     }" src="/sprites/leaf.png"/>
                                 </template>
@@ -53,12 +53,23 @@
                     </svg>
                 </template>
 
-                <!-- Swapping icon -->
-                <div v-if="kind == 'role' && canSwap"
-                    class="flex w-full h-full justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg"class="p-9" viewBox="0 0 24 24" >
-                        <path stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5" d="M7 11L3 7m0 0l4-4M3 7h18m-4 14l4-4m0 0l-4-4m4 4H3"></path>
-                    </svg>
+                <!-- Overlay icons -->
+                <div v-if="kind == 'role' && !hidden" class="flex relative w-full h-full justify-center items-center">
+                    <Transition name="enter" mode="out-in">
+                        <UIcon v-if="overlay === 'swap'"
+                            name="si-swap-horiz-fill"
+                            class="size-20 text-black" />
+                        <UIcon v-else-if="overlay === 'vote'"
+                            name="fa7-solid:hand-paper"
+                            class="size-20 text-black"/>
+                        <UIcon v-else-if="overlay === 'cancel'"
+                            name="material-symbols-cancel-outline-rounded"
+                            class="size-20 text-black" />
+                        <UIcon v-else-if="overlay === 'marked'"
+                            name="game-icons:slipknot"
+                            class="size-25 text-black" />
+                        <div v-else />
+                    </Transition>
                 </div>
             </div>
 
@@ -116,7 +127,7 @@ const props = defineProps<{
     order?: { firstNight: number, otherNights: number }
     hideLeaves?: boolean
     warning?: boolean
-    canSwap?: boolean
+    overlay?: 'swap' | 'vote' | 'cancel' | 'marked'
 }>()
 
 const background = "/token.png"
@@ -277,5 +288,17 @@ const background = "/token.png"
             background: #21102f;
         }
     }
+}
+
+.enter-enter-active,
+.enter-leave-active {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  transform-style: preserve-3d;
+}
+
+.enter-enter-from,
+.enter-leave-to {
+  transform: perspective(600px) rotateY(90deg);
+  opacity: 0;
 }
 </style>

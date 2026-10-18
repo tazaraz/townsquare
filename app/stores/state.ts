@@ -30,6 +30,17 @@ export const useGamestate = defineStore('gamestate', () => {
         global: [] as Reminder[],
     })
 
+    const nomination = reactive<Nomination>({
+        open: false,
+        marked: undefined,
+
+        nominator: -1,
+        nominee: -1,
+
+        hand: -1,
+        speed: 3,
+    })
+
     /** State of the UI */
     const ui = reactive<UI>({
         hidden: false,
@@ -97,6 +108,7 @@ export const useGamestate = defineStore('gamestate', () => {
         demonBluffs,
 
         reminders,
+        nomination,
         ui,
         sessionId,
         isHost,

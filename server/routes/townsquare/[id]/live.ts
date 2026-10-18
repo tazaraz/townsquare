@@ -14,12 +14,12 @@ interface Message extends Object {
           // Sync
           'sync' | 'script' | 'grimoire' | 'state' | 'player' | 'role' | 'modifier' | 'swap' | 'bluffs' | 'kick' |
           // UI state change
-          'nominated' | 'marked' | 'night' | 'votelocked' |
+          'nomination' | 'marked' | 'night' | 'voting' |
           // Player actions
-          'claim' | 'unclaim' | 'rename' | 'nominate' | 'voting' |
+          'claim' | 'unclaim' | 'rename' | 'nominate' | 'vote' |
           // Server specific
           'ping' | 'pong' | 'error' | 'notification' | 'leave' | 'connected' | 'close'
-    // TODO: 'nominate' | 'voting' | 'nominated' | 'marked' | 'night' | 'votelocked'
+    // TODO: 'night'
 
     /** The payload */
     data: any

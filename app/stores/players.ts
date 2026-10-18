@@ -22,8 +22,8 @@ export const usePlayers = defineStore('players', () => {
             reminders: [],
             state: PlayerState.Alive,
 
+            voteLocked: true,
             isVoting: false,
-            isMarked: false,
             nominated: {
                 been: false,
                 has: false
@@ -94,6 +94,26 @@ export const usePlayers = defineStore('players', () => {
         players[index]!.socketId = undefined
         gamestate.seatIndex = -1
         return true
+    }
+
+    /**
+     * Sets a player as voting or not voting
+     * @param index Index of the player to set the voting state for
+     * @param state Whether the player is voting or not
+     */
+    function vote(index: number, state: boolean) {
+        const p = get(index)
+        if (!p) return
+
+        p.isVoting = state
+    }
+
+    /**
+     * Whether a player is locked from voting or not
+     * @param index Index of the player
+     */
+    function voteLocked(index: number) {
+        return gamestate.nomination.hand !== -1 && get(index)!.voteLocked
     }
 
     /**
@@ -223,6 +243,26 @@ export const usePlayers = defineStore('players', () => {
             reminders.removeGlobal([reminder])
     }
 
+    /**
+     * Sets a player as nominated by another player
+     * @param player Index of the player to set as nominated
+     * @param by Index of the player who nominated the other player
+     * @param state Whether the player is nominated or not
+     */
+    function setNominated(player: number, by: number, state: boolean = true) {
+        const p = get(player)
+        const b = get(by)
+        if (!p || !b) return false
+
+        b.nominated.has = state
+        p.nominated.been = state
+
+        // Reset the nomination state
+        gamestate.nomination.nominator  = state ? by : -1
+        gamestate.nomination.nominee    = state ? player : -1
+        return true;
+    }
+
     return {
         list,
         length,
@@ -234,11 +274,14 @@ export const usePlayers = defineStore('players', () => {
         kick,
         claim,
         unclaim,
+        vote,
+        voteLocked,
 
         setRole,
         setName,
         setState,
         setReminder,
         removeReminder,
+        setNominated,
     }
 })
