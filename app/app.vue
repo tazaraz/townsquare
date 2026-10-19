@@ -2,11 +2,11 @@
     <UApp :toaster="{ position: 'top-right', expand: false }">
         <ClientOnly>
             <UMain>
-                <Welcome/>
+                <Welcome />
 
                 <Seats ref="seats"
                     @edit-player="editPlayer"
-                    @edit-reminder="editReminder"/>
+                    @edit-reminder="editReminder" />
             </UMain>
             <Menu />
         </ClientOnly>
@@ -20,15 +20,14 @@ import { ModalTokenSelector, Seats } from '#components'
 const seatsComponent = useTemplateRef<typeof Seats>('seats')
 
 // Start the stores
-const game = useGame()
+useGamestate()
+useGame()
 const players = usePlayers()
 const socket = useSocket()
 
 onMounted(() => {
     socket.reconnect()
 })
-
-
 
 const overlay = useOverlay();
 const tokenSelector = overlay.create(ModalTokenSelector)
