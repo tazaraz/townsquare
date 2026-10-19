@@ -61,11 +61,11 @@ export const useGame = defineStore('game', () => {
     })
 
     /** Available Fabled roles */
-    const availableFabled: Role[] = roleData.filter(r => r.team === 'fabled').map(r => loadRole(r.id)!)
+    const availableFabled = computed(() => roleData.filter(r => r.team === 'fabled').map(r => loadRole(r.id)!))
     /** Which fabled are assigned */
     const assignedFabled = computed(() => gamestate.fabled)
     /** Available Loric roles */
-    const availableLoric: Role[] = roleData.filter(r => r.team === 'loric').map(r => loadRole(r.id)!)
+    const availableLoric = computed(() => roleData.filter(r => r.team === 'loric').map(r => loadRole(r.id)!))
     /** Which loric are assigned */
     const assignedLoric = computed(() => gamestate.loric)
     /** The demon bluffs */
@@ -267,7 +267,7 @@ export const useGame = defineStore('game', () => {
         const store     = type === 'fabled' ? gamestate.fabled : gamestate.loric
 
         // Get the actual character associated with this id
-        const char = available.find(f => f.id == id)
+        const char = available.value.find(f => f.id == id)
         if (!char)
             return false;
 
