@@ -245,21 +245,21 @@ export const usePlayers = defineStore('players', () => {
 
     /**
      * Sets a player as nominated by another player
-     * @param player Index of the player to set as nominated
-     * @param by Index of the player who nominated the other player
+     * @param nominee Index of the player to set as nominated
+     * @param nominator Index of the player who nominated the other player
      * @param state Whether the player is nominated or not
      */
-    function setNominated(player: number, by: number, state: boolean = true) {
-        const p = get(player)
-        const b = get(by)
+    function setNominated(nominee: number, nominator: number, state: boolean = true) {
+        const p = get(nominee)
+        const b = get(nominator)
         if (!p || !b) return false
 
         b.nominated.has = state
         p.nominated.been = state
 
         // Reset the nomination state
-        gamestate.nomination.nominator  = state ? by : -1
-        gamestate.nomination.nominee    = state ? player : -1
+        gamestate.nomination.nominee    = state ? nominee : -1
+        gamestate.nomination.nominator  = state ? nominator : -1
         return true;
     }
 
