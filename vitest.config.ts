@@ -15,7 +15,9 @@ export default defineConfig({
         ],
         onConsoleLog: (l) => {
             // Hide '<Suspense> is an experimental feature and its API will likely change.' warning.
-            return !l.startsWith('<Suspense>');
+            return !l.startsWith('<Suspense>') &&
+                   !l.startsWith('GSAP target #wheel not found.') &&
+                   !l.startsWith('[Vue warn]: App already provides property with key "Symbol(pinia)"')
         }
     }
 })
