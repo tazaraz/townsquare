@@ -191,7 +191,7 @@ export const useSocket = defineStore('socket', () => {
     const requestRename   = (name: string) => sendTo('host', 'rename', { name } )
     const requestClaim    = (index: number) => sendTo('host', 'claim', { index } )
     const requestUnclaim  = () => sendTo('host', 'unclaim', undefined )
-    const requestVoting   = () => sendTo('host', 'vote', undefined )
+    const requestVote   = () => sendTo('host', 'vote', undefined )
 
     function syncDataToPlayers() {
         for (const [index, player] of players.list.entries()) {
@@ -352,7 +352,7 @@ export const useSocket = defineStore('socket', () => {
                     if (index < 0) return
 
                     message.data = { index }
-                    broadcast('voting', { index, voting: false })
+                    broadcast('vote', { index, voting: false })
                     broadcast('unclaim', message.data)
                 }
 
@@ -391,12 +391,12 @@ export const useSocket = defineStore('socket', () => {
                     if (players.voteLocked(index))
                         return
 
-                    message.data = { index }
-                    broadcast('voting', { index, voting: !players.list[index]!.isVoting })
+                    message.data = { index, voting: !players.list[index]!.isVoting }
+                    broadcast('vote', message.data)
                 }
 
                 // Toggle the voting state of the player
-                players.list[message.data.index]!.isVoting = !players.list[message.data.index]!.isVoting
+                players.list[message.data.index]!.isVoting = message.data.voting
                 return
 
             /** The following code should only be received by players, and the host should ignore them */
@@ -451,9 +451,6 @@ export const useSocket = defineStore('socket', () => {
                 game.nomination.nominator  = message.data.nominator ?? game.nomination.nominator
                 game.nomination.nominee    = message.data.nominee ?? game.nomination.nominee
                 return
-            case 'voting':
-                if (gamestate.isHost) return
-                return players.list[message.data.index]!.isVoting = message.data.voting
         }
     }
 
@@ -521,7 +518,7 @@ export const useSocket = defineStore('socket', () => {
         syncDataToPlayers,
 
         requestNominate,
-        requestVoting,
+        requestVote,
         requestRename,
         requestClaim,
         requestUnclaim,

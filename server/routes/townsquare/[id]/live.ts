@@ -14,7 +14,7 @@ interface Message extends Object {
           // Sync
           'sync' | 'script' | 'grimoire' | 'state' | 'player' | 'role' | 'modifier' | 'swap' | 'bluffs' | 'kick' |
           // UI state change
-          'nomination' | 'marked' | 'night' | 'voting' |
+          'nomination' | 'marked' | 'night' |
           // Player actions
           'claim' | 'unclaim' | 'rename' | 'nominate' | 'vote' |
           // Server specific
