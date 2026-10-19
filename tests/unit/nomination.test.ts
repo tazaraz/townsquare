@@ -27,12 +27,122 @@ describe('Nomination hand', () => {
         c.stop()
     })
 
+    it('allows player nominations', async () => {
+        await c.connectPlayers(0, PLAYERS)
+
+        c.activatePinia(c.host)
+        c.hgame.setNominations(true)
+        await delay()
+
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.open).toBe(true)
+            expect(c.pgame[p]!.nomination.nominator).toBe(-1)
+            expect(c.pgame[p]!.nomination.nominee).toBe(-1)
+            expect(c.pgame[p]!.nomination.hand).toBe(-1)
+        }
+
+        c.activatePinia(c.host)
+        c.hplayers.setNominated(1, 3)
+        expect(c.hgame.nomination.nominator).toBe(3)
+        expect(c.hgame.nomination.nominee).toBe(1)
+        await delay()
+
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.open).toBe(true)
+            expect(c.pgame[p]!.nomination.nominator).toBe(3)
+            expect(c.pgame[p]!.nomination.nominee).toBe(1)
+            expect(c.pgame[p]!.nomination.hand).toBe(-1)
+        }
+
+        c.activatePinia(c.host)
+        c.hgame.setNominations(false)
+        await delay()
+
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.open).toBe(false)
+            expect(c.pgame[p]!.nomination.nominator).toBe(-1)
+            expect(c.pgame[p]!.nomination.nominee).toBe(-1)
+            expect(c.pgame[p]!.nomination.hand).toBe(-1)
+        }
+    })
+
+    it('Moves hand on nomination', { timeout: 10000 * HANDSPEED }, async () => {
+        // Mount the host Component
+        await c.connectPlayers(0, PLAYERS)
+
+        // Mount the host Component
+        c.activatePinia(c.players[0]!)
+        const component = await mountSuspended(Seats, { global: {plugins: [ c.players[0]! ]} })
+        const { nomination } = component.setupState;
+
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.hand).toEqual(-1)
+        }
+
+        c.activatePinia(c.host)
+        c.hgame.setNominations(true)
+        c.hplayers.setNominated(2, 3, true)
+
+        // Wait for the hand to move to position 0 (offset of the nominee)
+        await delay(200)
+        c.activatePinia(c.players[0]!)
+        expect(c.pgame[0]!.nomination.hand).toEqual(0)
+
+        // Wait for the hand to be disabled
+        await delay(400)
+        expect(c.pgame[0]!.nomination.hand).toEqual(-1)
+    })
+
+    it('cancels correctly with marked player', async () => {
+        await c.connectPlayers(0, PLAYERS)
+
+        c.activatePinia(c.host)
+        c.hgame.setNominations(true)
+        c.hplayers.setNominated(2, 3, true)
+        c.hgame.setMarked(2, -1);
+
+        await delay()
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.marked).toEqual({ player: 2, votes: -1 })
+            expect(c.pgame[p]!.nomination.nominee).toEqual(-1)
+            expect(c.pgame[p]!.nomination.nominator).toEqual(-1)
+        }
+
+        c.activatePinia(c.host)
+        c.hplayers.setNominated(1, 2, true)
+        await delay()
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.marked).toEqual({ player: 2, votes: -1 })
+            expect(c.pgame[p]!.nomination.nominee).toEqual(1)
+            expect(c.pgame[p]!.nomination.nominator).toEqual(2)
+        }
+
+        // Stop
+        c.activatePinia(c.host)
+        c.hgame.setNominations(false)
+        await delay()
+
+        // Check that the marked player is not marked anymore
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.marked).toEqual(null)
+            expect(c.pgame[p]!.nomination.nominee).toEqual(-1)
+            expect(c.pgame[p]!.nomination.nominator).toEqual(-1)
+        }
+    })
+
     it('Rotates on the host', { timeout: 10000 * HANDSPEED }, async () => {
         // Mount the host Component
         const component = await mountSuspended(Seats, { global: {plugins: [ c.host ]} })
         const { nomination } = component.setupState;
 
-        c.connectPlayers(0, PLAYERS)
+        await c.connectPlayers(0, PLAYERS)
         c.hplayers.setNominated(0, 1, true)
         await delay(550)
 
