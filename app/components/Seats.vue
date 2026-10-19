@@ -800,7 +800,6 @@ watch(
             return;
 
         // Move the hand to the nominee
-        console.log('Nominee changed', game.nomination.hand, game.nomination.nominee)
         await nomination.movehand(0, 0.5, true)
         await nomination.movehand(-1, 0.0, true)
     }
@@ -816,7 +815,6 @@ watch(
 
         // Pre-reset of the hand (watch does not trigger when the value is already 0, so set it temp to -1)
         if (game.nomination.hand === -1) {
-            console.log('Resetting hand to -1')
             nomination.handOffset = -1;
             seats.moveHand(-1, 0.0)
         }
@@ -824,7 +822,6 @@ watch(
         // Move the hand
         else {
             const location = nomination.handLocation(game.nomination.hand);
-            console.log('Moving hand to', game.nomination.hand, `(${location}): handOffset: ${nomination.handOffset})`)
             seats.moveHand(location, game.nomination.speed)
 
             // We only update players ability to vote, if a vote is actually happening
