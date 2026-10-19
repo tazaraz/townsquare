@@ -726,7 +726,7 @@ class Nominations {
         // Setting the hand triggers the animation
         game.nomination.hand = hand
         game.nomination.speed = speed
-        await new Promise(resolve => setTimeout(resolve, Math.max(15, speed * 1000)))
+        await new Promise(resolve => setTimeout(resolve, Math.max(10, speed * 1000)))
     }
 }
 
