@@ -302,9 +302,10 @@ export const useGame = defineStore('game', () => {
      */
     function setNominations(open: boolean) {
         gamestate.nomination.open = open
-        gamestate.nomination.hand = -1
+        gamestate.nomination.marked = null
         gamestate.nomination.nominator = -1
         gamestate.nomination.nominee = -1
+        gamestate.nomination.hand = -1
     }
 
     /**
@@ -320,7 +321,7 @@ export const useGame = defineStore('game', () => {
             gamestate.nomination.nominator = -1
             gamestate.nomination.nominee = -1
         }
-        gamestate.nomination.marked = p ? { player, votes } : undefined
+        gamestate.nomination.marked = p ? { player, votes } : null
     }
 
     /** Contains selected roles during setup */

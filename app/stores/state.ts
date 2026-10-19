@@ -32,7 +32,7 @@ export const useGamestate = defineStore('gamestate', () => {
 
     const nomination = reactive<Nomination>({
         open: false,
-        marked: undefined,
+        marked: null,
 
         nominator: -1,
         nominee: -1,

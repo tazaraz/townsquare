@@ -39,14 +39,14 @@
                                 </template>
 
                                 <!-- No one is nominated, but some player is marked for death -->
-                                <div v-else class="font-bold text-lg">
+                                <div v-else-if="game.nomination.marked" class="font-bold text-lg">
                                     <span class="text-error">
-                                        {{ players.get(game.nomination.marked!.player)?.name }}
+                                        {{ players.get(game.nomination.marked.player)?.name }}
                                     </span>
                                     is marked for execution!
                                 </div>
                             </div>
-                            <UFieldGroup v-if="socket.isHost && game.nomination.marked !== undefined" class="mt-2">
+                            <UFieldGroup v-if="socket.isHost && game.nomination.marked !== null" class="mt-2">
                                 <UButton
                                     @click="game.setMarked(-1, -1)"
                                     label="Clear mark"
@@ -63,8 +63,8 @@
                             </UFieldGroup>
                         </template>
                     </UAlert>
-                    <UButton
-                        @click="game.setNominations(false); game.nomination.marked = undefined"
+                    <UButton v-if="game.nomination.nominee === -1"
+                        @click="game.setNominations(false)"
                         color="error" variant="subtle" label="Stop nominations" />
                 </template>
                 <template v-if="game.nomination.nominee > -1">
@@ -92,7 +92,7 @@
                                 @click="nomination.stop()" color="warning" variant="subtle" label="Stop" class="px-4" />
                             <UInputNumber v-model="game.nomination.speed" :ui="{base: 'w-0'}" :min="0.5" :step="0.5"/>
                             <UButton
-                                @click="game.setNominations(false); game.nomination.marked = undefined"
+                                @click="game.setNominations(false)"
                                 color="error" variant="subtle" label="Cancel" />
                         </UFieldGroup>
                         <small>Time per player: {{ game.nomination.speed }}s</small>

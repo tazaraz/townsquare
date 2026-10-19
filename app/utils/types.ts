@@ -90,7 +90,7 @@ export interface Nomination {
     /** Whether players can nominate */
     open: boolean
     /** The player marked for death */
-    marked: { player: number, votes: number } | undefined;
+    marked: { player: number, votes: number } | null;
 
     /** The player who has nominated */
     nominator: number

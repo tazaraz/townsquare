@@ -447,7 +447,9 @@ export const useSocket = defineStore('socket', () => {
                 game.nomination.open       = message.data.open ?? game.nomination.open
                 game.nomination.speed      = message.data.speed ?? game.nomination.speed
                 game.nomination.hand       = message.data.hand ?? game.nomination.hand
-                game.nomination.marked     = message.data.marked ?? game.nomination.marked
+                game.nomination.marked     = message.data.marked !== undefined
+                                                ? message.data.marked
+                                                : game.nomination.marked
                 game.nomination.nominator  = message.data.nominator ?? game.nomination.nominator
                 game.nomination.nominee    = message.data.nominee ?? game.nomination.nominee
                 return
@@ -484,7 +486,13 @@ export const useSocket = defineStore('socket', () => {
                 case 'toggleModifier':
                     return broadcast('modifier', { type: args[0], role: args[1] })
                 case 'setNominations':
-                    return broadcast('nomination', { open: args[0] })
+                    return broadcast('nomination', {
+                        open: gamestate.nomination.open,
+                        marked: gamestate.nomination.marked,
+                        nominator: gamestate.nomination.nominator,
+                        nominee: gamestate.nomination.nominee,
+                        hand: gamestate.nomination.hand,
+                     })
                 case 'setMarked':
                     return broadcast('nomination', {
                         marked: { player: args[0], votes: args[1], },
