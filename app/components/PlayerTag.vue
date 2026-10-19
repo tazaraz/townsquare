@@ -24,11 +24,11 @@
                         <template #description>
                             <USwitch
                                 label="Is alive"
-                                :default-value="!(player.state & PlayerState.Alive)"
+                                :model-value="(player.state & PlayerState.Dead) === 0"
                                 @change="players.setState(index, PlayerState.Dead)"/>
                             <USwitch
                                 label="Can vote"
-                                :default-value="!(player.state & PlayerState.Voteless)"
+                                :model-value="(player.state & PlayerState.Voteless) === 0"
                                 class="mt-2"
                                 @change="players.setState(index, PlayerState.Voteless)"/>
                         </template>
