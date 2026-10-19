@@ -265,6 +265,7 @@ export const useSocket = defineStore('socket', () => {
                             socketId: p.socketId,
                             nominated: p.nominated,
                         })),
+                        nomination: gamestate.nomination,
                     })
                 }
 
@@ -306,6 +307,9 @@ export const useSocket = defineStore('socket', () => {
                         if (players.get(gamestate.seatIndex)?.socketId !== id.value)
                             gamestate.seatIndex = -1
                     }
+
+                    // Set the nomination state
+                    gamestate.nomination = message.data.nomination
                 }
 
                 return
