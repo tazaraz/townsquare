@@ -7,6 +7,7 @@
                 title="Demon bluffs"
                 description="Fake roles for the demon"/>
         </template>
+        <!-- The bluffs -->
         <template #body>
             <div class="flex gap-3 h-[120px] mx-auto">
                 <Token v-for="role, i in game.demonBluffs"

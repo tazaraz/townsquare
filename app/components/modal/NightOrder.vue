@@ -14,6 +14,7 @@
 
                     <div class="role-info items-end my-auto me-2">
                         <h3>{{ role.name }}</h3>
+                        <!-- nbsp otherwise the span collapses to 0 height -->
                         <span class="text-neutral-500">{{ role.players.map(p => p.name).join(", ") }}&nbsp;</span>
                     </div>
                     <NuxtImg :src="role.image" />
@@ -28,6 +29,7 @@
                     <NuxtImg :src="role.image" />
                     <div class="role-info my-auto ms-2">
                         <h3>{{ role.name }}</h3>
+                        <!-- nbsp otherwise the span collapses to 0 height -->
                         <span class="text-neutral-500">{{ role.players.map(p => p.name).join(", ") }}&nbsp;</span>
                     </div>
                 </div>

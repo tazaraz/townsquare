@@ -9,6 +9,7 @@
         </template>
         <template #body>
             <div class="flex flex-col md:flex-row select-none">
+                <!-- Default list -->
                 <div class="flex-2 grid grid-cols-2 md:grid-cols-3 gap-2">
                     <UButton v-for="option, t in texts"
                         class="cursor-pointer font-bold text-[110%]"
@@ -19,8 +20,9 @@
                         class="cursor-pointer font-bold text-[110%]"
                         color="neutral"
                         variant="subtle"
-                        @click="addCustom">Custom note</UButton>
+                        @click="addCustomNote">Custom note</UButton>
                 </div>
+                <!-- Custom list -->
                 <div v-if="socket.isHost && (requiredData === 'token' || requiredData === 'custom')"
                     class="flex-1 flex flex-col p-10 m-auto">
                     <Token
@@ -31,11 +33,13 @@
                         :hide-leaves="true"
                         @click="editToken" />
 
+                    <!-- Show a note -->
                     <span v-if="!roleToken && requiredData !== 'custom'"
                         class="mt-5 mx-auto text-warning-500">You must set a role</span>
                     <span v-if="!roleToken && requiredData === 'custom'"
                         class="mt-5 mx-auto text-neutral-500">Leave empty to not send a role</span>
                 </div>
+                <!-- Make sure we can send data -->
                 <div v-if="socket.isHost && ['select'].includes(requiredData)"
                     class="flex-1 flex flex-col p-10 m-auto">
                     <b v-if="!rolePlayers.length"
@@ -65,7 +69,7 @@
                         :disabled="requiredData === 'token' && !roleToken ||
                                    requiredData === 'select' && rolePlayers.length === 0 ||
                                    targetPlayer === undefined"
-                        @click="show"/>
+                        @click="sendMessage"/>
                     <USelect
                         v-model="targetPlayer"
                         value-key="index"
@@ -123,7 +127,7 @@ async function editToken() {
     }
 }
 
-async function addCustom() {
+async function addCustomNote() {
     const input = inputDialog.open({ title: 'Write a custom note', placeholder: 'Custom note content' })
 
     const text = await input.result as string | undefined
@@ -134,7 +138,7 @@ async function addCustom() {
     }
 }
 
-function show() {
+function sendMessage() {
     socket.sendTo(players.get(targetPlayer.value!)!.socketId!, 'message', {
         text: texts[index.value]!.label
             + (texts[index.value]!.required === 'select'

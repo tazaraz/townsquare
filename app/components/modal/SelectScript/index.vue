@@ -11,6 +11,7 @@
                 id="tabs"
                 :items="tabs"
                 :ui="{ content: 'flex flex-col gap-6 mb-3' }">
+                <!-- List of official Pandemonium Institute scripts -->
                 <template #core>
                     <template v-for="scenario in scripts">
                         <ModalSelectScriptCard
@@ -19,6 +20,7 @@
                             @selected="scenario.onSelect"/>
                     </template>
                 </template>
+                <!-- List of community scripts, 8+ players -->
                 <template #full>
                     <NuxtImg src="/sprites/editions/custom.webp" class="max-h-[350px] h-full mx-auto" />
                     <template v-for="script in scripts">
@@ -28,6 +30,7 @@
                             @selected="script.onSelect"/>
                     </template>
                 </template>
+                <!-- List of community scripts, <8 players a.k.a. teensyville -->
                 <template #teensyville>
                     <NuxtImg src="/sprites/editions/custom.webp" class="max-h-[350px] h-full mx-auto" />
                     <template v-for="script in scripts">
@@ -37,6 +40,7 @@
                             @selected="script.onSelect"/>
                     </template>
                 </template>
+                <!-- Custom uploaded script -->
                 <template #upload>
                     <UPageCard
                         orientation="horizontal"
@@ -59,6 +63,7 @@
 
                         <NuxtImg src="/sprites/editions/custom.webp" class="max-h-[350px] mx-auto" />
 
+                        <!-- Upload options -->
                         <template #footer>
                             <div class="flex flex-wrap gap-2">
                                 <UInput
@@ -90,6 +95,7 @@
                                     variant="outline"
                                     :ui="{ root: 'text-white mt-5 p-3', description: 'flex flex-wrap'}" >
 
+                                    <!-- Show loaded roles -->
                                     <template #description>
                                         <template v-for="role, i in game.availableRoles">
                                             <span :class="`text-(--${role.team})`">{{ role.name }}</span>
@@ -217,6 +223,4 @@ async function getClipboard() {
         setTimeout(() => error.value = '', 5000)
     }
 }
-
-
 </script>

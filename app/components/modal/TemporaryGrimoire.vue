@@ -55,7 +55,7 @@
                         color="secondary"
                         :class="targetPlayer === undefined || ui.grimoire.temporary === false ? 'bg-gray-500!':''"
                         :disabled="targetPlayer === undefined || ui.grimoire.temporary === false"
-                        @click="show"/>
+                        @click="sendGrimoire"/>
                     <USelect
                         v-model="targetPlayer"
                         value-key="index"
@@ -106,7 +106,7 @@ function randomizeSeats() {
     }
 }
 
-function show() {
+function sendGrimoire() {
     socket.sendTo(players.get(targetPlayer.value!)!.socketId!, 'grimoire',
         players.list.map(p => ({
             name: p.name,
