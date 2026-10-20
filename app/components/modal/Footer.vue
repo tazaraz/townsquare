@@ -5,7 +5,7 @@
         <slot name="left"></slot>
     </div>
 
-    <main :class="['flex gap-3', !$slots.left && !$slots.right ? 'mx-auto' : '']">
+    <main :class="['flex flex-wrap gap-3', !$slots.left && !$slots.right ? 'mx-auto' : '']">
         <slot name="center"></slot>
     </main>
 
