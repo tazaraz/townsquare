@@ -69,7 +69,7 @@
                 </template>
                 <template v-if="game.nomination.nominee > -1">
                     <template v-if="socket.isHost">
-                        <UFieldGroup class="mb-1">
+                        <UFieldGroup v-if="game.nomination.nominee > -1" class="mb-1">
                             <UButton v-if="game.nomination.nominee === game.nomination.marked?.player"
                                 @click="game.setMarked(-1, -1)"
                                 :label="`Clear mark on ${players.get(game.nomination.nominee)!.name}`"
