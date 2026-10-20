@@ -54,8 +54,8 @@ async function editBluff(index: number) {
     })
 
     const role = await selector.result as Role | "unset" | undefined
-    if (role && role !== 'unset') {
-        game.setBluff(index, role.id)
+    if (role && role !== undefined) {
+        game.setBluff(index, role === 'unset' ? undefined : role.id)
     }
 }
 </script>
