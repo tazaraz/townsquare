@@ -4,7 +4,6 @@
             mode="click"
             arrow
             :content="{side: ui.centered ? 'left' : 'bottom'}"
-            :ui="{content: ''}"
             enable-touch
             @update:open="resetFields">
         <UButton color="neutral" variant="subtle">
