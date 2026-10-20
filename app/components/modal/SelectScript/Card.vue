@@ -5,10 +5,11 @@
         class="m-2">
         <template #body>
             <h2  class="text-2xl text-pretty font-semibold text-highlighted">{{ script.name }}</h2>
-            <div class="text-[15px] text-pretty text-muted mt-1 max-h-[145px] overflow-auto">
+            <div class="text-[15px] text-pretty text-muted mt-1 max-h-[200px] overflow-auto">
                 {{ script.description }}
             </div>
-            <div class="flex flex-col border-t pt-2 mt-2 border-muted">
+            <USeparator orientation="horizontal" class="my-3" />
+            <div class="flex flex-col">
                 <span v-if="script.author">Author: {{ script.author }}</span>
                 <span v-if="script.level">Level: {{ script.level }}</span>
             </div>
