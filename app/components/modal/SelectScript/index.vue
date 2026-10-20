@@ -7,7 +7,7 @@
                 description="Define the roles & mechanics"/>
         </template>
         <template #body>
-            <UTabs
+            <UTabs v-model="selected"
                 id="tabs"
                 :items="tabs"
                 :ui="{ content: 'mb-3' }">
@@ -140,6 +140,7 @@ const scripts = [
     }))
 ]
 
+const selected = ref('0')
 const tabs = [
     {
         label: 'Official',
