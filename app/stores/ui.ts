@@ -25,6 +25,9 @@ export const useUI = defineStore('UI', () => {
         uistate.grimoire.lastAction.description = 'Last action';
         uistate.grimoire.lastAction.onSelect = () => action()
 
+        // Clear the label after 15 seconds
+        setTimeout(() => uistate.grimoire.lastAction = {} as any, 15000)
+
         action();
     }
 
