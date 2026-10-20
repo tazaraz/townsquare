@@ -4,13 +4,13 @@
         :ui="{ body: 'flex justify-center'}">
         <template #body>
             <UInput
-                v-model="value"
-                :color="value == '' ? 'error' : 'neutral'"
+                v-model="input"
+                :color="input == '' ? 'error' : 'neutral'"
                 :placeholder="placeholder"
                 :ui="{ root: 'w-full' }"
                 :style="`padding-left: ${0.45 * leading?.length! || 1}rem`"
                 autofocus
-                @keydown.enter="value !== '' && emit('close', value)">
+                @keydown.enter="input !== '' && emit('close', input)">
 
                 <template v-if="leading" #leading>
                     <p class="text-sm text-muted">{{ leading }}</p>
@@ -23,8 +23,8 @@
                     <UButton
                         label="Confirm"
                         color="primary"
-                        :disabled="value === ''"
-                        @click="emit('close', value)" />
+                        :disabled="input === ''"
+                        @click="emit('close', input)" />
                     <UButton
                         label="Close"
                         color="neutral"
@@ -47,5 +47,11 @@ const emit = defineEmits<{
     close: [] | [ string ]
 }>()
 
-const value = ref(`${props.value || ''}`)
+const input = ref(`${props.value || ''}`)
+
+watch(() => input.value, (newValue) => {
+    if (props.leading && input.value.startsWith(props.leading)) {
+        input.value = input.value.slice(props.leading.length)
+    }
+})
 </script>
