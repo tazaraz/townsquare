@@ -10,7 +10,7 @@
             <UTabs v-model="selected"
                 id="tabs"
                 :items="tabs"
-                :ui="{ content: 'mb-3' }">
+                :ui="{ content: 'flex flex-col gap-6 mb-3' }">
                 <template #core>
                     <template v-for="scenario in scripts">
                         <ModalSelectScriptCard
@@ -47,11 +47,11 @@
                             <div class="text-[15px] text-pretty text-muted my-1 max-h-[145px] overflow-auto">
                                 Load your custom scenario here. You can upload custom scenarios or use ones defined by others.
                             </div>
-                            <!-- <div class="flex flex-col border-t pt-2 mt-2 border-muted">
-                                <span v-if="scenario.author">Author: {{ scenario.author }}</span>
-                                <span v-if="scenario.level">Level: {{ scenario.level }}</span>
-                            </div> -->
-                            <UButton to="https://docs.google.com/document/d/1irgMUc-3QPR8QABV7uPClGzOJplkjt3YaR3t16jO_HY"
+                            <div v-if="script" class="flex flex-col border-t pt-2 mt-2 border-muted">
+                                <span v-if="game.script?.author">Author: {{ game.script.author }}</span>
+                                <span v-if="game.script?.level">Level: {{ game.script.level }}</span>
+                            </div>
+                            <UButton to="https://docs.google.com/document/d/1irgMUc-3QPR8QABV7uPClGzOJplkjt3YaR3t16jO_HY" target="_blank"
                                 variant="outline" class="mt-2">
                                 Click here for more scenarios (Google Docs)
                             </UButton>
@@ -84,7 +84,7 @@
                                     color="error"
                                     variant="outline"
                                     :ui="{ root: 'mt-5 p-3' }"/>
-                                <UAlert v-if="error === '' && game.availableRoles.length > 0"
+                                <UAlert v-if="script && error === '' && game.availableRoles.length > 0"
                                     title="Loaded the following characters:"
                                     color="info"
                                     variant="outline"
@@ -121,6 +121,8 @@ const game = useGame();
 
 const overlay = useOverlay();
 const inputDialog = overlay.create(DialogInput);
+
+let script = null as any;
 
 const emit = defineEmits<{
     close: []
@@ -175,7 +177,7 @@ async function getUrl() {
         let res: Response;
         try {
             res = await fetch(`https://${url}`);
-            const script = await res.json();
+            script = await res.json();
             game.loadScript(script);
         } catch (e) {
             if (e instanceof TypeError)
@@ -196,7 +198,7 @@ async function loadFile(event: any) {
         return;
 
     try {
-        const script = JSON.parse(await selectedFile.text());
+        script = JSON.parse(await selectedFile.text());
         game.loadScript(script);
     } catch (e) {
         error.value = e instanceof DataFormatError ? String(e) : 'Invalid JSON formatting'
@@ -208,7 +210,7 @@ async function getClipboard() {
     error.value = '';
 
     try {
-        const script = JSON.parse(text);
+        script = JSON.parse(text);
         game.loadScript(script);
     } catch (e) {
         error.value = e instanceof DataFormatError ? String(e) : 'Invalid JSON formatting'
