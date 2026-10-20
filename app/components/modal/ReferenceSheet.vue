@@ -1,7 +1,11 @@
 <template>
-    <UModal
-        :title="`${name} Reference Sheet`"
-        :ui="{ content: 'max-w-screen-2xl', footer: 'flex relative'}">
+    <UModal :ui="{ content: 'max-w-screen-2xl', footer: 'flex relative'}">
+        <template #title>
+            <ModalTitle
+                icon="material-symbols-book"
+                :title="`${name} Reference Sheet`"
+                description="Reference sheet for the current scenario"/>
+        </template>
         <template #body>
             <UTabs id="tabs"
                    :items="tabs"

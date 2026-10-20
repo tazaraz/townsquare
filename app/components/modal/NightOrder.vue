@@ -1,11 +1,11 @@
 <template>
-    <UModal
-        :title="`${game.script?.name || 'Custom script'} Reference Sheet`"
-        :ui="{
-            content: 'max-w-screen-sm',
-            body: 'grid gap-20 grid-cols-1 md:grid-cols-2',
-            footer: 'self-center gap-10'
-        }">
+    <UModal :ui="{ content: 'max-w-screen-sm', body: 'grid gap-15 grid-cols-2', footer: 'self-center gap-10' }">
+        <template #title>
+            <ModalTitle
+                icon="material-symbols:format-list-numbered-rounded"
+                :title="`${game.script?.name || 'Custom script'} Reference Sheet`"
+                description="Reference sheet for the current script"/>
+        </template>
         <template #body>
             <div class="night-order text-right">
                 <h3>First night</h3>

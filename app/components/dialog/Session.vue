@@ -1,7 +1,11 @@
 <template>
-    <UModal
-        :title="create ? 'Create a lobby' : 'Join a lobby'"
-        :ui="{ body: 'flex justify-center'}">
+    <UModal :ui="{ body: 'flex justify-center'}">
+        <template #title>
+            <ModalTitle
+                :icon="create ? 'material-symbols-book-2-outline' : 'i-carbon-connection-signal'"
+                :title="create ? 'Create a lobby' : 'Join a lobby'"
+                :description="create ? 'Create a new Townsquare and some trouble.' : 'Join an existing Townsquare'"/>
+        </template>
         <template #body>
             <div class="flex flex-col gap-5 w-full">
                 <div>

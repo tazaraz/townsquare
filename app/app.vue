@@ -35,6 +35,10 @@ const tokenSelector = overlay.create(ModalTokenSelector)
 async function editPlayer(player: number) {
     const selector = tokenSelector.open({
         kind: 'role',
+        title: {
+            icon: 'i-lucide-user',
+            text: `Select a role for ${players.get(player)!.name}`,
+        },
         playerName: players.get(player)!.name,
         canClear: true
     })
@@ -53,6 +57,11 @@ async function editPlayer(player: number) {
 async function editReminder(player: number, index: number | undefined) {
     const selection = tokenSelector.open({
         kind: 'reminder',
+        title: {
+            icon: 'i-lucide-bell',
+            text: `Select a reminder for ${players.get(player)!.name}`,
+            description: index !== undefined ? 'Edit the reminder' : 'Add a new reminder'
+        },
         canClear: typeof index === 'number',
     })
 

@@ -480,7 +480,12 @@ async function addPlayer() {
 async function addModifier(type: 'fabled' | 'loric') {
     const selector = tokenSelector.open({
         kind: type,
-        selected: (type === 'fabled' ? game.assignedFabled : game.assignedLoric).map(f => f.id)
+        title: {
+            icon: 'boxicons:sparkles',
+            text: type === 'fabled' ? 'Select a Fabled' : 'Select a Loric',
+            description: 'Enforce your rule. Alter game mechanics.'
+        },
+        selected: (type === 'fabled' ? game.assignedFabled : game.assignedLoric).map(f => f.id),
     })
 
     const item = await selector.result;
@@ -492,7 +497,7 @@ async function addModifier(type: 'fabled' | 'loric') {
 async function syncRoleData() {
     const confirm = confirmDialog.open({
         title: 'Syncing roles & bluffs',
-        text: 'Are you sure you want to sync the roles to the players?'
+        text: 'Are you sure you want to sync the roles and bluffs to the players?'
     })
 
     const yes = await confirm.result;

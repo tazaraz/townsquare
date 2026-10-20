@@ -1,8 +1,12 @@
 
 <template>
-    <UModal
-        title="Demon bluffs available"
-        :ui="{ content: 'max-w-screen-md', body: 'overflow-hidden flex', footer: 'flex relative'}">
+    <UModal :ui="{ content: 'max-w-screen-md', body: 'overflow-hidden flex', footer: 'flex relative'}">
+        <template #title>
+            <ModalTitle
+                icon="arcticons:fake-gps-2"
+                title="Demon bluffs"
+                description="Fake roles for the demon"/>
+        </template>
         <template #body>
             <div class="flex gap-3 h-[120px] mx-auto">
                 <Token v-for="role, i in game.demonBluffs"
@@ -46,6 +50,10 @@ const tokenSelector = overlay.create(ModalTokenSelector)
 async function editBluff(index: number) {
     const selector = tokenSelector.open({
         kind: 'role',
+        title: {
+            icon: 'arcticons:fake-gps-2',
+            text: 'Select a demon bluff'
+        },
         canClear: true,
         disabled: (Object.values(game.assignedTeamRoles) as Player[][])
                     .flat()

@@ -1,7 +1,12 @@
 <template>
     <UModal
-        title="Define the temporary grimoire"
         :ui="{ content: 'max-w-screen-md', body: 'overflow-hidden flex', footer: 'flex relative'}">
+        <template #title>
+            <ModalTitle
+                :icon="ui.grimoire.temporary ? 'i-lucide-book-open' : 'material-symbols-book-2-outline'"
+                title="Temporary grimoire"
+                description="Edit the player names, seats, states and reminders"/>
+        </template>
         <template #body>
             <div class="flex flex-col gap-3">
                 <div class="flex flex-col gap-2">

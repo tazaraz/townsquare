@@ -1,7 +1,11 @@
 <template>
-    <UModal
-        title="Load a script"
-        :ui="{ content: 'max-w-screen-2xl', body: 'flex flex-col', footer: 'flex relative'}">
+    <UModal :ui="{ content: 'max-w-screen-2xl', body: 'flex flex-col'}">
+        <template #title>
+            <ModalTitle
+                icon="i-lucide-book-open"
+                :title="`${tabs[Number(selected)]!.label} scripts`"
+                description="Define the roles & mechanics"/>
+        </template>
         <template #body>
             <UTabs
                 id="tabs"

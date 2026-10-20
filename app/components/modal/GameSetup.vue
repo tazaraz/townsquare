@@ -1,7 +1,11 @@
 <template>
-    <UModal
-        :title="`Select the characters for the game`"
-        :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}">
+    <UModal :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}">
+        <template #title>
+            <ModalTitle
+                icon="material-symbols-person"
+                title="Select the characters for the game"
+                description="Create the mystery, adjust the misery"/>
+        </template>
         <template #body>
             <template v-if="game.division"
                       v-for="(team, name) of game.availableTeamRoles" :key="name">

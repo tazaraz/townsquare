@@ -1,7 +1,12 @@
 <template>
     <UModal
-        title="What do you want to communicate with the player?"
         :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}">
+        <template #title>
+            <ModalTitle
+                icon="material-symbols-chat-outline"
+                title="Direct message"
+                description="Send a message to a player"/>
+        </template>
         <template #body>
             <div class="flex flex-col md:flex-row select-none">
                 <div class="flex-2 grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -104,6 +109,11 @@ const index = ref<number>(4)
 async function editToken() {
     const selector = tokenSelector.open({
         kind: 'role',
+        title: {
+            icon: 'material-symbols-person',
+            text: 'Select a role to send',
+            description: requiredData.value === 'custom' ? 'Clear it to not send a role' : ''
+        },
         canClear: true
     })
 

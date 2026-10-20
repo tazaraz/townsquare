@@ -2,6 +2,9 @@
     <UModal
         :title="`Select a ${kind}` + (kind === 'role' ? ` for ${playerName}` : '')"
         :ui="{ content: 'max-w-screen-lg', footer: 'flex relative'}">
+        <template #title>
+            <ModalTitle :icon="title.icon" :title="title.text" :description="title.description"/>
+        </template>
         <template #body>
             <UTabs
                 id="token-kind"
@@ -85,6 +88,7 @@ const inputDialog = useOverlay().create(DialogInput)
 
 const props = defineProps<{
     kind: TokenKind
+    title: { icon: string, text: string, description?: string }
     selected?: string[]
     disabled?: string[]
     canClear?: boolean
