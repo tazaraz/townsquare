@@ -28,3 +28,101 @@
       @apply disabled:cursor-not-allowed;
    }
 }
+
+@theme static {
+   /* Arcane blue */
+   --color-arcane-50: #f0f4ff;
+   --color-arcane-100: #e0e8ff;
+   --color-arcane-200: #cbd8ff;
+   --color-arcane-300: #b0c4ff;
+   --color-arcane-400: #91adff;
+   --color-arcane-500: #7a9cff;
+   --color-arcane-600: #5b82ff;
+   --color-arcane-700: #3367ff;
+   --color-arcane-800: #2852e6;
+   --color-arcane-900: #1f40bd;
+   --color-arcane-950: #14266b;
+
+   /* Archive gold */
+   --color-gold-50: #fbf7ed;
+   --color-gold-100: #f2e8ca;
+   --color-gold-200: #e7d29d;
+   --color-gold-300: #d8bb7c;
+   --color-gold-400: #c6a96c;
+   --color-gold-500: #ad8c4d;
+   --color-gold-600: #8d6f3b;
+   --color-gold-700: #70552f;
+   --color-gold-800: #4b3924;
+   --color-gold-900: #302519;
+   --color-gold-950: #1c160f;
+
+   /* Emerald */
+   --color-emerald-50: #f4fbf9;
+   --color-emerald-100: #e8f7f2;
+   --color-emerald-200: #c9ede1;
+   --color-emerald-300: #9bdec8;
+   --color-emerald-400: #66ccaa;
+   --color-emerald-500: #53ffc6;
+   --color-emerald-600: #36af87;
+   --color-emerald-700: #257f60;
+   --color-emerald-800: #1c5a45;
+   --color-emerald-900: #13392d;
+   --color-emerald-950: #0d261e;
+
+   /* Violet */
+   --color-mystic-50: #f5f0ff;
+   --color-mystic-100: #ebe0ff;
+   --color-mystic-200: #d0b8ff;
+   --color-mystic-300: #a87aff;
+   --color-mystic-400: #7933ff;
+   --color-mystic-500: #a378f9;
+   --color-mystic-600: #4e00e6;
+   --color-mystic-700: #3800a3;
+   --color-mystic-800: #280075;
+   --color-mystic-900: #1a004d;
+   --color-mystic-950: #110033;
+
+   /* Typography */
+   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+   --font-serif: "Cormorant Garamond", Georgia, serif;
+   --font-mono: "JetBrains Mono", monospace;
+}
+
+/* =========================================
+   GLOBAL THEME TOKENS
+   ========================================= */
+
+:root {
+   color-scheme: dark;
+
+   --ui-radius: 0.5rem;
+   --ui-container: 80rem;
+   --ui-header-height: 4rem;
+
+   --ui-primary: var(--color-arcane-500);
+   --ui-secondary: #35a07c;
+
+   /* Background layers: midnight and navy */
+   --ui-bg: rgb(10, 17, 33);
+   --ui-bg-muted: #0b1220;
+   --ui-bg-elevated: #101a2d;
+   --ui-bg-accented: #1a2944;
+   --ui-bg-inverted: #f0e8d5;
+
+   --ui-border: rgb(198 169 108 / 28%);
+   --ui-border-muted: rgb(198 169 108 / 15%);
+   --ui-border-accented: rgb(198 169 108 / 60%);
+   --ui-border-inverted: #e4d2a8;
+
+   --ui-text: #e4e9f4;
+   --ui-text-highlighted: #f5f0e4;
+   --ui-text-muted: #a0aec6;
+   --ui-text-dimmed: var(--color-gold-500);
+   --ui-text-toned: #c0cadc;
+   --ui-text-inverted: #080d19;
+}
+
+.dark {
+   color-scheme: dark;
+
+}

@@ -1,73 +1,73 @@
 <template>
     <div id="seats">
         <!-- Voting + clock hand -->
-        <div id="nominations">
-            <div id="votes" class="flex flex-col items-center text-nowrap">
-                <template v-if="game.nomination.nominee > -1 || game.nomination.marked !== undefined">
-                    <UAlert
-                        color="neutral"
-                        variant="subtle"
-                        :ui="{ root: 'text-center py-3 mb-2'}">
-                        <template #description>
-                            <div class="text-center text-md">
-                                <!-- If we are nominating -->
-                                <template v-if="game.nomination.nominee > -1">
-                                    <div class="font-bold text-lg">
-                                        <span class="text-info">
-                                            {{ players.get(game.nomination.nominator)?.name }}
-                                        </span>
-                                        nominated
-                                        <span class="text-error">
-                                            {{ players.get(game.nomination.nominee)?.name }}
-                                        </span>
-                                    </div>
-                                    {{ players.list.filter(p => p.isVoting).length }} votes in favour
-                                    <!-- This differs based on exile or execution -->
-                                    <span class="text-error">
-                                        (<template v-if="players.get(game.nomination.nominee)?.role?.team === 'traveller'">
-                                            {{  Math.ceil(players.length / 2) }}
-                                        </template>
-                                        <template v-else>
-                                            {{ Math.max( // Max between (sum half alive players) and (votes of marked player)
-                                                Math.ceil( // Round up the amount of alive players divided by 2
-                                                    players.list.filter(p => (p.state & PlayerState.Alive) == 0
-                                                ).length / 2),
-                                                game.nomination.marked?.votes ?? 0
-                                            ) }}
-                                        </template> required)
+        <div id="nominations" class="flex flex-col items-center ">
+            <div v-if="game.nomination.open"
+                id="votes" class="flex flex-col items-center text-nowrap bg-default/50 backdrop-blur-lg rounded-lg">
+                <UAlert v-if="game.nomination.nominee > -1 || game.nomination.marked !== null"
+                    color="neutral"
+                    variant="subtle"
+                    :ui="{ root: 'text-center py-3 mb-2'}">
+                    <template #description>
+                        <div class="text-center text-md">
+                            <!-- If we are nominating -->
+                            <template v-if="game.nomination.nominee > -1">
+                                <div class="font-bold text-lg">
+                                    <span class="text-info">
+                                        {{ players.get(game.nomination.nominator)?.name }}
                                     </span>
-                                </template>
-
-                                <!-- No one is nominated, but some player is marked for death -->
-                                <div v-else-if="game.nomination.marked" class="font-bold text-lg">
+                                    nominated
                                     <span class="text-error">
-                                        {{ players.get(game.nomination.marked.player)?.name }}
+                                        {{ players.get(game.nomination.nominee)?.name }}
                                     </span>
-                                    is marked for execution!
                                 </div>
+                                {{ players.list.filter(p => p.isVoting).length }} votes in favour
+                                <!-- This differs based on exile or execution -->
+                                <span class="text-error">
+                                    (<template v-if="players.get(game.nomination.nominee)?.role?.team === 'traveller'">
+                                        {{  Math.ceil(players.length / 2) }}
+                                    </template>
+                                    <template v-else>
+                                        {{ Math.max( // Max between (sum half alive players) and (votes of marked player)
+                                            Math.ceil( // Round up the amount of alive players divided by 2
+                                                players.list.filter(p => (p.state & PlayerState.Alive) == 0
+                                            ).length / 2),
+                                            game.nomination.marked?.votes ?? 0
+                                        ) }}
+                                    </template> required)
+                                </span>
+                            </template>
+
+                            <!-- No one is nominated, but some player is marked for death -->
+                            <div v-else-if="game.nomination.marked" class="font-bold text-lg">
+                                <span class="text-error">
+                                    {{ players.get(game.nomination.marked.player)?.name }}
+                                </span>
+                                is marked for execution!
                             </div>
-                            <UFieldGroup v-if="socket.isHost && game.nomination.marked !== null" class="mt-2">
-                                <UButton
-                                    @click="game.setMarked(-1, -1)"
-                                    label="Clear mark"
-                                    color="neutral"
-                                    variant="subtle"
-                                    class="px-4" />
-                                <UButton
-                                    @click="players.setState(game.nomination.marked.player, PlayerState.Dead);
-                                            game.setMarked(-1, -1)"
-                                    label="Execute"
-                                    color="error"
-                                    variant="subtle"
-                                    class="px-4" />
-                            </UFieldGroup>
-                        </template>
-                    </UAlert>
-                    <UButton v-if="game.nomination.nominee === -1"
-                        @click="game.setNominations(false)"
-                        color="error" variant="subtle" label="Stop nominations" />
-                </template>
-                <template v-if="game.nomination.nominee > -1">
+                        </div>
+                        <UFieldGroup v-if="socket.isHost && game.nomination.marked !== null" class="mt-2">
+                            <UButton
+                                @click="game.setMarked(-1, -1)"
+                                label="Clear mark"
+                                color="neutral"
+                                variant="subtle"
+                                class="px-4" />
+                            <UButton
+                                @click="players.setState(game.nomination.marked.player, PlayerState.Dead);
+                                        game.setMarked(-1, -1)"
+                                label="Execute"
+                                color="error"
+                                variant="subtle"
+                                class="px-4" />
+                        </UFieldGroup>
+                    </template>
+                </UAlert>
+                <UButton v-if="game.nomination.nominee === -1"
+                    @click="game.setNominations(false)"
+                    class="mb-2" color="error" variant="subtle" label="Stop nominations" />
+
+                <template v-else>
                     <template v-if="socket.isHost">
                         <UFieldGroup v-if="game.nomination.nominee > -1" class="mb-1">
                             <UButton v-if="game.nomination.nominee === game.nomination.marked?.player"
@@ -127,7 +127,7 @@
                             otherNights: game.knownNightOrder.otherNights.findIndex(r => r.id === player.role?.id) + 1
                         }"
                         @click="processTokenClick(p)"/>
-                    <PlayerTag class="mx-4 mt-1" :player="player" :index="p"></PlayerTag>
+                    <PlayerMenu class="mx-4 mt-1" :player="player" :index="p"></PlayerMenu>
                 </div>
                 <Token v-for="(reminder, rIndex) in player.reminders"
                     :class="`reminder mx-auto ${ui.hidden ? 'invisible' : ''}`"
@@ -136,7 +136,7 @@
                     @click="emit('editReminder', p, rIndex)"
                     />
                 <Token v-if="player.reminders.length < 3"
-                    :class="`reminder mx-auto ${ui.hidden ? 'invisible' : ''}`"
+                    :class="`add reminder mx-auto ${ui.hidden ? 'invisible' : ''}`"
                     :data="{name: '', image: '/sprites/plus.png'}"
                     kind="reminder"
                     @click="emit('editReminder', p)"
@@ -914,7 +914,7 @@ defineExpose({
                 opacity: 1;
             }
 
-            &:deep(.reminder:nth-child(4)),
+            &:deep(.reminder:not(.add)),
             &:hover:deep(.reminder:last-child) {
                 opacity: 1 !important;
             }

@@ -70,6 +70,7 @@
                     <!-- Player management -->
                     <UButton
                         :label="ui.swapping == index ? 'Cancel swap' : 'Swap seats'"
+                        color="secondary"
                         variant="outline"
                         @click="(ui.swapping == index ? ui.swapping = -1 : ui.swapping = index); open=!open"/>
                     <UButton v-if="players.get(index)?.socketId"

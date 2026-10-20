@@ -65,12 +65,12 @@
                                 <div class="flex gap-2">
                                     <UButton
                                         label="Input file url"
-                                        color="info"
+                                        color="secondary"
                                         @click="getUrl"
                                         icon="i-formkit-url"/>
                                     <UButton
                                         label="Load from clipboard"
-                                        color="info"
+                                        color="secondary"
                                         @click="getClipboard"
                                         icon="i-lucide-clipboard"/>
                                 </div>

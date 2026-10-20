@@ -45,7 +45,7 @@
                     <div class="flex flex-nowrap gap-1">
                         <UButton
                             :label="`Randomly assign ${roleTotal} character${roleTotal == 1 ? '' : 's'}`"
-                            color="neutral"
+                            color="primary"
                             :disabled="roleTotal > players.length"
                             @click="ui.runAction('Reroll Assignment', game.setupAssignRandomly); emit('close')"/>
                         <Remark v-if="roleTotal !== players.length || players.length >= MAX_ACTIVE_PLAYERS"
@@ -64,7 +64,7 @@
                         </Remark>
                     </div>
                     <div class="flex flex-nowrap gap-1">
-                        <UButton label="Shuffle roles" color="neutral" @click="shuffle()"/>
+                        <UButton label="Shuffle roles" color="secondary" @click="shuffle()"/>
                         <Remark v-if="game.setupSelected.some(r => r.setup)"
                             kind="warning"
                             class="shuffle-warning w-[32px] p-1">

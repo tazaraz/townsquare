@@ -255,7 +255,7 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
 ], !socket.isHost ? [] : [
     {
         label: 'Storyteller Tools',
-        class: 'text-info',
+        class: 'text-primary',
         defaultOpen: true,
         icon: 'material-symbols-book-2-outline',
         chip: ui.grimoire.temporary ? {
@@ -293,14 +293,13 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
             {
                 label: 'Communicate with a player',
                 description: 'Either a token or text',
-                class: `text-(--traveller)`,
                 disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
                 onSelect: () => displayInfo.open()
             },
             {
                 label: `${ui.grimoire.temporary ? '!' : ''} Temporary Grimoire`,
                 description: `Allows non-persistent modifications`,
-                class: `text-(--traveller) ${ui.grimoire.temporary ? 'text-error' : ''}`,
+                class: `${ui.grimoire.temporary ? 'text-error' : ''}`,
                 disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
                 onSelect: () => temporaryGrimoire.open()
             },
@@ -338,7 +337,7 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
 ], [
     {
         label: 'Game',
-        class: 'text-info',
+        class: 'text-(--color-gold-600)',
         defaultOpen: true,
         icon: 'i-material-symbols-light-chess-pawn-rounded',
         slot: 'game' as const,
