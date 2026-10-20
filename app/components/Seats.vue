@@ -97,7 +97,7 @@
                         </UFieldGroup>
                         <small>Time per player: {{ game.nomination.speed }}s</small>
                     </template>
-                    <template v-else-if="!socket.isHost">
+                    <template v-else>
                         <UButton v-if="!players.get(socket.seatIndex)?.isVoting"
                             @click="socket.requestVote()"
                             color="primary" variant="subtle" label="Vote" class="px-4" />
