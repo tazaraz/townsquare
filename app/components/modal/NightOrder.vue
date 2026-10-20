@@ -7,12 +7,12 @@
                 description="Reference sheet for the current script"/>
         </template>
         <template #body>
-            <div class="night-order text-right">
+            <div class="night-order truncate">
                 <h3>First night</h3>
                 <div v-for="role in game.scriptNightOrder.firstNight"
-                    :class="['character', role.team, 'left', 'border-e']">
+                    :class="['character', role.team, 'left', 'border-e', 'text-right']">
 
-                    <div class="role-info my-auto me-2">
+                    <div class="role-info items-end my-auto me-2">
                         <h3>{{ role.name }}</h3>
                         <span class="text-neutral-500">{{ role.players.map(p => p.name).join(", ") }}&nbsp;</span>
                     </div>
@@ -20,7 +20,7 @@
                 </div>
             </div>
 
-            <div class="night-order">
+            <div class="night-order truncate">
                 <h3>Other nights</h3>
                 <div v-for="role in game.scriptNightOrder.otherNights"
                     :class="['character', role.team, 'right', 'border-s']">
@@ -44,6 +44,8 @@
 </template>
 
 <script setup lang="ts">
+// Overflow on both sides is a design choice. None of the other things I tried were any better.
+// Now at least there is symmetry.
 
 const emit = defineEmits<{
     close: []
@@ -74,9 +76,17 @@ game.calculateNightOrder()
 
         .role-info {
             display: flex;
-            flex: 1;
             flex-direction: column;
-            justify-content: left;
+            flex: 1;
+            min-width: 0;
+            overflow: visible;
+
+            h3, span {
+                width: max-content;
+                max-width: none;
+                white-space: nowrap;
+            }
+
 
             h3 {
                 font-size: 110%;
