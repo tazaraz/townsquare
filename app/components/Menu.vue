@@ -279,6 +279,20 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 onSelect: async () => { await gameSetup.open(); isOpen.value = !isOpen.value },
             },
             {
+                label: 'Set demon bluffs',
+                description: 'They probably need it',
+                class: `text-(--demon)`,
+                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
+                onSelect: () => demonBluffs.open({ editable: true })
+            },
+            {
+                label: 'Hand out roles & bluffs',
+                description: '',
+                class: `text-(--minion)`,
+                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
+                onSelect: () => syncRoleData()
+            },
+            {
                 label: 'Add / Remove Fabled',
                 description: 'Alter game mechanics',
                 class: 'text-(--fabled)',
@@ -302,20 +316,6 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 class: `${ui.grimoire.temporary ? 'text-error' : ''}`,
                 disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
                 onSelect: () => temporaryGrimoire.open()
-            },
-            {
-                label: 'Set demon bluffs',
-                description: 'They probably need it',
-                class: `text-(--demon)`,
-                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
-                onSelect: () => demonBluffs.open({ editable: true })
-            },
-            {
-                label: 'Hand out roles & bluffs',
-                description: '',
-                class: `text-(--minion)`,
-                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
-                onSelect: () => syncRoleData()
             },
             {
                 toggle: 'nominations',
