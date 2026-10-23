@@ -36,30 +36,6 @@
                 viewport: 'origin-[bottom_center]'
             }">
             <!-- During time of coding, this is the only way to edit the items. #slot="{item}" does not work. -->
-            <template #storyteller-content="{ item }">
-                <div class="isolate grid p-2 grid-cols-2 gap-2 text-sm">
-                    <button v-for="child in ((item as any).children)"
-                        :class="['rounded-md transition hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3',child.disabled]"
-                        @click="!child.disabled && child.onSelect?.()">
-
-                        <UIcon :name="child.icon" class="size-5 text-dimmed" />
-                        <div v-if="child.toggle">
-                            <USwitch v-if="child.toggle === 'nominations'"
-                                @click="game.setNominations(!game.nomination.open)"
-                                v-model:model-value="game.nomination.open"
-                                :label="child.label"
-                                :disabled="child.disabled !== undefined"
-                                color="info"
-                                :ui="{label: 'text-muted'}"
-                                class="font-medium text-start"/>
-                        </div>
-                        <div v-else class="text-start">
-                            <span :class="['font-medium', child.class]">{{ child.label }}</span>
-                            <span :class="['text-muted line-clamp-2']">{{ child.description }}</span>
-                        </div>
-                    </button>
-                </div>
-            </template>
             <template #game-content="{ item }">
                 <div class="isolate grid p-2 grid-cols-2 gap-2 text-sm">
                     <button v-for="child in ((item as any).children)"
@@ -143,17 +119,6 @@
                     </template>
                 </template>
 
-                <template #nominations="{ item }">
-                    <USwitch
-                        @click="game.setNominations(!game.nomination.open); sidebarTimeoutClose"
-                        v-model:model-value="game.nomination.open"
-                        :label="(item as any).label"
-                        :disabled="(item as any).disabled !== undefined"
-                        color="info"
-                        :ui="{label: 'text-muted'}"
-                        class="font-medium text-start"/>
-                </template>
-
                 <template #flavour="{ item }">
                     <USwitch
                         v-model="ui.showFlavor"
@@ -163,7 +128,7 @@
                 </template>
                 <template #night-order="{ item }">
                     <USwitch
-                        @click="sidebarTimeoutClose"
+                        @click="sidebarOpenModalWithClose"
                         v-model="ui.showNightOrder"
                         :label="(item as any).label"
                         :ui="{label: 'text-muted'}"
@@ -176,7 +141,7 @@
                         {label: 'Top', value: 'top'},
                         {label: 'Right', value: 'right'},
                         {label: 'Bottom', value: 'bottom'},
-                    ]" @change="sidebarTimeoutClose"/>
+                    ]" @change="sidebarOpenModalWithClose"/>
                 </template>
             </UNavigationMenu>
         </template>
@@ -308,20 +273,21 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 label: 'Communicate with a player',
                 description: 'Either a token or text',
                 disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
-                onSelect: () => displayInfo.open()
+                onSelect: () => sidebarOpenModalWithClose(displayInfo)
             },
             {
                 label: `${ui.grimoire.temporary ? '!' : ''} Temporary Grimoire`,
                 description: `Allows non-persistent modifications`,
                 class: `${ui.grimoire.temporary ? 'text-error' : ''}`,
                 disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
-                onSelect: () => temporaryGrimoire.open()
+                onSelect: () => sidebarOpenModalWithClose(temporaryGrimoire)
             },
             {
-                toggle: 'nominations',
-                label: 'Allow player nominations',
+                label: 'Nominations',
+                description: 'Allow player nominations',
+                class: 'text-primary',
                 disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
-                slot: 'nominations' as const,
+                onSelect: () => sidebarOpenModalWithClose(nominations)
             },
             {
                 label: players.length < MAX_PLAYERS ? 'Add a player' : 'Max players reached',
@@ -374,7 +340,7 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
             socket.isHost || socket.seatIndex < 0 ? {} : {
                 label: 'Message storyteller',
                 icon: 'i-material-symbols-chat-outline',
-                onSelect: () => messageHost()
+                onSelect: () => sidebarOpenModalWithClose(messageHost)
             },
             socket.isHost || socket.seatIndex < 0 ? {} : {
                 label: 'Demon bluffs',
@@ -461,8 +427,9 @@ function cleanMenu(menu: NavigationMenuItem[][]){
     return menu.filter(group => group.length > 0)
 }
 
-async function sidebarTimeoutClose() {
+async function sidebarOpenModalWithClose(modal: any) {
     setTimeout(() => isOpen.value = !isOpen.value, 500)
+    modal.open()
 }
 
 async function addPlayer() {
