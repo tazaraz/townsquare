@@ -89,7 +89,7 @@
                                 @click="nomination.stop()" color="warning" variant="subtle" label="Stop" class="px-4" />
                             <UInputNumber v-model="game.nomination.speed" :ui="{base: 'w-0'}" :min="0.5" :step="0.5"/>
                             <UButton
-                                @click="game.setNominations(false)"
+                                @click="players.setNominated(game.nomination.nominee, game.nomination.nominator, false)"
                                 color="error" variant="subtle" label="Cancel" />
                         </UFieldGroup>
                         <small>Time per player: {{ game.nomination.speed }}s</small>
