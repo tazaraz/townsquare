@@ -92,9 +92,9 @@ export interface NominationHistoryEntry {
     /** The player that was nominated */
     nominee: string
     /** Who voted in favour */
-    votes: string[]
-    /** Whether the votes achieved a majority at that time */
-    majority: boolean
+    votes: string[] | null
+    /** How many votes were required for a majority */
+    majority: number
     /** Whether a player was exiled or executed */
     type: 'cleared' | 'execution' | 'exile'
     /** Time of the vote */

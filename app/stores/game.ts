@@ -324,31 +324,37 @@ export const useGame = defineStore('game', () => {
     /**
      * Marks a player for execution, or unmarks them if `player` is `-1`
      * @param player The player to mark for execution. Set to `-1` to unset
-     * @param votes How many votes this player received.
+     * @param completed Whether the nomination round has been completed.
      * @returns
      */
-    function setMarked(player: number, votes: number) {
+    function setMarked(player: number, completed: boolean) {
         const p = players.get(player)
+        const voting = players.list.filter(p => p.isVoting)
+        console.log('Setting marked player', player, p?.name, completed)
 
-        // Free all players to vote
-        for (let i = 0; i < players.length; i++)
-            players.get(i)!.voteLocked = false
-
-        // If this is not clearing
+        // First, do history recording
         if (p) {
-            // If the marked player has the same amount of votes as the current nominee, clear both
-            if (players.list.filter(p => p.isVoting).length === gamestate.nomination.marked?.votes)
-                gamestate.nomination.marked = null
+            // If the round has been completed, or if the amount is equal to the required votes
+            const valid = completed || voting.length >= votesRequired.value
 
-            gamestate.nomination.history.entries.push({
+            const entry = {
                 nominator: players.get(gamestate.nomination.nominator)!.name,
                 nominee: players.get(gamestate.nomination.nominee)!.name,
-                votes: players.list.filter(p => p.isVoting).map(p => p.name),
-                majority: players.list.filter(p => p.isVoting).length <= votesRequired.value,
+                votes: valid ? voting.map(p => p.name) : null,
+                majority: votesRequired.value,
                 type: p.role?.team === 'traveller' ? 'exile' : 'execution',
                 time: Date.now()
-            })
+            } satisfies NominationHistoryEntry
 
+            // If the last history is identical to the one we are about to push, don't push it again
+            const last = gamestate.nomination.history.entries.at(-1)
+            if (!last ||
+                last.nominator !== entry.nominator ||
+                last.nominee !== entry.nominee ||
+                last.votes?.join(',') !== entry.votes?.join(',') ||
+                last.majority !== entry.majority ||
+                last.type !== entry.type)
+                gamestate.nomination.history.entries.push(entry)
         }
 
         // If there is someone to clear
@@ -357,16 +363,32 @@ export const useGame = defineStore('game', () => {
                 nominator: '',
                 nominee: players.get(gamestate.nomination.marked.player)!.name,
                 votes: [],
-                majority: false,
+                majority: -1,
                 type: 'cleared',
                 time: Date.now()
             })
         }
 
-        // History as been recorded, now clear the nomination state
-        gamestate.nomination.nominator = -1
-        gamestate.nomination.nominee = -1
-        gamestate.nomination.marked = p ? { player, votes } : null
+        // History as been recorded, now clear the nomination state,
+        // if and only if the storyteller says so. This is when completed is false.
+        if (!completed) {
+            // Free all players to vote
+            for (let i = 0; i < players.length; i++)
+                players.get(i)!.voteLocked = false
+
+            // If the marked player has the same amount of votes as the current nominee, clear both
+            if (p && voting.length === gamestate.nomination.marked?.votes)
+                gamestate.nomination.marked = null
+            // Else set the new marked player, if there is one.
+            else
+                gamestate.nomination.marked = p ? { player, votes: players.list.filter(p => p.isVoting).length } : null
+
+            gamestate.nomination.nominator = -1
+            gamestate.nomination.nominee = -1
+        }
+
+        // Return whether the nomination round has been completed. When we return true, some data is synced to players
+        return !completed
     }
 
     /** Contains selected roles during setup */

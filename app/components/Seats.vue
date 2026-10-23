@@ -38,14 +38,14 @@
                         </div>
                         <UFieldGroup v-if="socket.isHost && game.nomination.marked !== null" class="mt-2">
                             <UButton
-                                @click="game.setMarked(-1, -1)"
+                                @click="game.setMarked(-1, false)"
                                 label="Clear mark"
                                 color="neutral"
                                 variant="subtle"
                                 class="px-4" />
                             <UButton
                                 @click="players.setState(game.nomination.marked.player, PlayerState.Dead);
-                                        game.setMarked(-1, -1)"
+                                        game.setMarked(-1, false)"
                                 label="Execute"
                                 color="error"
                                 variant="subtle"
@@ -62,13 +62,13 @@
                     <template v-if="game.nomination.nominee > -1">
                         <UFieldGroup class="my-2">
                             <UButton v-if="game.nomination.nominee === game.nomination.marked?.player"
-                                @click="game.setMarked(-1, -1)"
+                                @click="game.setMarked(-1, false)"
                                 :label="`Clear mark on ${players.get(game.nomination.nominee)!.name}`"
                                 color="neutral"
                                 variant="subtle"
                                 class="px-4" />
                             <UButton v-else
-                                @click="game.setMarked(game.nomination.nominee,players.list.filter(p => p.isVoting).length)"
+                                @click="game.setMarked(game.nomination.nominee, false)"
                                 color="neutral"
                                 variant="subtle"
                                 class="px-4">
@@ -674,6 +674,10 @@ class Nominations {
 
             await this.movehand(i + 1, game.nomination.speed);
         }
+
+        // Finalize
+        await new Promise(resolve => setTimeout(resolve, game.nomination.speed * 1000))
+        game.setMarked(game.nomination.nominee, true)
     }
 
     /** Stops the nominations and marks the nominations as not ongoing */
@@ -806,13 +810,15 @@ watch(
         seats.setWheelVisualization(ui.orientation.user)
         seats.updateOrder(true)
 
-        if (game.nomination.nominee === -1)
+        if (game.nomination.nominee === -1) {
+            await nomination.movehand(-1, 0.0, true)
             return;
+        }
 
         // Move the hand to the nominee
         await nomination.movehand(0, 0.5, true)
         await nomination.movehand(-1, 0.0, true)
-    }
+    }, { immediate: true }
 )
 
 /** If the hand is supposed to move */
@@ -839,9 +845,8 @@ watch(
                 setTimeout(() => {
                     nomination.handOffset = location;
 
-                    for (let i = 0; i < players.length; i++) {
+                    for (let i = 0; i < players.length; i++)
                         players.get(i)!.voteLocked = nomination.voteLocked(i)
-                    }
                 }, game.nomination.speed * (1000 / 2))  // Halfway through hand motion, minus token css animation
             }
         }

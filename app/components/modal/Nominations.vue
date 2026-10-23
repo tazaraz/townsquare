@@ -23,12 +23,20 @@
                         class="font-medium text-start"/>
                 </div>
                 <div class="w-auto sm:h-auto sm:w-px border-default w-full border-solid border-t sm:border-s"/>
-                <USwitch
-                    v-model="game.nomination.history.sync"
-                    label="Show voting results to players"
-                    color="info"
-                    :ui="{label: 'text-muted'}"
-                    class="grow-1 font-medium text-start"/>
+                <div class="grow-1">
+                    <USwitch
+                        v-model="game.nomination.history.sync"
+                        label="Show voting results to players"
+                        color="info"
+                        :ui="{label: 'text-muted'}"
+                        class="grow-1 font-medium text-start mb-3"/>
+                    <UButton
+                        @click="game.nomination.history.entries.length = 0"
+                        label="Clear voting history"
+                        color="error"
+                        variant="soft"
+                        class="font-medium text-start"/>
+                </div>
             </div>
 
             <!-- The voting history -->
@@ -39,7 +47,7 @@
                     <div class="header hidden md:block z-1 bg-default/80">Nominator</div>
                     <div class="header hidden md:block z-1 bg-default/80">Votes</div>
                     <div class="header hidden md:block z-1 bg-default/80">Majority</div>
-                    <div class="header hidden md:block z-1 bg-default/80">Result</div>
+                    <div class="header hidden md:block z-1 bg-default/80">Type</div>
                     <div class="header hidden md:flex z-1 bg-default/80 justify-center items-center">
                         <UIcon name="ic-baseline-access-time-filled" class="size-5" />
                     </div>
@@ -50,7 +58,7 @@
                             <!-- Nominee -->
                             <div class="grid grid-cols-[5.5rem_1fr] md:block px-2 py-1">
                                 <span class="text-highlighted font-semibold md:hidden">Nominee</span>
-                                <span>{{ h.nominee }}</span>
+                                <span class="text-error">{{ h.nominee }}</span>
                             </div>
 
                             <USeparator v-if="h.type === 'cleared'" label="Cleared" class="flex col-span-1 md:col-span-4 px-2" />
@@ -59,28 +67,34 @@
                                 <!-- Nominator -->
                                 <div class="grid grid-cols-[5.5rem_1fr] md:block px-2 py-1">
                                     <span class="text-highlighted font-semibold md:hidden">Nominator</span>
-                                    <span>{{ h.nominator }}</span>
+                                    <span class="text-info">{{ h.nominator }}</span>
                                 </div>
 
                                 <!-- Votes -->
-                                <template v-if="h.votes.length >= game.votesRequired">
+                                <template v-if="h.votes">
                                     <div class="grid grid-cols-[5.5rem_1fr] md:block col-span-1 px-2 py-1 min-w-0">
                                         <span class="text-highlighted font-semibold md:hidden">Votes</span>
-                                        <span class="break-words">{{ h.votes.join(', ') }}</span>
+                                        <div class="flex break-words">
+                                            <div class="flex justify-center items-center border-1 border-accented rounded px-1 mr-2">
+                                                <UIcon name="material-symbols-person" />
+                                                <span>{{ h.votes.length }}</span>
+                                            </div>
+                                            {{ h.votes.join(', ') }}
+                                        </div>
                                     </div>
 
                                     <!-- Majority -->
                                     <div class="grid grid-cols-[5.5rem_1fr] md:block col-span-1 px-2 py-1">
                                         <span class="text-highlighted font-semibold md:hidden">Majority</span>
-                                        <span>{{ h.majority ? 'Yes' : 'No' }}</span>
+                                        <span>{{ h.majority }}</span>
                                     </div>
                                 </template>
 
                                 <USeparator v-else label="Forced" class="flex col-span-1 md:col-span-2 px-2" />
 
-                                <!-- Result -->
+                                <!-- Type -->
                                 <div class="grid grid-cols-[5.5rem_1fr] md:block col-span-1 px-2 py-1">
-                                    <span class="text-highlighted font-semibold md:hidden">Result</span>
+                                    <span class="text-highlighted font-semibold md:hidden">Type</span>
                                     <span>{{ h.type === 'execution' ? 'Execution' : 'Exile' }}</span>
                                 </div>
                             </template>
