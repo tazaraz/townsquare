@@ -317,6 +317,11 @@ export const useGame = defineStore('game', () => {
     function setMarked(player: number, votes: number) {
         const p = players.get(player)
 
+        // Free all players to vote
+        for (let i = 0; i < players.length; i++)
+            players.get(i)!.voteLocked = false
+
+        // If this is not clearing
         if (p) {
             gamestate.nomination.nominator = -1
             gamestate.nomination.nominee = -1
