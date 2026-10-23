@@ -367,6 +367,7 @@ export const useSocket = defineStore('socket', () => {
                     const index = players.list.findIndex(p => p.socketId === message.origin)
                     if (index < 0) return
 
+                    message.data.name = message.data.name.trim().substring(0, 10)
                     message.data.index = index
                     broadcast('rename', message.data)
                 }

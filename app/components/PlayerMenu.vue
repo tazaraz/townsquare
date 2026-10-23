@@ -6,11 +6,12 @@
             :content="{side: ui.centered ? 'left' : 'bottom'}"
             enable-touch
             @update:open="resetFields">
-        <UButton color="neutral" variant="subtle">
-            <UIcon v-if="player.socketId" name="material-symbols-person"/>{{ player.name }}
+        <UButton color="neutral" variant="subtle" class="m-0">
+            <UIcon v-if="player.socketId" name="material-symbols-person"/>
+            <span class="truncate">{{ player.name }}</span>
         </UButton>
 
-        <template v-if="!ui.grimoire.temporary"  #content>
+        <template v-if="!ui.grimoire.temporary" #content>
             <div class="flex flex-col gap-2 p-2">
                 <UInput
                     :disabled="index !== socket.seatIndex && !socket.isHost"
