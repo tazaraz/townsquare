@@ -86,19 +86,20 @@
                 </template>
                 <template v-else>
                     <!-- Only allow nominatons when target has not been nominated, and socket has not nominated -->
-                    <UButton v-if="game.nomination.open &&
-                                   !player.nominated.been && !players.get(socket.seatIndex)?.nominated.has"
-                        label="Nominate"
-                        variant="outline"
-                        color="info"
-                        @click="socket.requestNominate(index)"/>
-                    <UButton v-else-if="game.nomination.open"
-                        :label="players.get(socket.seatIndex)?.nominated.has ?
-                            'You already nominated' : 'Already been nominated'"
-                        variant="outline"
-                        color="neutral"
-                        disabled
-                        @click="socket.requestNominate(index)"/>
+                    <template v-if="socket.seatIndex >= 0 && game.nomination.open">
+                        <UButton v-if="!player.nominated.been && !players.get(socket.seatIndex)?.nominated.has"
+                            label="Nominate"
+                            variant="outline"
+                            color="info"
+                            @click="socket.requestNominate(index)"/>
+                        <UButton v-else
+                            :label="players.get(socket.seatIndex)?.nominated.has ?
+                                'You already nominated' : 'Already been nominated'"
+                            variant="outline"
+                            color="neutral"
+                            disabled
+                            @click="socket.requestNominate(index)"/>
+                    </template>
 
                     <!-- Seat claiming -->
                     <UButton v-if="socket.seatIndex < 0 && player.socketId === undefined"
