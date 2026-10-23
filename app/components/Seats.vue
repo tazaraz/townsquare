@@ -671,19 +671,14 @@ class Nominations {
 
             await this.movehand(i + 1, game.nomination.speed);
         }
-
-        // Reset the hand to -1, indicating the hand is not active
-        if (currentRunId === this.runId) {
-            await this.movehand(0, game.nomination.speed, true)
-            await this.movehand(-1, 0.0, true)
-        }
     }
 
     /** Stops the nominations and marks the nominations as not ongoing */
     async stop() {
         this.runId++;
+        const duration = game.nomination.hand === players.length ? 0.0 : 0.5;
         await this.movehand(-1, 0.0, true)
-        await this.movehand(0, 0.5, true)
+        await this.movehand(0, duration, true)
         await this.movehand(-1, 0.0, true)
     }
 
