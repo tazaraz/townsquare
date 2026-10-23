@@ -94,6 +94,13 @@
                         </UFieldGroup>
                         <small>Time per player: {{ game.nomination.speed }}s</small>
                     </template>
+                </template>
+                <template v-else>
+                    <UAlert v-if="game.nomination.nominee === -1"
+                        description="Nominations are now open!"
+                        color="info"
+                        variant="subtle"
+                        :ui="{ root: 'text-center py-3 mb-2'}"/>
                     <template v-else>
                         <UButton v-if="!players.get(socket.seatIndex)?.isVoting"
                             @click="socket.requestVote()"
