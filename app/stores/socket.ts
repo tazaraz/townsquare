@@ -451,8 +451,9 @@ export const useSocket = defineStore('socket', () => {
                 game.nomination.marked     = message.data.marked !== undefined
                                                 ? message.data.marked
                                                 : game.nomination.marked
-                game.nomination.nominator  = message.data.nominator ?? game.nomination.nominator
-                game.nomination.nominee    = message.data.nominee ?? game.nomination.nominee
+                if (message.data.nominator !== undefined && message.data.nominee !== undefined)
+                    players.setNominated(message.data.nominee, message.data.nominator, message.data.state ?? false)
+                return
                 return
         }
     }
@@ -474,7 +475,7 @@ export const useSocket = defineStore('socket', () => {
                 case 'setState':
                     return broadcast('state', { index: args[0], state: args[1] })
                 case 'setNominated':
-                    return broadcast('nomination', { nominee: args[0], nominator: args[1] })
+                    return broadcast('nomination', { nominee: args[0], nominator: args[1], state: args[2] })
 
             }
         }))
@@ -499,7 +500,7 @@ export const useSocket = defineStore('socket', () => {
                         broadcast('history', game.nomination.history.entries)
 
                     return broadcast('nomination', {
-                        marked: { player: args[0], votes: args[1], },
+                        marked: game.nomination.marked,
                         nominator: game.nomination.nominator,
                         nominee: game.nomination.nominee,
                     })
