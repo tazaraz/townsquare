@@ -79,7 +79,7 @@ export const useToaster = defineStore('toaster', () => {
             label: 'Accept',
             color: 'primary',
             variant: 'solid',
-            onClick: () => players.setNominated(nominee, nominator)
+            onClick: () => players.setNominated(nominee, nominator, true)
         }, {
             label: 'I see',
             color: 'neutral',

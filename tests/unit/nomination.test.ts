@@ -43,7 +43,7 @@ describe('Nomination hand', () => {
         }
 
         c.activatePinia(c.host)
-        c.hplayers.setNominated(1, 3)
+        c.hplayers.setNominated(1, 3, true)
         expect(c.hgame.nomination.nominator).toBe(3)
         expect(c.hgame.nomination.nominee).toBe(1)
         await delay()
