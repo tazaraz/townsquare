@@ -454,6 +454,10 @@ export const useSocket = defineStore('socket', () => {
                 if (message.data.nominator !== undefined && message.data.nominee !== undefined)
                     players.setNominated(message.data.nominee, message.data.nominator, message.data.state ?? false)
                 return
+            case 'history':
+                if (gamestate.isHost) return
+                game.nomination.history.entries.length = 0
+                message.data.forEach((entry: NominationHistoryEntry) => game.nomination.history.entries.push(entry))
                 return
         }
     }
