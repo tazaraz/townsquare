@@ -402,15 +402,18 @@ class PlayerSeats {
 
         // Index offset calculation, bearing in mind rotationary nature of the wheel
         const m = this.seats.max;
+        const angle = 360 / m;
+        // Get the rotation relative to the wheel orientation
+        const relativeRotation = (gsap.getProperty("#wheel", "rotation") as number) - this.wheel.orentation
+        // Align to the same slot grid as updateOrder
+        const snappedRotation = this.wheel.orentation + Math.round(relativeRotation / angle) * angle
         // Difference between the current index and the centre index
         const diff = this.seats.slots[index]! - this.centreSeatIndex;
         // Wrap the difference to the range [-m/2, m/2]
         const indexOffset = ((diff + m / 2) % m + m) % m - m / 2;
-        // Round the rotation to the nearest multiple of 360/m to avoid getting stuck on the wrong positions
-        const rotation = Math.floor((gsap.getProperty("#wheel", "rotation") as number) / (360 / m)) * (360 / m)
 
         await gsap.to("#wheel", {
-            rotation: rotation - indexOffset * (360 / m) + (180 / m),
+            rotation: snappedRotation - indexOffset * angle,
             duration: duration,
             ease: nominations ? 'circ.inOut' : 'power2.inOut',
             onUpdate: () => this.updateOrder(),
