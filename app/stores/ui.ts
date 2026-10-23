@@ -93,7 +93,7 @@ export const useUI = defineStore('UI', () => {
                     // Update the players to match the grimoire
                     players.splice(0, players.length, ...grimoire.map((p: any) => ({
                         name: p.name,
-                        role: game.loadRole(p.role),
+                        role: p.role ? game.loadRole(p.role) : undefined,
                         reminders: p.reminders,
                         state: p.state,
                     })))
