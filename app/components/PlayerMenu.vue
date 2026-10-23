@@ -62,7 +62,8 @@
                                     label="Confirm"
                                     color="info"
                                     class="mt-2"
-                                    @click="players.setNominated(targetPlayer, index, true)"/>
+                                    @click="game.nomination.open = true;
+                                            players.setNominated(targetPlayer, index, true)"/>
                             </div>
                         </template>
                     </UAlert>
