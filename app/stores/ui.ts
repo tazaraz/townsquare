@@ -87,6 +87,7 @@ export const useUI = defineStore('UI', () => {
                 label: 'I am ready',
                 color: 'info',
                 onClick: () => {
+                    uistate.grimoire.temporary = false
                     toggleTemporaryGrimoire()
 
                     // Update the players to match the grimoire
