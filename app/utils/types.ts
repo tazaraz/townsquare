@@ -86,11 +86,31 @@ export interface Player {
 
 export type WheelOrientation = "center" | "top" | "right" | "bottom" | "left"
 
+export interface NominationHistoryEntry {
+    /** The player who had nominated */
+    nominator: string
+    /** The player that was nominated */
+    nominee: string
+    /** Who voted in favour */
+    votes: string[]
+    /** Whether the votes achieved a majority at that time */
+    majority: boolean
+    /** Whether a player was exiled or executed */
+    type: 'cleared' | 'execution' | 'exile'
+    /** Time of the vote */
+    time: number
+}
+
 export interface Nomination {
     /** Whether players can nominate */
     open: boolean
     /** The player marked for death */
     marked: { player: number, votes: number } | null;
+    /** Nomination resolution history. Only contains completed nomination rounds */
+    history: {
+        sync: boolean
+        entries: NominationHistoryEntry[]
+    }
 
     /** The player who has nominated */
     nominator: number

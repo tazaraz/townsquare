@@ -308,6 +308,19 @@ export const useGame = defineStore('game', () => {
         gamestate.nomination.hand = -1
     }
 
+    /** Calculates how many votes are required to exile or execute a player. */
+    const votesRequired = computed(() => {
+        if (players.get(gamestate.nomination.nominee)?.role?.team === 'traveller')
+            return Math.ceil(players.length / 2)
+
+        // Max between (sum half alive players) and (votes of marked player)
+        return Math.max(
+            // Round up the amount of alive players divided by 2
+            Math.ceil(players.list.filter(p => (p.state & PlayerState.Alive) == 0).length / 2),
+            gamestate.nomination.marked?.votes ?? 0
+        )
+    })
+
     /**
      * Marks a player for execution, or unmarks them if `player` is `-1`
      * @param player The player to mark for execution. Set to `-1` to unset
@@ -323,9 +336,36 @@ export const useGame = defineStore('game', () => {
 
         // If this is not clearing
         if (p) {
-            gamestate.nomination.nominator = -1
-            gamestate.nomination.nominee = -1
+            // If the marked player has the same amount of votes as the current nominee, clear both
+            if (players.list.filter(p => p.isVoting).length === gamestate.nomination.marked?.votes)
+                gamestate.nomination.marked = null
+
+            gamestate.nomination.history.entries.push({
+                nominator: players.get(gamestate.nomination.nominator)!.name,
+                nominee: players.get(gamestate.nomination.nominee)!.name,
+                votes: players.list.filter(p => p.isVoting).map(p => p.name),
+                majority: players.list.filter(p => p.isVoting).length <= votesRequired.value,
+                type: p.role?.team === 'traveller' ? 'exile' : 'execution',
+                time: Date.now()
+            })
+
         }
+
+        // If there is someone to clear
+        else if (gamestate.nomination.marked) {
+            gamestate.nomination.history.entries.push({
+                nominator: '',
+                nominee: players.get(gamestate.nomination.marked.player)!.name,
+                votes: [],
+                majority: false,
+                type: 'cleared',
+                time: Date.now()
+            })
+        }
+
+        // History as been recorded, now clear the nomination state
+        gamestate.nomination.nominator = -1
+        gamestate.nomination.nominee = -1
         gamestate.nomination.marked = p ? { player, votes } : null
     }
 
@@ -385,6 +425,7 @@ export const useGame = defineStore('game', () => {
         toggleModifier,
         setBluff,
         setNominations,
+        votesRequired,
         setMarked,
 
         setupSelected,

@@ -133,9 +133,9 @@ describe('Socket connection', () => {
         for (const kind of [
             'message',
           // Sync
-          'sync', 'script', 'grimoire', 'state', 'player', 'role', 'modifier', 'swap', 'bluffs', 'kick',
+          'sync', 'script', 'state', 'player', 'role', 'modifier', 'bluffs', 'kick', 'history',
           // UI state change
-          'nomination', 'marked', 'night',
+          'swap', 'grimoire', 'nomination',
           // Player actions
           'claim', 'unclaim', 'rename', 'nominate', 'vote',
           // Server specific

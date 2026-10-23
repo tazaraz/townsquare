@@ -495,6 +495,9 @@ export const useSocket = defineStore('socket', () => {
                         hand: gamestate.nomination.hand,
                      })
                 case 'setMarked':
+                    if (gamestate.nomination.history.sync)
+                        broadcast('history', game.nomination.history.entries)
+
                     return broadcast('nomination', {
                         marked: { player: args[0], votes: args[1], },
                         nominator: game.nomination.nominator,

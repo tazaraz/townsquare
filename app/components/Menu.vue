@@ -173,6 +173,7 @@ import {
     DialogInput,
     DialogSession,
     DialogConfirm,
+    ModalNominations,
 } from '#components'
 
 defineShortcuts({
@@ -196,6 +197,7 @@ const tokenSelector = overlay.create(ModalTokenSelector)
 const displayInfo = overlay.create(ModalDisplayInfo)
 const temporaryGrimoire = overlay.create(ModalTemporaryGrimoire)
 const demonBluffs = overlay.create(ModalDemonBluffs)
+const nominations = overlay.create(ModalNominations)
 
 const confirmDialog = overlay.create(DialogConfirm)
 const sessionDialog = overlay.create(DialogSession)
@@ -336,6 +338,11 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 label: `${players.list.filter(p => p.socketId).length} connected`,
                 description: '',
                 icon: 'i-wordpress-connection',
+            },
+            socket.seatIndex < 0 || game.nomination.history.entries.length === 0 ? {} : {
+                label: 'Voting History',
+                icon: 'material-symbols:how-to-vote',
+                onSelect: () => sidebarOpenModalWithClose(nominations)
             },
             socket.isHost || socket.seatIndex < 0 ? {} : {
                 label: 'Message storyteller',
