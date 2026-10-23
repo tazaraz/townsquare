@@ -174,12 +174,17 @@ import {
     DialogSession,
     DialogConfirm,
     ModalNominations,
+    UKbd,
 } from '#components'
 
 defineShortcuts({
     g: () => {
         ui.hidden = !ui.hidden
     },
+    a: () => {
+        if (socket.isHost && players.length < MAX_PLAYERS)
+            addPlayer()
+    }
 })
 
 
@@ -292,6 +297,7 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 onSelect: () => sidebarOpenModalWithClose(nominations)
             },
             {
+                icon: h(UKbd, { class: 'text-default! size-5' }, 'A'),
                 label: players.length < MAX_PLAYERS ? 'Add a player' : 'Max players reached',
                 class:       (players.length >= MAX_PLAYERS ? 'opacity-50 cursor-not-allowed' : ''),
                 disabled:     players.length >= MAX_PLAYERS,
