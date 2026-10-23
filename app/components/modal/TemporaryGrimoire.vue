@@ -94,14 +94,16 @@ function randomizeSeats() {
     const roles = game.shuffleArray(
         players.list
             .filter(player => !fixTravellers.value || player.role?.team !== "traveller")
-            .map(player => player.role)
+            // Map (copy) because of pointer sharing.
+            .map(player => ({ role: player.role, reminders: player.reminders}))
     )
 
     let index = 0
 
     for (const player of players.list) {
         if (!fixTravellers.value || player.role?.team !== "traveller") {
-            player.role = roles[index++]!
+            player.reminders = roles[index]!.reminders
+            player.role = roles[index++]!.role
         }
     }
 }
