@@ -793,8 +793,16 @@ watch(
 )
 
 watch(
-    () => game.nomination.nominee,
+    () => [
+        game.nomination.open,
+        game.nomination.nominee,
+    ],
     async () => {
+        // Make sure the nomination panel is centered
+        await nextTick();
+        seats.setWheelVisualization(ui.orientation.user)
+        seats.updateOrder(true)
+
         if (game.nomination.nominee === -1)
             return;
 
