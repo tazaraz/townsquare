@@ -1,11 +1,11 @@
 <template>
-    <div class="flex gap-3 my-3 h-[3rem]">
-        <div v-if="icon" class="flex size-11 rounded-sm bg-accented border-1 border-(--color-gold-300)">
+    <div class="flex gap-3 sm:mt-2 h-fit max-h-[80px]">
+        <div v-if="icon" class="flex size-11 aspect-square rounded-sm bg-accented border-1 border-(--color-gold-300)">
             <UIcon :name="icon" class="m-auto size-6 text-(--color-gold-300)"/>
         </div>
         <div class="flex-1 flex flex-col">
             <span class="font-bold text-xl">{{ title }}</span>
-            <span v-if="description" class="invisible md:visible text-sm text-gray-500">{{ description }}</span>
+            <span v-if="description" class="overflow-hidden text-sm text-gray-500">{{ description }}</span>
         </div>
     </div>
     <!-- Bookmark icon -->
