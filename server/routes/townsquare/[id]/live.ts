@@ -210,7 +210,7 @@ export default defineWebSocketHandler({
                 peer.send(createMessage('error', 'You are sending too many data packets. You should down what you\'re doing!'))
 
             // Kick after 5 messages per second
-            if (session.messageCount++ > (3 * PING_INTERVAL) / 1000) {
+            if (session.messageCount > (3 * PING_INTERVAL) / 1000) {
                 peer.send(createMessage('error', 'You have been kicked due to spamming.'))
                 peer.close(1008, 'You have been kicked due to spamming')
 
