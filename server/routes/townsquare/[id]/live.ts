@@ -128,6 +128,10 @@ export default defineWebSocketHandler({
         if (!id || !session || session.token !== token || session.townsquare !== id || !townsquares.get(id))
             return peer.close(1008, 'Invalid session')
 
+        // If the user already has a peer, close the old one.
+        if (session.peer)
+            session.peer.close(1008, 'You have connected from another location')
+
         // Add the user
         session.alive = true;
         session.peer = peer
@@ -159,7 +163,10 @@ export default defineWebSocketHandler({
             return
         }
 
-        // Unset the peer
+        // Unset the peer if it is the same as the one closing. Prevents race condition with open()
+        if (session.peer?.id !== peer.id)
+            return
+
         session.peer = undefined;
 
         // Notify the host of the disconnect. They can broadcast it to the players
