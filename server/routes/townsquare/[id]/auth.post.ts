@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
     let token = parseCookies(event)['token']
 
      // Make sure we have the id of the townsquare we want to join
-    if (!townsquareId || !townsquares.has(townsquareId)) {
+    if (!townsquareId || !/^[A-Za-z0-9_-]+$/.test(townsquareId) || !townsquares.has(townsquareId)) {
         throw createError({
             statusCode: 404,
             statusMessage: `Could not find townsquare '${townsquareId}'`,
