@@ -326,6 +326,12 @@ export default defineWebSocketHandler({
                 return;
             }
 
+            if (Boolean(sessions.get(to.id)!.peer) === false) {
+                peer.send(createMessage('notification', `The player '${message.to}' is not connected`))
+                return;
+            }
+
+            // Should the connection also just disconnect, don't (fail here and report to the host)
             sessions.get(to.id)!.peer!.send({
                 kind: message.kind,
                 origin: session.id,
