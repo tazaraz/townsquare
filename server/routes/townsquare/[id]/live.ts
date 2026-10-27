@@ -159,7 +159,7 @@ export default defineWebSocketHandler({
         }
 
         if (!id) {
-            console.error(`The townsquare '${id}' does not exist`)
+            console.error(`The townsquare '${id}' does not exist. What are you even connected to?`)
             return
         }
 
@@ -338,7 +338,7 @@ export default defineWebSocketHandler({
                 data: message.data,
             } satisfies ReceiveMessage)
         } catch {
-            peer.send(createMessage('error', 'Could not parse your message.'))
+            peer.send(createMessage('error', 'Something went wrong'))
         }
     },
 
