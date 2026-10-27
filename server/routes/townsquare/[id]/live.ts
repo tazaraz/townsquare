@@ -356,7 +356,13 @@ const pingpong = setInterval(() => {
         // Close the connection if it wasn't alive since previous ping-pong
         if (!connection.alive && connection.peer) {
             connection.peer?.terminate()
-            connection.peer = undefined
+            continue
+        }
+
+        // If the connection is still not alive, delete the session.
+        if (!connection.alive && !connection.peer) {
+            townsquares.get(connection.townsquare)?.users.delete(id)
+            sessions.delete(id)
             continue
         }
 
@@ -380,6 +386,7 @@ const towncleanup = setInterval(() => {
             }
 
             // Delete the townsquare itself
+            sessions.delete(sessions.get(townsquares.get(townsquare.id)!.host)?.id!)
             townsquares.delete(townsquare.id)
         }
     }
