@@ -866,7 +866,7 @@ defineExpose({
     user-select: none;
 
     width: 100%;
-    min-height: 100%;
+    min-height: calc(100vh - var(--ui-header-height));
     position: fixed;
 
     #nominations {
