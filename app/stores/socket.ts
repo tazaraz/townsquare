@@ -549,5 +549,7 @@ export const useSocket = defineStore('socket', () => {
 
         sendTo,
         broadcast,
+
+        getUrlSessionId,
     }
 })

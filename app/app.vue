@@ -1,5 +1,7 @@
 <template>
     <UApp :toaster="{ position: 'top-right', expand: false }">
+        <Title>Town Square{{ socket.id !== '' ? ` | ${socket.getUrlSessionId()}` : '' }}
+        </Title>
         <ClientOnly>
             <UMain class="relative">
                 <div id="town">
