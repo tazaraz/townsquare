@@ -1,7 +1,17 @@
 <template>
     <UApp :toaster="{ position: 'top-right', expand: false }">
         <ClientOnly>
-            <UMain>
+            <UMain class="relative">
+                <div id="town">
+                    <svg
+                        viewBox="60 0 2550 1250"
+                        fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <use href="/bg.svg#town"></use>
+                    </svg>
+                    <div class="line" />
+                </div>
                 <Welcome />
 
                 <Seats ref="seats"
@@ -91,5 +101,42 @@ async function editReminder(player: number, index: number | undefined) {
 <style lang="css">
 html, body {
     overflow: hidden;
+}
+</style>
+<style lang="css" scoped>
+#town {
+    position: absolute;
+    width: 100vw;
+    top: 60%;
+    transform: translateY(-50%);
+
+    display: flex;
+    justify-content: center;
+
+    z-index: -1;
+    overflow: none;
+
+    svg {
+        position: relative;
+        width: 90vw;
+        min-width: 70rem;
+        max-width: 100rem;
+
+        display: flex;
+        justify-content: center;
+
+        color: var(--color-gold-600);
+        background-color: var(--ui-bg);
+    }
+
+    .line {
+        position: absolute;
+        height: 2px;
+        width: 100vw;
+        bottom: 0;
+
+        background-color: var(--color-gold-600);
+        z-index: -3;
+    }
 }
 </style>
