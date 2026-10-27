@@ -244,10 +244,8 @@ export default defineWebSocketHandler({
                 return
             }
 
-            // Close the townsquare if the host leaves
-            if (message.kind == 'close') {
-                // Ensure this is the host
-                if (peer.id === sessions.get(townsquares.get(id)!.host)?.peer?.id) {
+            // Update the last activity of this townsquare
+            townsquares.get(id)!.lastActivity = Date.now()
                     for (const connectionId of townsquares.get(id)!.users) {
                         sessions.get(connectionId)?.peer?.close(1012, 'The host has closed this townsquare.')
                         sessions.delete(connectionId)
