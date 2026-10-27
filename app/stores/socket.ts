@@ -328,10 +328,15 @@ export const useSocket = defineStore('socket', () => {
                 return
             case 'message':
                 const player = players.list.find(p => p.socketId === message.origin)
+                // If the receiver is host but the player does not exist
                 if (isHost.value && !player)
                     return
-
-                message.data.title = isHost.value ? `${player!.name} says to you:` : `A raven whispers to you:`
+                // If receiver is host or another player
+                else if ((isHost.value && player) || (!isHost.value && player))
+                    message.data.title = `${player.name} says to you:`
+                // If origin is host and receiver is player
+                else if (!isHost.value && !player)
+                    message.data.title = `A raven whispers to you:`
                 toaster.showDirectMessage(message.data, isHost.value ? message.origin : 'host')
                 return
             case 'claim':
