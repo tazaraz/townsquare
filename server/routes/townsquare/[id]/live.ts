@@ -3,7 +3,7 @@ import type { Peer } from 'crossws'
 
 const MAX_MESSAGE_BYTES = 8 * 1024 // 8 KiB
 const TOWNSQUARE_MAX_INACTIVITY = 14400000  // 4h
-const PING_INTERVAL = 30000;                // 30s
+const PING_INTERVAL = 20000;                // 20s
 
 interface Message extends Object {
     /** If this is a broadcasting message instead of a 1-to-1 message */
