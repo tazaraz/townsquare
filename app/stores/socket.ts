@@ -240,6 +240,9 @@ export const useSocket = defineStore('socket', () => {
                 gamestate.id = document.cookie.match(/id=([^;]+)/)?.[1]!
                 gamestate.sessionId = getUrlSessionId()!
 
+                if (!gamestate.id || !gamestate.sessionId)
+                    return toaster.serverError('Could not find your session. Please reload the page.')
+
                 if (!gamestate.isHost)
                     return sendTo('host', 'sync', true)
 
