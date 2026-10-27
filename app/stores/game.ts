@@ -306,6 +306,11 @@ export const useGame = defineStore('game', () => {
         gamestate.nomination.nominator = -1
         gamestate.nomination.nominee = -1
         gamestate.nomination.hand = -1
+
+        for (let i = 0; i < players.length; i++) {
+            players.get(i)!.voteLocked = !open
+            players.get(i)!.isVoting = false
+        }
     }
 
     /** Calculates how many votes are required to exile or execute a player. */
