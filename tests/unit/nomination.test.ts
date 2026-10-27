@@ -103,12 +103,12 @@ describe('Nomination hand', () => {
         c.activatePinia(c.host)
         c.hgame.setNominations(true)
         c.hplayers.setNominated(2, 3, true)
-        c.hgame.setMarked(2, -1);
+        c.hgame.setMarked(2, false);
 
         await delay()
         for (const p of range(0, PLAYERS)) {
             c.activatePinia(c.players[p]!)
-            expect(c.pgame[p]!.nomination.marked).toEqual({ player: 2, votes: -1 })
+            expect(c.pgame[p]!.nomination.marked).toEqual({ player: 2, votes: 0 })
             expect(c.pgame[p]!.nomination.nominee).toEqual(-1)
             expect(c.pgame[p]!.nomination.nominator).toEqual(-1)
         }
@@ -118,7 +118,7 @@ describe('Nomination hand', () => {
         await delay()
         for (const p of range(0, PLAYERS)) {
             c.activatePinia(c.players[p]!)
-            expect(c.pgame[p]!.nomination.marked).toEqual({ player: 2, votes: -1 })
+            expect(c.pgame[p]!.nomination.marked).toEqual({ player: 2, votes: 0 })
             expect(c.pgame[p]!.nomination.nominee).toEqual(1)
             expect(c.pgame[p]!.nomination.nominator).toEqual(2)
         }
@@ -134,137 +134,6 @@ describe('Nomination hand', () => {
             expect(c.pgame[p]!.nomination.marked).toEqual(null)
             expect(c.pgame[p]!.nomination.nominee).toEqual(-1)
             expect(c.pgame[p]!.nomination.nominator).toEqual(-1)
-        }
-    })
-
-    it('Rotates on the host', { timeout: 10000 * HANDSPEED }, async () => {
-        // Mount the host Component
-        const component = await mountSuspended(Seats, { global: {plugins: [ c.host ]} })
-        const { nomination } = component.setupState;
-
-        await c.connectPlayers(0, PLAYERS)
-        c.hplayers.setNominated(0, 1, true)
-        await delay(550)
-
-        c.activatePinia(c.host)
-        c.hgame.nomination.speed = HANDSPEED
-        nomination.start()
-
-        for (const h of range(0, PLAYERS + 1)) {
-            await delay(HANDSPEED * 1000)
-            expect(c.hgame.nomination.hand).toEqual(h)
-        }
-
-        // End sequence
-        await delay()
-        expect(c.hgame.nomination.hand).toEqual(0)
-        await delay(HANDSPEED * 1000)
-        expect(c.hgame.nomination.hand).toEqual(-1)
-    })
-
-    it('Rotates and syncs', { timeout: 10000 * HANDSPEED }, async () => {
-        // Mount the host Component
-        const component = await mountSuspended(Seats, { global: {plugins: [ c.host ]} })
-        const { nomination } = component.setupState;
-
-        // Connect half the players and nominate one of them
-        await c.connectPlayers(0, PLAYERS / 2)
-        for (const p of range(PLAYERS / 2, PLAYERS))
-            c.hplayers.add(`Player ${p + 1}`)
-
-        c.hplayers.setNominated(0, 1, true)
-        await delay(500)
-
-        c.activatePinia(c.host)
-        c.hgame.nomination.speed = HANDSPEED
-        nomination.start()
-
-        // Check sync state of the hand for all players
-        for (const h of range(0, PLAYERS / 2)) {
-            await delay(HANDSPEED * 1000)
-            expect(c.hgame.nomination.hand).toEqual(h)
-
-            for (const p of range(0, PLAYERS / 2)) {
-                c.activatePinia(c.players[p]!)
-                expect(c.pgame[p]!.nomination.hand).toEqual(h)
-            }
-        }
-
-        // Midway connect more players
-        for (const p of range(PLAYERS / 2, PLAYERS)) {
-            c.activatePinia(c.players[p]!)
-            c.psocket[p]!.connect(SESSION, SESSION)
-            c.psocket[p]!.requestClaim(p)
-        }
-        // Should sync correctly
-        for (const h of range(PLAYERS / 2, PLAYERS + 1)) {
-            await delay(HANDSPEED * 1000)
-            expect(c.hgame.nomination.hand).toEqual(h)
-
-            for (const p of range(0, PLAYERS)) {
-                c.activatePinia(c.players[p]!)
-                expect(c.pgame[p]!.nomination.hand).toEqual(h)
-            }
-        }
-
-        // End sequence
-        await delay()
-        expect(c.hgame.nomination.hand).toEqual(0)
-        for (const p of range(0, PLAYERS)) {
-            c.activatePinia(c.players[p]!)
-            expect(c.pgame[p]!.nomination.hand).toEqual(0)
-        }
-
-        await delay(HANDSPEED * 1000)
-        expect(c.hgame.nomination.hand).toEqual(-1)
-        for (const p of range(0, PLAYERS)) {
-            c.activatePinia(c.players[p]!)
-            expect(c.pgame[p]!.nomination.hand).toEqual(-1)
-        }
-    })
-
-    it('Correctly stops', { timeout: 10000 * HANDSPEED }, async () => {
-        // Mount the host Component
-        const component = await mountSuspended(Seats, { global: {plugins: [ c.host ]} })
-        const { nomination } = component.setupState;
-
-        c.connectPlayers(0, PLAYERS)
-        c.hplayers.setNominated(0, 1, true)
-        await delay(500)
-
-        c.activatePinia(c.host)
-        c.hgame.nomination.speed = HANDSPEED
-        nomination.start()
-
-        for (const h of range(0, PLAYERS + 1)) {
-            await delay(HANDSPEED * 1000)
-            expect(c.hgame.nomination.hand).toEqual(h)
-
-            for (const p of range(0, PLAYERS)) {
-                c.activatePinia(c.players[p]!)
-                expect(c.pgame[p]!.nomination.hand).toEqual(h)
-            }
-
-            // Stop the hand at 2 and break out of the loop
-            if (h === 2) {
-                nomination.stop()
-                break;
-            }
-        }
-
-        // Wait a bit and check that the hand has not moved
-        await delay()
-        expect(c.hgame.nomination.hand).toEqual(0)
-        for (const p of range(0, PLAYERS)) {
-            c.activatePinia(c.players[p]!)
-            expect(c.pgame[p]!.nomination.hand).toEqual(0)
-        }
-
-        await delay(HANDSPEED * 1000)
-        expect(c.hgame.nomination.hand).toEqual(-1)
-        for (const p of range(0, PLAYERS)) {
-            c.activatePinia(c.players[p]!)
-            expect(c.pgame[p]!.nomination.hand).toEqual(-1)
         }
     })
 
@@ -319,5 +188,138 @@ describe('Nomination hand', () => {
 
         c.activatePinia(c.host)
         expect(c.hplayers.list.filter(p => p.isVoting).length).toBe(PLAYERS / 2)
+    })
+
+    it('Rotates on the host', { timeout: 10000 * HANDSPEED }, async () => {
+        // Mount the host Component
+        const component = await mountSuspended(Seats, { global: {plugins: [ c.host ]} })
+        const { nomination } = component.setupState;
+
+        await c.connectPlayers(0, PLAYERS)
+        c.hplayers.setNominated(0, 1, true)
+        await delay(550)
+
+        c.activatePinia(c.host)
+        c.hgame.nomination.speed = HANDSPEED
+        nomination.start()
+
+        for (const h of range(0, PLAYERS + 1)) {
+            await delay(HANDSPEED * 1000)
+            expect(c.hgame.nomination.hand).toEqual(h)
+        }
+
+        // End sequence
+        await delay(HANDSPEED * 1000)
+        expect(c.hgame.nomination.hand).toEqual(PLAYERS)
+    })
+
+    it('Rotates and syncs', { timeout: 10000 * HANDSPEED }, async () => {
+        // Mount the host Component
+        const component = await mountSuspended(Seats, { global: {plugins: [ c.host ]} })
+        const { nomination } = component.setupState;
+
+        // Connect half the players and nominate one of them
+        await c.connectPlayers(0, PLAYERS / 2)
+        for (const p of range(PLAYERS / 2, PLAYERS))
+            c.hplayers.add(`Player ${p + 1}`)
+
+        c.activatePinia(c.host)
+        c.hgame.setNominations(true)
+        c.hplayers.setNominated(0, 1, true)
+        await delay(600)
+
+        c.hgame.nomination.speed = HANDSPEED
+        nomination.start()
+
+        // Check sync state of the hand for all players
+        for (const h of range(0, PLAYERS / 2)) {
+            await delay(HANDSPEED * 1000)
+            expect(c.hgame.nomination.hand).toEqual(h)
+
+            for (const p of range(0, PLAYERS / 2)) {
+                c.activatePinia(c.players[p]!)
+                expect(c.pgame[p]!.nomination.hand).toEqual(h)
+            }
+        }
+
+        // Midway connect more players
+        for (const p of range(PLAYERS / 2, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            c.psocket[p]!.connect(SESSION, SESSION)
+            c.psocket[p]!.requestClaim(p)
+        }
+        // Should sync correctly
+        for (const h of range(PLAYERS / 2, PLAYERS + 1)) {
+            await delay(HANDSPEED * 1000)
+            expect(c.hgame.nomination.hand).toEqual(h)
+
+            for (const p of range(0, PLAYERS)) {
+                c.activatePinia(c.players[p]!)
+                expect(c.pgame[p]!.nomination.hand).toEqual(h)
+            }
+        }
+
+        // End sequence
+        await delay(HANDSPEED * 1000)
+        expect(c.hgame.nomination.hand).toEqual(4)
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.hand).toEqual(4)
+        }
+
+        // Stop the nomination
+        await nomination.stop()
+
+        await delay(HANDSPEED * 1000)
+        expect(c.hgame.nomination.hand).toEqual(-1)
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.hand).toEqual(-1)
+        }
+    })
+
+    it('Correctly stops', { timeout: 10000 * HANDSPEED }, async () => {
+        // Mount the host Component
+        const component = await mountSuspended(Seats, { global: {plugins: [ c.host ]} })
+        const { nomination } = component.setupState;
+
+        c.connectPlayers(0, PLAYERS)
+        c.hplayers.setNominated(0, 1, true)
+        await delay(600)
+
+        c.activatePinia(c.host)
+        c.hgame.nomination.speed = HANDSPEED
+        nomination.start()
+
+        for (const h of range(0, PLAYERS + 1)) {
+            await delay(HANDSPEED * 1000)
+            expect(c.hgame.nomination.hand).toEqual(h)
+
+            for (const p of range(0, PLAYERS)) {
+                c.activatePinia(c.players[p]!)
+                expect(c.pgame[p]!.nomination.hand).toEqual(h)
+            }
+
+            // Stop the hand at 2 and break out of the loop
+            if (h === 2) {
+                nomination.stop()
+                break;
+            }
+        }
+
+        // Wait a bit and check that the hand has not moved
+        await delay()
+        expect(c.hgame.nomination.hand).toEqual(0)
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.hand).toEqual(0)
+        }
+
+        await delay(HANDSPEED * 1000)
+        expect(c.hgame.nomination.hand).toEqual(-1)
+        for (const p of range(0, PLAYERS)) {
+            c.activatePinia(c.players[p]!)
+            expect(c.pgame[p]!.nomination.hand).toEqual(-1)
+        }
     })
 })
