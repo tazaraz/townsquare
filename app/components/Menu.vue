@@ -403,7 +403,7 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 toggle: 'nightorder',
                 slot: 'night-order' as const
             },
-            {
+            ui.orientation.rendered === 'center' ? {} : {
                 select: 'ui-orientation',
                 slot: 'ui-orientation' as const
             },
