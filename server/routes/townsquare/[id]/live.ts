@@ -246,75 +246,91 @@ export default defineWebSocketHandler({
 
             // Update the last activity of this townsquare
             townsquares.get(id)!.lastActivity = Date.now()
+
+            // If this is the host, handle special messages
+            if (peer.id === sessions.get(townsquares.get(id)!.host)?.peer?.id) {
+                // Close the townsquare if the host leaves
+                if (message.kind == 'close') {
                     for (const connectionId of townsquares.get(id)!.users) {
                         sessions.get(connectionId)?.peer?.close(1012, 'The host has closed this townsquare.')
                         sessions.delete(connectionId)
                     }
 
+                    sessions.delete(sessions.get(townsquares.get(id)!.host)?.id!)
                     townsquares.delete(id)
+                    return;
                 }
+
+                // Broadcast the message
+                else if (message.broadcast === true) {
+                    // Send to everyone
+                    townsquares.get(id)!.users.forEach(u => {
+                        sessions.get(u)!.peer?.send({
+                            origin: session.id,
+                            kind: message.kind,
+                            data: message.data
+                        } satisfies ReceiveMessage)
+                    })
+                    return
+                }
+            }
+
+            // If this is not the host, only allow certain messages to be sent
+            else {
+                switch (message.kind) {
+                    case 'claim':
+                    case 'unclaim':
+                    case 'rename':
+                    case 'nominate':
+                    case 'vote':
+                    case 'message':
+                        break;
+                    case 'sync':
+                        if (message.data === true) break;
+                    default:
+                        peer.send(createMessage('error', 'You are not allowed to send this kind of message.'))
+                        return
+                }
+            }
+
+            /**
+             * Check if:
+             *  - The message is valid
+             *  - Is not reaching an unrelated peer
+             */
+            const to = message.to === 'host'
+                ? sessions.get(townsquares.get(id)!.host)
+                : sessions.get(message.to!)
+            if (!to) {
+                peer.send(createMessage('notification', `'${message.to}' is not a valid recipient`))
+                return
+            }
+
+            // Prevent the host sending to the host
+            if (peer.id === to.peer?.id) {
+                peer.send(createMessage('notification', 'You cannot send messages to yourself'))
+                return
+            }
+
+            // Make sure our target is inside this townsquare. We are not going to tell you you hit a valid id.
+            if (!message.to || !to ||
+                (to && !townsquares.get(id)!.users.has(to.id) && !(townsquares.get(id)!.host === to.id))
+            ) {
+                peer.send(createMessage('error', 'Your request could not be completed'))
+                return
+            }
+
+            // Make sure the player exists
+            if (!townsquares.get(id)!.users.has(to.id) && townsquares.get(id)!.host !== to.id) {
+                peer.send(createMessage('notification', `Could not find receipient '${message.to}'`))
                 return;
             }
 
-            // Broadcast the message
-            if (message.broadcast === true) {
-                // Only the host can do this
-                if (peer.id !== sessions.get(townsquares.get(id)!.host)?.peer?.id)
-                    return;
-
-                // console.log(`Broadcasting from ${session.id} to ${townsquares.get(id)!.users.size} users: ${JSON.stringify(message.data)}`)
-
-                // Send to everyone
-                townsquares.get(id)!.users.forEach(u => {
-                    sessions.get(u)!.peer!.send({
-                        origin: session.id,
-                        kind: message.kind,
-                        data: message.data
-                    } satisfies ReceiveMessage)
-                })
-            }
-
-            // Or just send to the defined recipient
-            else {
-                /**
-                 * Check if:
-                 *  - The message is valid
-                 *  - Is not reaching an unrelated peer
-                 */
-                const to = message.to === 'host'
-                    ? sessions.get(townsquares.get(id)!.host)
-                    : sessions.get(message.to!)
-                if (!to) {
-                    peer.send(createMessage('notification', `'${message.to}' is not a valid recipient`))
-                    return
-                }
-
-                // Prevent the host sending to the host
-                if (peer.id === to.peer?.id) {
-                    peer.send(createMessage('notification', 'You cannot send messages to yourself'))
-                    return
-                }
-
-                // Make sure our target is inside this townsquare. We are not going to tell you you hit a valid id.
-                if (!message.to || !to ||
-                    (to && !townsquares.get(id)!.users.has(to.id) && !(townsquares.get(id)!.host === to.id))
-                ) {
-                    peer.send(createMessage('error', 'Your request could not be completed'))
-                    return
-                }
-
-                // Make sure the player exists
-                if (!townsquares.get(id)!.users.has(to.id) && townsquares.get(id)!.host !== to.id) {
-                    peer.send(createMessage('notification', `Could not find receipient '${message.to}'`))
-                    return;
-                }
-
-                sessions.get(to.id)!.peer!.send({
-                    kind: message.kind,
-                    origin: session.id,
-                    data: message.data,
-                } satisfies ReceiveMessage)
-            }
+            sessions.get(to.id)!.peer!.send({
+                kind: message.kind,
+                origin: session.id,
+                data: message.data,
+            } satisfies ReceiveMessage)
         } catch {
             peer.send(createMessage('error', 'Could not parse your message.'))
         }
