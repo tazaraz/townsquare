@@ -8,9 +8,8 @@
         </template>
         <template #body>
             <UTabs id="tabs"
-                   :items="tabs"
-                   :ui="{ content: `mb-3`, list: kind == 'role' ? '' : 'hidden' }"
-            >
+                :items="tabs"
+                :ui="{ content: `mb-3`, list: kind == 'role' ? '' : 'hidden' }">
                 <template #scenario>
                     <template v-for="(team, name) of items">
                         <div v-if="name !== 'traveller'"

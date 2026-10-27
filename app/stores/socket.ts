@@ -88,7 +88,6 @@ export const useSocket = defineStore('socket', () => {
                 sendTo('host', 'sync', true)
 
                 // Request seat again, but we reset preemtively if that fails to not lock up state
-                console.log(`Requesting seat ${seatIndex} again`)
                 requestClaim(seatIndex)
             }
 

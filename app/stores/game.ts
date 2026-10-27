@@ -335,7 +335,6 @@ export const useGame = defineStore('game', () => {
     function setMarked(player: number, completed: boolean) {
         const p = players.get(player)
         const voting = players.list.filter(p => p.isVoting)
-        console.log('Setting marked player', player, p?.name, completed)
 
         // First, do history recording
         if (p) {
