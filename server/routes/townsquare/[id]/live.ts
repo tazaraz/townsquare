@@ -1,6 +1,7 @@
 import { randomBytes, randomUUID } from 'node:crypto'
 import type { Peer } from 'crossws'
 
+const MAX_MESSAGE_BYTES = 8 * 1024 // 8 KiB
 const TOWNSQUARE_MAX_INACTIVITY = 14400000  // 4h
 const PING_INTERVAL = 30000;                // 30s
 
@@ -180,6 +181,11 @@ export default defineWebSocketHandler({
     },
 
     message(peer, message_raw) {
+        if (message_raw.uint8Array().byteLength > MAX_MESSAGE_BYTES) {
+            peer.close(1009, 'Message too large')
+            return
+        }
+
         const id = getTownsquareId(peer)
 
         if (!id) {
