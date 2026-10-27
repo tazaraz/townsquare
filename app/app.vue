@@ -48,6 +48,7 @@ async function editPlayer(player: number) {
         title: {
             icon: 'i-lucide-user',
             text: `Select a role for ${players.get(player)!.name}`,
+            description: socket.isHost ? 'Change this player\'s role' : 'This does not affect the others'
         },
         playerName: players.get(player)!.name,
         canClear: true
