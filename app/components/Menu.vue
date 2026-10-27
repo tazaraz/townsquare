@@ -175,6 +175,7 @@ import {
     DialogConfirm,
     ModalNominations,
     UKbd,
+    ModalAbout,
 } from '#components'
 
 defineShortcuts({
@@ -203,6 +204,7 @@ const displayInfo = overlay.create(ModalDisplayInfo)
 const temporaryGrimoire = overlay.create(ModalTemporaryGrimoire)
 const demonBluffs = overlay.create(ModalDemonBluffs)
 const nominations = overlay.create(ModalNominations)
+const about = overlay.create(ModalAbout)
 
 const confirmDialog = overlay.create(DialogConfirm)
 const sessionDialog = overlay.create(DialogSession)
@@ -404,6 +406,11 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
             {
                 select: 'ui-orientation',
                 slot: 'ui-orientation' as const
+            },
+            {
+                label: 'About',
+                icon: 'material-symbols:help-outline',
+                onSelect: () => sidebarOpenModalWithClose(about)
             },
         ]
     }
