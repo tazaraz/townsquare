@@ -30,7 +30,7 @@ export default defineAppConfig({
                 content: 'border border-[var(--color-gold-600)] bg-default/70 backdrop-blur-lg',
                 wrapper: 'w-[90%]',
                 header: 'min-h-fit! border-0 pb-0!',
-                body: 'border-0'
+                body: 'border-0 mt-3'
             }
         },
         pageCard: {
