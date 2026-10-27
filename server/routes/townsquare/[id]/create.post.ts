@@ -36,14 +36,13 @@ export default defineEventHandler(async (event) => {
         })
     }
 
+    const hash = await argon2.hash(password, { type: argon2.argon2id })
     const host = createSession(townsquareId)
 
     sessions.set(host.id, host)
     townsquares.set(townsquareId, {
         id: townsquareId,
-        passwordHash: await argon2.hash(password, {
-            type: argon2.argon2id,
-        }),
+        passwordHash: hash,
         host: host.id,
         users: new Set(),
         lastActivity: Date.now()
