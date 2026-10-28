@@ -24,7 +24,8 @@
                     </template>
                 </template>
                 <template #travellers>
-                    <template v-if="items.length > 0 && !showTravellers" v-for="item in items">
+                    <template v-if="items.filter(r => (r as Role).team === 'traveller').length > 0 && !showTravellers"
+                        v-for="item in items">
                         <Token v-if="(item as Role).team === 'traveller'"
                             :class="[(item as Role).team || undefined, hasBackdrop((item as Role).id)]"
                             :data="item"
@@ -33,7 +34,7 @@
                             :hide-leaves="true"
                             @click="!isDisabled((item as Role).id) && emitToken(item)"/>
                     </template>
-                    <UAlert v-else-if="items.length === 0 && !showTravellers"
+                    <UAlert v-else-if="!showTravellers"
                         class="w-fit mt-3 mx-auto"
                         variant="subtle"
                         color="info"
