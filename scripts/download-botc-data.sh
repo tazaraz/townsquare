@@ -7,13 +7,24 @@ download_file() {
     url="$1"
     filename="$2"
 
+    # Make sure the parent directory exists before downloading the file
+    mkdir -p "$(dirname "$filename")"
+
+    tmpfile=$(mktemp)
     echo "Downloading $filename"
-    curl -fLs --retry 3 "$url" -o "$filename"
 
     # If curl returned a non-zero exit code, print an error message and exit the script
-    if [ $? -ne 0 ]; then
+    if ! curl -fLs --retry 3 "$url" -o "$tmpfile"; then
         echo "Error: Failed to download $url"
-        exit 1
+        rm -f "$tmpfile"
+        return 1
+    fi
+
+    if [ -f "$filename" ] && cmp -s "$tmpfile" "$filename"; then
+        rm -f "$tmpfile"
+    else
+        echo "Updated: $filename"
+        mv "$tmpfile" "$filename"
     fi
 }
 
