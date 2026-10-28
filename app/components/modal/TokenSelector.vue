@@ -33,9 +33,11 @@
                             :hide-leaves="true"
                             @click="!isDisabled((item as Role).id) && emitToken(item)"/>
                     </template>
-                    <div v-else-if="items.length === 0 && !showTravellers" class="text-center">
-                        There are no travellers in this script.
-                    </div>
+                    <UAlert v-else-if="items.length === 0 && !showTravellers"
+                        class="w-fit mt-3 mx-auto"
+                        variant="subtle"
+                        color="info"
+                        description="There are no travellers in this script."/>
                     <template v-else v-for="item in game.loadTravellers()">
                         <Token v-if="item.team === 'traveller'"
                             :class="[item.team, hasBackdrop((item as Role).id)]"
@@ -55,7 +57,7 @@
                         label="Reference sheet"
                         color="info"
                         @click="referenceSheet.open({ kind })"/>
-                    <USwitch v-if="activeTab == '1'" v-model="showTravellers" label="Show all Travellers" class="py-2"/>
+                    <USwitch v-if="activeTab == '1'" v-model="showTravellers" label="Show all Travellers" class="my-auto"/>
                 </template>
                 <template #center>
                     <UButton v-if="canClear"
