@@ -3,6 +3,8 @@ import editionsData from '~/data/editions.json'
 import roleData from '~/data/roles.json'
 import nightorderData from '~/data/nightorder.json'
 import gameData from '~/data/game.json'
+import jinxData from '~/data/jinxes.json'
+
 
 interface TeamDivision {
     townsfolk: number
@@ -60,10 +62,10 @@ export const useGame = defineStore('game', () => {
         }
     })
 
-    /** Available Fabled roles */
-    const availableFabled = computed(() => roleData.filter(r => r.team === 'fabled').map(r => loadRole(r.id)!))
+    /** Available Fabled roles. Djinn is automatically calculated and cannot be toggled */
+    const availableFabled = computed(() => roleData.filter(r => r.team === 'fabled' && r.id !== 'djinn').map(r => loadRole(r.id)!))
     /** Which fabled are assigned */
-    const assignedFabled = computed(() => gamestate.fabled)
+    const assignedFabled = computed(() => (jinxes.value.length > 0 ? [loadRole('djinn')] : []).concat(gamestate.fabled))
     /** Available Loric roles */
     const availableLoric = computed(() => roleData.filter(r => r.team === 'loric').map(r => loadRole(r.id)!))
     /** Which loric are assigned */
@@ -90,6 +92,20 @@ export const useGame = defineStore('game', () => {
             traveller: travellers
         }
     })
+
+    /** The Jinxes in play */
+    const jinxes = computed(() => jinxData.map(role =>
+            role.jinx.filter(
+                clash =>
+                    availableRoles.value.some(p => p.id === role.id) &&
+                    availableRoles.value.some(p => p.id === clash.id)
+            ).map(jinx => ({
+                role1: role.id,
+                role2: jinx.id,
+                reason: jinx.reason
+            }))
+        ).flat()
+    )
 
     /** Night order for the current script */
     const scriptNightOrder = ref({ firstNight: [] as NightOrder[], otherNights: [] as NightOrder[] })
@@ -439,6 +455,7 @@ export const useGame = defineStore('game', () => {
         demonBluffs,
         nomination,
         division,
+        jinxes,
 
         scriptNightOrder,
         knownNightOrder,

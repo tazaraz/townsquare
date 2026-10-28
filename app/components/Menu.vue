@@ -415,7 +415,9 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
         children: [
             ...game.assignedFabled.map(f => ({
                 slot: 'modifier-item' as const,
-                onSelect: () => referenceSheet.open({ kind: 'fabled' }),
+                onSelect: () => f.id === 'djinn'
+                    ? jinxes.open()
+                    : referenceSheet.open({ kind: 'fabled' }),
                 ...f,
             })),
             ...game.assignedLoric.map(f => ({
