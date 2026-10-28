@@ -33,7 +33,7 @@
     "name": "One in One Out",
     "author": "Baron von Klutz",
     "description": "If your name’s not down, you’re not coming in!",
-    "level": "Beginner",
+    "level": "Advanced",
     "roles": ["steward", "knight", "highpriestess", "villageidiot", "snakecharmer", "fortuneteller", "oracle", "monk", "amnesiac", "fisherman", "seamstress", "farmer", "cannibal", "ogre", "goon", "recluse", "drunk", "poisoner", "harpy", "spy", "mezepheles", "kazali", "imp", "ojo", "fanggu", "spiritofivory"],
     "type": "full"
   },
@@ -65,6 +65,7 @@
     "type": "full"
   },
 
+
   {
     "id": "ngj",
     "name": "No Greater Joy",
@@ -75,21 +76,21 @@
     "type": "teensyville"
   },
   {
-    "id": "luf",
-    "name": "Laissez un Faire",
-    "author": "Steven Medway",
-    "description": "The length, feel, and stakes of a much larger game, all in a teensy package.",
-    "level": "Intermediate",
-    "roles": ["balloonist", "savant", "amnesiac", "fisherman", "artist", "cannibal", "mutant", "lunatic", "widow", "goblin", "leviathan"],
-    "type": "teensyville"
-  },
-  {
     "id": "otr",
     "name": "Over the River",
     "author":" Andrew Nathenson",
     "description": "What big eyes you have!",
     "level": "Beginner",
     "roles": ["grandmother","clockmaker","innkeeper","snakecharmer","professor","slayer","lunatic","recluse","godfather","spy","imp"],
+    "type": "teensyville"
+  },
+  {
+    "id": "luf",
+    "name": "Laissez un Faire",
+    "author": "Steven Medway",
+    "description": "The length, feel, and stakes of a much larger game, all in a teensy package.",
+    "level": "Advanced",
+    "roles": ["balloonist", "savant", "amnesiac", "fisherman", "artist", "cannibal", "mutant", "lunatic", "widow", "goblin", "leviathan"],
     "type": "teensyville"
   }
 ]
