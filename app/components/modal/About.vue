@@ -13,26 +13,27 @@
                 <UPageCard
                     title="Blood on the Clocktower"
                     description="This game is a trademark of Steven Medway and The Pandemonium Institute.">
-                    <UButton variant="subtle" class="w-fit" to="https://bloodontheclocktower.com/">Website</UButton>
+                    <UButton variant="subtle" class="w-fit" to="https://bloodontheclocktower.com/" target="_blank">Website</UButton>
                 </UPageCard>
                 <UPageCard
                     title="Townsquare Github"
-                    description="Should you be interested in the code">
-                    <UButton variant="subtle" class="w-fit" to="https://github.com/tazaraz/townsquare">Github</UButton>
+                    description="Should you be interested in the code, or if you found a bug and want to report it.">
+                    <UButton variant="subtle" class="w-fit" to="https://github.com/tazaraz/townsquare" target="_blank">Github</UButton>
                 </UPageCard>
                 <UPageCard
                     title="Townsquare inspiration (also called Townsquare)"
-                    description="Original inspiration for this site was taken from Townsquare, but that site does not support mobile. This way, you can play locally with friends without requiring a laptop on your lap.">
+                    description="Original inspiration for this site was taken from Townsquare, but that site does not support mobile. Hence, you can only play this version locally with friends when you have a laptop on your lap.">
                     <div class="flex gap-2">
-                        <UButton variant="subtle" to="https://clocktower.online/">Online version</UButton>
-                        <UButton variant="subtle" to="https://github.com/bra1n/townsquare/">Github</UButton>
+                        <UButton variant="subtle" to="https://github.com/bra1n/townsquare/" target="_blank">Github</UButton>
                     </div>
                 </UPageCard>
-                <UPageCard
-                    title="Background"
-                    description="Obligatory attribution for the background.">
-                    <UButton variant="subtle" class="w-fit" to="https://www.vecteezy.com/vector-art/77164940-minimalist-village-line-art-illustration">Online version</UButton>
-                </UPageCard>
+                <div>
+                    <div class="text-base text-pretty font-semibold text-highlighted">Background
+                        <span class="font-normal text-[15px] text-pretty text-muted ms-auto mt-1"> | Obligatory background attribution
+                            <UButton variant="subtle" class="w-fit" to="https://www.vecteezy.com/vector-art/77164940-minimalist-village-line-art-illustration" target="_blank">View</UButton>
+                        </span>
+                    </div>
+                </div>
             </div>
         </template>
 
