@@ -301,7 +301,7 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 onSelect: () => sidebarOpenModalWithClose(nominations)
             },
             {
-                icon: h(UKbd, { class: 'text-default! size-5' }, 'A'),
+                icon: h(UKbd, { class: 'text-default! size-5' }, () => 'A'),
                 label: players.length < MAX_PLAYERS ? 'Add a player' : 'Max players reached',
                 class:        players.length >= MAX_PLAYERS ? 'opacity-50 cursor-not-allowed' : '',
                 disabled:     players.length >= MAX_PLAYERS,
