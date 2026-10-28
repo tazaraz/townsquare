@@ -5,16 +5,17 @@
             <ModalTitle
                 icon="picon:genie"
                 title="Jinxes"
-                :description="djinn.flavor"/>
+                description="Setting things straight"/>
         </template>
         <template #body>
             <div class="grid grid-cols-[64px_64px_64px_1fr] justify-center items-center px-3">
                 <!-- Title -->
                 <NuxtImg :src="djinn.image" class="col-span-2" />
                 <span class="col-span-2 md:hidden" />
-                <div class="col-span-4 md:col-span-2 flex flex-col my-auto">
+                <div class="col-span-4 md:col-span-2 flex flex-col my-auto px-3">
                     <span class="font-bold text-highlighted text-lg">{{ djinn.name }}</span>
-                    <span class="text-sm">{{ djinn.ability }}</span>
+                    <span class="text-sm text-toned">{{ djinn.ability }}</span>
+                    <span class="text-sm text-gray-500 mt-2">{{ djinn.flavor }}</span>
                 </div>
 
                 <!-- Separator -->
@@ -26,7 +27,7 @@
                     <NuxtImg :src="game.availableRoles.find(r => r.id === jinx.role1)!.image" />
                     <NuxtImg :src="game.availableRoles.find(r => r.id === jinx.role2)!.image" />
                     <span class="col-span-2 md:hidden" />
-                    <span class="col-span-4 md:col-span-1 mb-4 md:mb-0 mx-4">{{ jinx.reason }}</span>
+                    <span class="text-toned col-span-4 md:col-span-1 mb-4 md:mb-0 mx-4">{{ jinx.reason }}</span>
                 </template>
             </div>
         </template>
