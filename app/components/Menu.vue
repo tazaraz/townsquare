@@ -39,7 +39,8 @@
             <template #game-content="{ item }">
                 <div class="isolate grid p-2 grid-cols-2 gap-2 text-sm">
                     <button v-for="child in ((item as any).children)"
-                        :class="['rounded-md transition hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3',child.disabled]"
+                        class="rounded-md transition hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3"
+                        :class="[child.disabled, child.info ? 'col-span-2 justify-center' : '']"
                         @click="!child.disabled && child.onSelect?.()">
 
                         <UIcon :name="child.icon" class="size-5 text-dimmed" />
@@ -128,7 +129,7 @@
                 </template>
                 <template #night-order="{ item }">
                     <USwitch
-                        @click="sidebarOpenModalWithClose"
+                        @click="sidebarOpenModalWithClose()"
                         v-model="ui.showNightOrder"
                         :label="(item as any).label"
                         :ui="{label: 'text-muted'}"
@@ -141,7 +142,7 @@
                         {label: 'Top', value: 'top'},
                         {label: 'Right', value: 'right'},
                         {label: 'Bottom', value: 'bottom'},
-                    ]" @change="sidebarOpenModalWithClose"/>
+                    ]" @change="sidebarOpenModalWithClose()"/>
                 </template>
             </UNavigationMenu>
         </template>
@@ -333,15 +334,6 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
                 icon: 'i-lucide-square-arrow-right-exit',
                 onSelect: () => socket.disconnect()
             },
-            {
-                label: 'Load game',
-                onSelect: () => {
-                    game.loadScript("tb")
-                    for (const p of Array(6).keys()) {
-                        players.add((p + 1).toString())
-                    }
-                }
-            },
             !socket.id ? {} : {
                 label: `${players.list.filter(p => p.socketId).length} connected`,
                 description: '',
@@ -447,9 +439,10 @@ function cleanMenu(menu: NavigationMenuItem[][]){
     return menu.filter(group => group.length > 0)
 }
 
-async function sidebarOpenModalWithClose(modal: any) {
+async function sidebarOpenModalWithClose(modal?: any) {
     setTimeout(() => isOpen.value = !isOpen.value, 500)
-    modal.open()
+    if (modal)
+        modal.open()
 }
 
 async function addPlayer() {
