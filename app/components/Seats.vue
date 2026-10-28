@@ -228,6 +228,8 @@ class PlayerSeats {
                 this.updateOrder(true)
             })
 
+            this.setWheelVisualization(ui.orientation.user)
+
             if (players.length === 0)
                 return;
 
@@ -460,8 +462,6 @@ class PlayerSeats {
      * @param position Position requested by the user
      */
     setWheelVisualization(position: WheelOrientation) {
-        if (!this.draggable) return;
-
         const w_width = this.seats.wrapper.clientWidth;
         const w_height = this.seats.wrapper.clientHeight;
 
@@ -506,9 +506,9 @@ class PlayerSeats {
 
         // Disable dragging if the wheel is smaller than the screen.
         if (ui.orientation.rendered === "center") {
-            this.draggable.disable()
+            this.draggable?.disable()
         } else {
-            this.draggable.enable()
+            this.draggable?.enable()
         }
 
         const votes = {
@@ -588,39 +588,43 @@ class PlayerSeats {
             top: this.wheel.y,
         })
 
-        gsap.set("#wheel .player", {
-            width: ui.tokenSize,
-            height: ui.tokenSize
-        })
+        if (players.length > 0) {
+            gsap.set("#wheel .player", {
+                width: ui.tokenSize,
+                height: ui.tokenSize
+            })
 
-        gsap.set("#wheel .reminder", {
-            width: ui.tokenSize * this.wheel.reminders.scale,
-            height: ui.tokenSize * this.wheel.reminders.scale,
-            margin: `${this.wheel.reminders.margin}px auto 0 auto`
-        })
+            gsap.set("#wheel .reminder", {
+                width: ui.tokenSize * this.wheel.reminders.scale,
+                height: ui.tokenSize * this.wheel.reminders.scale,
+                margin: `${this.wheel.reminders.margin}px auto 0 auto`
+            })
+        }
 
-        gsap.set("#nominations", {
-            left: this.wheel.x,
-            top: this.wheel.y,
-        })
+        if (game.nomination.open) {
+            gsap.set("#nominations", {
+                left: this.wheel.x,
+                top: this.wheel.y,
+            })
 
-        gsap.set("#nominations #votes", {
-            left: this.nomination.ui.x,
-            top: this.nomination.ui.y,
-            xPercent: -50,
-            yPercent: -50,
-        })
+            gsap.set("#nominations #votes", {
+                left: this.nomination.ui.x,
+                top: this.nomination.ui.y,
+                xPercent: -50,
+                yPercent: -50,
+            })
 
-        gsap.set("#nominations #hand", {
-            rotation: this.nomination.handRotation
-        })
+            gsap.set("#nominations #hand", {
+                rotation: this.nomination.handRotation
+            })
 
-        gsap.set("#nominations #hand span", {
-            left: this.wheel.radius - ui.tokenSize * 0.75,
-            yPercent: -100,
-            width: ui.tokenSize * 1.5,
-            height: ui.tokenSize / 5,
-        })
+            gsap.set("#nominations #hand span", {
+                left: this.wheel.radius - ui.tokenSize * 0.75,
+                yPercent: -100,
+                width: ui.tokenSize * 1.5,
+                height: ui.tokenSize / 5,
+            })
+        }
     }
 }
 
