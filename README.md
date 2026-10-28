@@ -53,6 +53,7 @@ Always welcome! Leave an issue via the issues tab, and I will try to look at it 
 > - Make sure all tests pass, and create new tests for your code if applicable.
 > - Leave comments and documentation for your code.
 >   - If unsure how much, take my level of documentation as a reference
+> - This project was made without AI generated code, but with the help of AI. Disclose any use of AI.
 
 ## Acknowledgements & Copyrights
 * [Blood on the Clocktower](https://bloodontheclocktower.com) is a trademark of Steven Medway and The Pandemonium Institute.
