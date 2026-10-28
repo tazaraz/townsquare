@@ -64,10 +64,8 @@
         <template #footer>
             <ModalFooter>
                 <template #left>
-                    <div class="flex flex-col md:flex-row gap-4">
-                        <USwitch v-model="ui.showFlavor" label="Show character flavor text"/>
-                        <USwitch v-if="activeTab == '1'" v-model="showTravellers" label="Show all Travellers" />
-                    </div>
+                    <USwitch v-model="ui.showFlavor" label="Show character flavor text"/>
+                    <USwitch v-if="activeTab == '1'" v-model="showTravellers" label="Show all Travellers" />
                 </template>
                 <template #center>
                     <UButton

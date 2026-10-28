@@ -55,6 +55,7 @@
             <ModalFooter>
                 <template #left>
                     <UButton v-if="kind !== 'reminder'"
+                        class="w-fit"
                         label="Reference sheet"
                         color="info"
                         @click="referenceSheet.open({ kind })"/>
