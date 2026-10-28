@@ -163,20 +163,21 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
 import {
-    ModalReferenceSheet,
-    ModalNightOrder,
+    ModalAbout,
+    ModalDemonBluffs,
+    ModalDisplayInfo,
     ModalGameSetup,
+    ModalJinxes,
+    ModalNightOrder,
+    ModalNominations,
+    ModalReferenceSheet,
     ModalSelectScript,
     ModalTokenSelector,
     ModalTemporaryGrimoire,
-    ModalDisplayInfo,
-    ModalDemonBluffs,
     DialogInput,
     DialogSession,
     DialogConfirm,
-    ModalNominations,
     UKbd,
-    ModalAbout,
 } from '#components'
 
 defineShortcuts({
@@ -196,16 +197,17 @@ const ui = useUI();
 const game = useGame();
 const socket = useSocket();
 
-const referenceSheet = overlay.create(ModalReferenceSheet)
-const nightOrder = overlay.create(ModalNightOrder)
+const about = overlay.create(ModalAbout)
+const demonBluffs = overlay.create(ModalDemonBluffs)
+const displayInfo = overlay.create(ModalDisplayInfo)
 const gameSetup = overlay.create(ModalGameSetup)
+const jinxes = overlay.create(ModalJinxes)
+const nightOrder = overlay.create(ModalNightOrder)
+const nominations = overlay.create(ModalNominations)
+const referenceSheet = overlay.create(ModalReferenceSheet)
 const selectScript = overlay.create(ModalSelectScript)
 const tokenSelector = overlay.create(ModalTokenSelector)
-const displayInfo = overlay.create(ModalDisplayInfo)
 const temporaryGrimoire = overlay.create(ModalTemporaryGrimoire)
-const demonBluffs = overlay.create(ModalDemonBluffs)
-const nominations = overlay.create(ModalNominations)
-const about = overlay.create(ModalAbout)
 
 const confirmDialog = overlay.create(DialogConfirm)
 const sessionDialog = overlay.create(DialogSession)
@@ -302,7 +304,7 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
             {
                 icon: h(UKbd, { class: 'text-default! size-5' }, 'A'),
                 label: players.length < MAX_PLAYERS ? 'Add a player' : 'Max players reached',
-                class:       (players.length >= MAX_PLAYERS ? 'opacity-50 cursor-not-allowed' : ''),
+                class:        players.length >= MAX_PLAYERS ? 'opacity-50 cursor-not-allowed' : '',
                 disabled:     players.length >= MAX_PLAYERS,
                 onSelect: async () => addPlayer(),
             },
