@@ -40,21 +40,19 @@
                 <div class="isolate grid p-2 grid-cols-2 gap-2 text-sm">
                     <button v-for="child in ((item as any).children)"
                         class="rounded-md transition hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3"
-                        :class="[child.disabled, child.info ? 'col-span-2 justify-center' : '']"
-                        @click="!child.disabled && child.onSelect?.()">
+                        :class="[child.info ? 'col-span-2 justify-center' : '']"
+                        @click="child.onSelect?.()">
 
                         <UIcon :name="child.icon" class="size-5 text-dimmed" />
                         <div v-if="child.toggle">
                             <USwitch v-if="child.toggle === 'flavour'"
                                 v-model="ui.showFlavor"
                                 :label="child.label"
-                                :disabled="child.disabled !== undefined"
                                 :ui="{label: 'text-muted'}"
                                 :class="['font-medium text-start', child.class]"/>
                             <USwitch v-else-if="child.toggle === 'nightorder'"
                                 v-model="ui.showNightOrder"
                                 :label="child.label"
-                                :disabled="child.disabled !== undefined"
                                 :ui="{label: 'text-muted'}"
                                 :class="['font-medium text-start', child.class]"/>
                         </div>
@@ -80,7 +78,7 @@
             <template #modifier-content="{ item }">
                 <div class="isolate grid p-2 grid-cols-2 gap-2 text-sm">
                     <button v-for="child in ((item as any).children)"
-                        :class="['rounded-md transition hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3',child.disabled]"
+                        class="rounded-md transition hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3"
                         @click="child.onSelect?.()">
 
                         <NuxtImg :src="child.image" class="w-[64px] h-[64px]" />
@@ -251,22 +249,22 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
             {
                 label: 'Game setup',
                 description: 'Select roles and assign them to players.',
-                class: `text-sky-300`,
-                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
+                class: `text-sky-300 ${scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed'}`,
+                disabled: !scenarioIsSelected.value,
                 onSelect: async () => { await gameSetup.open(); isOpen.value = !isOpen.value },
             },
             {
                 label: 'Set demon bluffs',
                 description: 'They probably need it',
-                class: `text-(--demon)`,
-                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
+                class: `text-(--demon) ${scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed'}`,
+                disabled: !scenarioIsSelected.value,
                 onSelect: () => demonBluffs.open({ editable: true })
             },
             {
                 label: 'Hand out roles & bluffs',
                 description: '',
-                class: `text-(--minion)`,
-                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
+                class: `text-(--minion) ${scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed'}`,
+                disabled: !scenarioIsSelected.value,
                 onSelect: () => syncRoleData()
             },
             {
@@ -284,21 +282,22 @@ const items = computed<NavigationMenuItem[][]>(() => cleanMenu([[
             {
                 label: 'Communicate with a player',
                 description: 'Either a token or text',
-                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
+                class: `${scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed'}`,
+                disabled: !scenarioIsSelected.value,
                 onSelect: () => sidebarOpenModalWithClose(displayInfo)
             },
             {
                 label: `${ui.grimoire.temporary ? '!' : ''} Temporary Grimoire`,
                 description: `Allows non-persistent modifications`,
-                class: `${ui.grimoire.temporary ? 'text-error' : ''}`,
-                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
+                class: `${ui.grimoire.temporary ? 'text-error' : ''} ${scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed'}`,
+                disabled: !scenarioIsSelected.value,
                 onSelect: () => sidebarOpenModalWithClose(temporaryGrimoire)
             },
             {
                 label: 'Nominations',
                 description: 'Allow player nominations',
-                class: 'text-primary',
-                disabled: scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed',
+                class: `text-primary ${scenarioIsSelected.value ? undefined : 'opacity-50 cursor-not-allowed'}`,
+                disabled: !scenarioIsSelected.value,
                 onSelect: () => sidebarOpenModalWithClose(nominations)
             },
             {
