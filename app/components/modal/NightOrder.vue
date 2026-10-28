@@ -1,5 +1,5 @@
 <template>
-    <UModal :ui="{ content: 'max-w-screen-sm', body: 'grid gap-15 grid-cols-2', footer: 'self-center gap-10' }">
+    <UModal :ui="{ content: 'max-w-screen-sm', body: 'grid gap-10 md:gap-15 grid-cols-2' }">
         <template #title>
             <ModalTitle
                 icon="material-symbols:format-list-numbered-rounded"
@@ -7,7 +7,7 @@
                 description="Reference sheet for the current script"/>
         </template>
         <template #body>
-            <div class="night-order truncate">
+            <div class="night-order">
                 <h3>First night</h3>
                 <div v-for="role in game.scriptNightOrder.firstNight"
                     :class="['character', role.team, 'left', 'border-e', 'text-right']">
@@ -21,7 +21,7 @@
                 </div>
             </div>
 
-            <div class="night-order truncate">
+            <div class="night-order">
                 <h3>Other nights</h3>
                 <div v-for="role in game.scriptNightOrder.otherNights"
                     :class="['character', role.team, 'right', 'border-s']">
@@ -71,6 +71,7 @@ game.calculateNightOrder()
         display: flex;
         flex-direction: row;
         position: relative;
+        overflow: hidden;
 
         img {
             width: 5vh;
