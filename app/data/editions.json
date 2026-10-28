@@ -29,21 +29,47 @@
 
 
   {
-    "id": "hhr",
-    "name": "Harold Holt's Revenge",
-    "author": "Theo",
-    "description": "It's Laissez Un Faire, all grown up! Harold Holt's Revenge gives the town 5 days to defeat the Leviathan, but they'll have to do so while covering for the Damsel and avoiding the pitfalls of a Pit-Hag, Politician, and more.",
+    "id": "oio",
+    "name": "One in One Out",
+    "author": "Baron von Klutz",
+    "description": "If your name’s not down, you’re not coming in!",
     "level": "Beginner",
-    "roles": ["librarian", "investigator", "shugenja", "balloonist", "dreamer", "snakecharmer", "towncrier", "slayer", "savant", "amnesiac", "seamstress", "courtier", "magician", "mutant", "damsel", "lunatic", "politician", "cerenovus", "pithag", "baron", "goblin", "marionette", "leviathan"],
+    "roles": ["steward", "knight", "highpriestess", "villageidiot", "snakecharmer", "fortuneteller", "oracle", "monk", "amnesiac", "fisherman", "seamstress", "farmer", "cannibal", "ogre", "goon", "recluse", "drunk", "poisoner", "harpy", "spy", "mezepheles", "kazali", "imp", "ojo", "fanggu", "spiritofivory"],
     "type": "full"
   },
-
+  {
+    "id": "agc",
+    "name": "A Grimm Chorus",
+    "author": "Zets",
+    "description": "Keep your powder dry",
+    "level": "Intermediate",
+    "roles": ["general", "villageidiot", "towncrier", "innkeeper", "gambler", "exorcist", "amnesiac", "nightwatchman", "slayer", "fisherman", "soldier", "minstrel", "cannibal", "damsel", "drunk", "golem", "politician", "godfather", "summoner", "assassin", "scarletwoman", "yaggababble", "pukka", "ojo", "po", "thief", "harlot", "judge", "beggar", "scapegoat"],
+    "type": "full"
+  },
+  {
+    "id": "has",
+    "name": "Hide and Seek",
+    "author": "Narninian and Zaba",
+    "description": "Everyone is lying (or should be)",
+    "level": "Intermediate",
+    "roles": ["noble", "librarian", "pixie", "preacher", "towncrier", "oracle", "undertaker", "dreamer", "seamstress", "artist", "huntsman", "ravenkeeper", "virgin", "damsel", "drunk", "mutant", "goon", "godfather", "mezepheles", "poisoner", "cerenovus", "pukka", "vigormortis", "imp", "ojo"],
+    "type": "full"
+  },
+  {
+    "id": "le",
+    "name": "Lunar Eclipse",
+    "author": "Ekin",
+    "description": "Can the Lunatic go through an entire game without realizing what they are?",
+    "level": "Advanced",
+    "roles": ["grandmother", "pixie", "sailor", "chambermaid", "mathematician", "innkeeper", "lycanthrope", "savant", "artist", "tealady", "magician", "mayor", "cannibal", "goon", "barber", "lunatic", "puzzlemaster", "godfather", "devilsadvocate", "spy", "assassin", "marionette", "nodashii", "zombuul", "vigormortis", "barista", "harlot", "apprentice", "beggar", "voudon", "spiritofivory"],
+    "type": "full"
+  },
 
   {
     "id": "ngj",
     "name": "No Greater Joy",
     "author": "Steven Medway",
-    "description": "This script is designed for fast, fun, loud, and easy to understand games. If you want a twenty minute game, or a series of twenty minute games, then No Greater Joy should be just the ticket. Please note that the Baron, which normally adds two Outsiders, will only add one additional Outsider if there is already one Outsider in play, as there are only two Outsiders on the script.",
+    "description": "A simple 'next step' for new players who have played Trouble Brewing.",
     "level": "Beginner",
     "roles": ["clockmaker", "investigator", "empath", "chambermaid", "artist", "sage", "drunk", "klutz", "scarletwoman", "baron", "imp"],
     "type": "teensyville"
@@ -52,36 +78,18 @@
     "id": "luf",
     "name": "Laissez un Faire",
     "author": "Steven Medway",
-    "description": "This script will create long, interesting games with a lot of deception and wild, unusual plays. The game will last a long time for a Teensyille game (as long, or even longer than a normal seven or nine player game) and that will give the players lots of time to put their information together, or decide on the perfect bluff. To balance this, the information available is much more vague than usual. Many of the characters have information that is blurry at first but gets stronger over time. Or, they have abilities that must be used at the right time to be most useful. \n\n Every game is incredibly different, due to the high level of creativity required from the Storyteller.",
+    "description": "The length, feel, and stakes of a much larger game, all in a teensy package.",
     "level": "Intermediate",
     "roles": ["balloonist", "savant", "amnesiac", "fisherman", "artist", "cannibal", "mutant", "lunatic", "widow", "goblin", "leviathan"],
     "type": "teensyville"
   },
   {
-    "id": "rttb",
-    "name": "Tace to the Bottom",
-    "author": "Ben Burns",
-    "description": "Run it with the Fabled roles of the Doomsayer and the Sentinel, and avoid the Toymaker. Most games will end on day one - short, sharp, and sweet sessions with sudden deaths, big plays, and some even bigger (and hilarious) mistakes. It's the spiritual opposite of a Leviathan game.",
-    "level": "Intermediate",
-    "roles": ["clockmaker", "empath", "dreamer", "slayer", "courtier", "mayor", "lunatic", "klutz", "scarletwoman", "spy", "vortox", "doomsayer", "sentinel"],
-    "type": "teensyville"
-  },
-  {
-    "id": "mlpos",
-    "name": "Miserable Little Pile of Secrets",
-    "author": "Evin Donohoe",
-    "description": "This script is themed around not knowing whether or not you are what you believe you are, while potentially being required to guess or even decide what you or other players are. In short, roles are fluid. The existence of the Pukka as the Demon means that players have plenty of time to get stuck into their roles, which is good, because most of the Townsfolk require a couple of nights to really get going. As the Storyteller, you can extend this potentially further by putting the Professor in the bag. The Amnesiac also gives you ample opportunity to balance the game, should you require it.",
-    "level": "Intermediate",
-    "roles": ["amnesiac", "gambler", "exorcist", "dreamer", "professor", "philosopher", "lunatic", "barber", "goblin", "pithag", "pukka", "sentinel"],
-    "type": "teensyville"
-  },
-  {
-    "id": "fm",
-    "name": "Frankenstein's Mayor",
-    "author": "Baron Ted",
-    "description": "Frankenstein's Mayor focuses on one question - “do we execute, or let the Zombuul kill?” - while maximizing every player's chance of contributing a “big play.” The powerful Undertaker begs for executions, while everyone else hopes or dreads a Sage or Ravenkeeper (or Mayor-bounce) hit. Instead of a demon-identification hunt, this script tends to encourage searching for Outsider/Minion combinations, so if you see players bluffing a Recluse narrative when Lunatic is in play, string along that dilemma for as much time as players enjoy it. Zombuulen may be unsure, even at game end, whether they are truly the demon.",
-    "level": "Intermediate",
-    "roles": ["chef", "undertaker", "oracle", "sage", "ravenkeeper", "mayor", "recluse", "lunatic", "poisoner", "spy", "zombuul", "sentinel"],
+    "id": "otr",
+    "name": "Over the River",
+    "author":" Andrew Nathenson",
+    "description": "What big eyes you have!",
+    "level": "Beginner",
+    "roles": ["grandmother","clockmaker","innkeeper","snakecharmer","professor","slayer","lunatic","recluse","godfather","spy","imp"],
     "type": "teensyville"
   }
 ]
