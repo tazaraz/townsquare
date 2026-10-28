@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { DialogInput } from '#components';
-import editionData from '~/components/data/editions.json'
+import editionData from '~/data/editions.json'
 
 const game = useGame();
 

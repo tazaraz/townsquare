@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
-import editionsData from '~/components/data/editions.json'
-import roleData from '~/components/data/roles.json'
-import nightorderData from '~/components/data/nightorder.json'
-import gameData from '~/components/data/game.json'
+import editionsData from '~/data/editions.json'
+import roleData from '~/data/roles.json'
+import nightorderData from '~/data/nightorder.json'
+import gameData from '~/data/game.json'
 
 interface TeamDivision {
     townsfolk: number

@@ -1,7 +1,7 @@
 #!/bin/sh
 REPO="https://raw.githubusercontent.com/ThePandemoniumInstitute/botc-release/refs/heads/main/resources"
 
-mkdir -p /app/app/components/data /app/app/public
+mkdir -p /app/app/data /app/app/public
 
 download_file() {
     url="$1"
@@ -17,13 +17,13 @@ download_file() {
     fi
 }
 
-download_file "$REPO/data/jinxes.json" "/app/app/components/data/jinxes.json"
-download_file "$REPO/data/nightsheet.json" "/app/app/components/data/nightorder.json"
-download_file "$REPO/data/roles.json" "/app/app/components/data/roles.json"
+download_file "$REPO/data/jinxes.json" "/app/app/data/jinxes.json"
+download_file "$REPO/data/nightsheet.json" "/app/app/data/nightorder.json"
+download_file "$REPO/data/roles.json" "/app/app/data/roles.json"
 
 # Download sprites for each role
 mkdir -p "/app/public/sprites/botc"
-jq -c '.[]' /app/app/components/data/roles.json |
+jq -c '.[]' /app/app/data/roles.json |
 while IFS= read -r role; do
     edition=$(printf '%s' "$role" | jq -r '.edition')
     id=$(printf '%s' "$role" | jq -r '.id')
