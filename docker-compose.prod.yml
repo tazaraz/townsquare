@@ -3,7 +3,10 @@ services:
     build:
       context: .
       target: prod
+    container_name: townsquare
     restart: unless-stopped
+    expose:
+      - 3000
     environment:
       NODE_ENV: production
       PORT: 3000
