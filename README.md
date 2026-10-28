@@ -1,11 +1,11 @@
 # Blood on the Clocktower Grimoire & Townsquare
 <p align="center">
-    <a href="https://botc.tazaraz.dev">
+    <a href="https://townsquare.tazaraz.dev">
         <img src='./public/logo.png' width="300px" />
     </a>
 </p>
 <h2 align="center">
-  <a href="https://botc.tazaraz.dev">Try it out!</a>
+  <a href="https://townsquare.tazaraz.dev">Try it out!</a>
 </h2>
 <br>
 
