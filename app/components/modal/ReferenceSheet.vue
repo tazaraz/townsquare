@@ -7,7 +7,8 @@
                 description="Reference sheet for the current scenario"/>
         </template>
         <template #body>
-            <UTabs id="tabs"
+            <UTabs v-model="activeTab"
+                id="tabs"
                 :items="tabs"
                 :ui="{ content: `mb-3`, list: kind == 'role' ? '' : 'hidden' }">
                 <template #scenario>
@@ -35,12 +36,17 @@
                     </template>
                 </template>
                 <template #travellers>
-                    <div class="text-(--traveller) team-list flex flex-col md:flex-row">
+                    <UAlert v-if="(items as any).traveller?.length === 0 && !showTravellers"
+                        class="w-fit mt-3 mx-auto"
+                        variant="subtle"
+                        color="info"
+                        description="There are no travellers in this script."/>
+                    <div v-else class="text-(--traveller) team-list flex flex-col md:flex-row">
                         <div class="name w-full md:w-6">
                             <h3 class="px-6 border-b-2 md:border-0 md:rotate-270">traveller</h3>
                         </div>
                         <div class="flex-grow py-3 grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-                            <div v-for="role in game.availableTeamRoles.traveller" :key="role.id"
+                            <div v-for="role in (showTravellers ? game.loadTravellers() : game.availableTeamRoles.traveller)" :key="role.id"
                                 class="role flex items-center">
 
                                 <NuxtImg :src="role.image"/>
@@ -58,9 +64,10 @@
         <template #footer>
             <ModalFooter>
                 <template #left>
-                    <USwitch
-                        v-model="ui.showFlavor"
-                        label="Show character flavor text"/>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <USwitch v-model="ui.showFlavor" label="Show character flavor text"/>
+                        <USwitch v-if="activeTab == '1'" v-model="showTravellers" label="Show all Travellers" />
+                    </div>
                 </template>
                 <template #center>
                     <UButton
@@ -108,6 +115,8 @@ const name = computed(() => {
     }
 })
 
+const activeTab = ref('0')
+const showTravellers = ref(false)
 const tabs = [
     {
         label: 'Script roles',
