@@ -81,10 +81,10 @@
                 <div class="isolate grid p-2 grid-cols-2 gap-2 text-sm">
                     <button v-for="child in ((item as any).children)"
                         :class="['rounded-md transition hover:bg-elevated/50 flex gap-2 ms-0 py-2 px-3',child.disabled]"
-                        @click="referenceSheet.open({ kind: child.team as 'fabled' | 'loric' })">
+                        @click="child.onSelect?.()">
 
                         <NuxtImg :src="child.image" class="w-[64px] h-[64px]" />
-                        <div>
+                        <div class="text-start">
                             <span :class="`font-medium text-(--${child.team})`">{{ child.name }}</span>
                             <span class="text-muted line-clamp-2">{{ child.ability }}</span>
                         </div>
