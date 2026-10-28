@@ -43,7 +43,7 @@ docker compose up
 **Production**
 
 ```bash
-docker compose -f compose.prod.yaml up -d --build
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 ## Contributions
