@@ -138,7 +138,6 @@ const background = "/token.png"
 .token {
     user-select: none;
     position: relative;
-    aspect-ratio: 1;
 
     cursor: pointer;
 
@@ -153,8 +152,11 @@ const background = "/token.png"
 
     .inside {
         position: relative;
-        height: 100%;
+        inset: 0;
         width: 100%;
+        height: 100%;
+        aspect-ratio: 1;
+
 
         .background {
             width: 100%;
@@ -258,6 +260,7 @@ const background = "/token.png"
 
     .outside {
         .night-tooltip {
+            width: 2rem;
             border: 2px solid black;
             border-radius: 50%;
             line-height: 1;
