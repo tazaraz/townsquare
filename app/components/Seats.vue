@@ -265,11 +265,27 @@ class PlayerSeats {
             onDrag: () => this.updateOrder(),
         })[0]!;
 
+        let lastRotation = NaN
+        let lastKey = ''
+
         // Update the rotation of the tokens on each tick
         gsap.ticker.add(() => {
             const angleStep = 360 / this.seats.max
             // Get the current rotation of the wheel, account for initial orientation
             const rotation = gsap.getProperty("#wheel", "rotation") as number - this.wheel.orentation
+
+            const key = [
+                this.centreSeatIndex,
+                this.wheel.orentation,
+                this.seats.max,
+                this.seats.slots.join(),
+                this.seats.elements.reduce((n, e) => n + e.children.length, 0),
+            ].join('|')
+            const discreteChanged = key !== lastKey
+
+            if (!discreteChanged && rotation === lastRotation) return
+            lastKey = key
+            lastRotation = rotation
 
             this.seats.elements.forEach((seat, index) => {
                 // Calculate the seat angle to the centre. Account for the index of the seat
@@ -281,13 +297,15 @@ class PlayerSeats {
                     rotation: seatRotation - rotation
                 })
 
-                // Make sure each token is faceing upward
-                Array.from(seat.children).forEach((token, i) => {
-                    gsap.set(token, {
-                        // Undo the centre rotation, and add 180 degrees to make the token face upward
-                        rotation: -seatRotation - this.wheel.orentation
+                if (discreteChanged) {
+                    // Make sure each token is faceing upward
+                    Array.from(seat.children).forEach((token, i) => {
+                        gsap.set(token, {
+                            // Undo the centre rotation, and add 180 degrees to make the token face upward
+                            rotation: -seatRotation - this.wheel.orentation
+                        })
                     })
-                })
+                }
             })
         })
     }
@@ -312,7 +330,7 @@ class PlayerSeats {
         let elSize = 0;
         if (reminders.length > 0) {
             // My math is mathing but shomehow off by 2px
-            elSize = (reminders[0]!.clientHeight / 2 + this.wheel.reminders.margin - 2) * reminders.length
+            elSize = (ui.tokenSize * this.wheel.reminders.scale / 2 + this.wheel.reminders.margin - 2) * reminders.length
         }
 
         const vars: gsap.TweenVars = {
