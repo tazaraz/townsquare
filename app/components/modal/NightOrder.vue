@@ -1,5 +1,5 @@
 <template>
-    <UModal :ui="{ content: 'max-w-screen-sm', body: 'grid gap-10 md:gap-15 grid-cols-2' }">
+    <UModal :ui="{ content: 'max-w-screen-sm', body: 'grid gap-6 md:gap-10 md:gap-15 grid-cols-2' }">
         <template #title>
             <ModalTitle
                 icon="material-symbols:format-list-numbered-rounded"
@@ -74,7 +74,9 @@ game.calculateNightOrder()
         overflow: hidden;
 
         img {
+            margin: auto;
             width: 5vh;
+            height: 5vh;
         }
 
         .role-info {
