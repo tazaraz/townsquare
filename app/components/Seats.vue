@@ -494,7 +494,7 @@ class PlayerSeats {
             case "right":
                 this.wheel.radius = screenSize * 3.5
                 this.seats.max = Math.ceil(Math.pow(screenSize, 1/2)) * 3;
-                ui.tokenSize = Math.min(Math.max(100, screenSize * 0.22), 140)
+                ui.tokenSize = Math.min(Math.max(110, screenSize * 0.22), 140)
                 break;
             // Center. We calculate the radius based on the size of the token, ensuring no overlap
             case "center":
