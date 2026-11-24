@@ -11,7 +11,7 @@
                 v-model="activeTab"
                 :style="{ '--token-size': `${ui.tokenSize * 0.8}px` }"
                 :items="tabs"
-                :ui="{ list: `mb-3 ${kind == 'role' ? '' : 'hidden'}` }">
+                :ui="{ list: `mb-3 ${kind == 'role' ? '' : 'hidden'}`, content: `gap-2 md:gap-6` }">
                 <template #script>
                     <template v-for="item in items">
                         <Token v-if="(item as Role).team !== 'traveller'"
@@ -184,7 +184,6 @@ async function customReminder() {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 1.5rem;
 
         .token {
             width: var(--token-size);
