@@ -3,7 +3,7 @@
         <Title>Town Square{{ socket.id !== '' ? ` | ${socket.getUrlSessionId()}` : '' }}
         </Title>
         <ClientOnly>
-            <UMain class="relative">
+            <main class="relative" style="min-height: calc(100dvh - var(--ui-header-height))">
                 <div id="town">
                     <svg
                         viewBox="60 0 2550 1250"
@@ -19,7 +19,7 @@
                 <Seats ref="seats"
                     @edit-player="editPlayer"
                     @edit-reminder="editReminder" />
-            </UMain>
+            </main>
             <Menu />
         </ClientOnly>
     </UApp>
