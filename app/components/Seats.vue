@@ -118,8 +118,8 @@
         <!-- Player seats -->
         <div id="wheel">
             <div v-for="(player, p) in players.list"
-                 class="seat" :style="`z-index: ${p < players.length / 2 ? -p : p}`">
-                <div class="player flex flex-col mb-8">
+                 class="seat" :style="`z-index: ${p < players.length / 2 ? -p : p}`" style="will-change: transform">
+                <div class="player flex flex-col mb-8" style="will-change: transform">
                     <Token
                         :data="player.role ?? undefined"
                         :state="player.state"
